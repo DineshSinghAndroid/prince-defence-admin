@@ -217,17 +217,17 @@ export default function QuizAnalyticsPage() {
                     ]}
                 />
 
-                <div className="mt-6 grid gap-6 xl:grid-cols-[1.2fr_1fr]">
-                    <section className={`rounded-2xl p-5 sm:p-6 ${glass}`}>
+                <div className="mt-6 grid min-w-0 gap-6 xl:grid-cols-[1.2fr_1fr]">
+                    <section className={`min-w-0 overflow-hidden rounded-2xl p-5 sm:p-6 ${glass}`}>
                         <div className="flex items-center gap-3">
                             <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#dbeafe] text-[#3869D0]"><Users size={18} /></span>
-                            <div>
+                            <div className="min-w-0">
                                 <h2 className="font-bold text-[var(--navy)]">Category and subject analysis</h2>
-                                <p className="text-xs text-[var(--muted)]">Participants, answers, and accuracy across the selected dates</p>
+                                <p className="break-words text-xs text-[var(--muted)]">Participants, answers, and accuracy across the selected dates</p>
                             </div>
                         </div>
                         {analytics.subjectStats.length ? (
-                            <div className="mt-5 overflow-x-auto">
+                            <div className="mt-5 max-w-full overflow-x-auto overscroll-x-contain">
                                 <table className="w-full min-w-[680px] border-separate border-spacing-y-2 text-left text-sm">
                                     <thead className="text-[10px] uppercase tracking-wide text-[var(--muted)]"><tr><th className="px-3 py-2">Category</th><th className="px-3 py-2">Subject</th><th className="px-3 py-2">People</th><th className="px-3 py-2">Started</th><th className="px-3 py-2">Completed</th><th className="px-3 py-2">Attempted</th><th className="px-3 py-2">Correct</th><th className="px-3 py-2">Wrong</th><th className="px-3 py-2">Skipped</th><th className="px-3 py-2">Accuracy</th></tr></thead>
                                     <tbody>{analytics.subjectStats.map((item) => (
@@ -249,16 +249,17 @@ export default function QuizAnalyticsPage() {
                         ) : <p className="mt-5 rounded-xl border border-dashed border-[#C8D5EA] py-10 text-center text-sm text-[var(--muted)]">No category scores for this date range.</p>}
                     </section>
 
-                    <section className={`rounded-2xl p-5 sm:p-6 ${glass}`}>
+                    <section className={`min-w-0 overflow-hidden rounded-2xl p-5 sm:p-6 ${glass}`}>
                         <div className="flex items-center gap-3">
                             <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#f4d27e]/25 text-[#8A6820]"><Trophy size={18} /></span>
-                            <div>
+                            <div className="min-w-0">
                                 <h2 className="font-bold text-[var(--navy)]">Top performers</h2>
-                                <p className="text-xs text-[var(--muted)]">Completed quiz attempts in this date range</p>
+                                <p className="break-words text-xs text-[var(--muted)]">Completed quiz attempts in this date range</p>
                             </div>
                         </div>
                         {analytics.leaderboard.length ? (
-                            <div className="mt-5 space-y-3">
+                            <div className="mt-5 max-w-full overflow-x-auto overscroll-x-contain">
+                                <div className="min-w-[280px] space-y-3">
                                 {analytics.leaderboard.map((entry, index) => (
                                     <div key={entry._id} className="flex items-center justify-between gap-3 rounded-xl border border-[#C8D5EA] bg-white/70 px-3 py-3">
                                         <div className="flex min-w-0 items-center gap-3">
@@ -268,6 +269,7 @@ export default function QuizAnalyticsPage() {
                                         <p className="shrink-0 text-sm font-bold text-[#3869D0]">{Number(entry.percentage || 0).toFixed(1)}%</p>
                                     </div>
                                 ))}
+                                </div>
                             </div>
                         ) : <p className="mt-5 rounded-xl border border-dashed border-[#C8D5EA] py-10 text-center text-sm text-[var(--muted)]">No completed attempts in this date range.</p>}
                     </section>
