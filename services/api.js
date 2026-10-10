@@ -1,10 +1,24 @@
 const API_URL =
-    process.env.NEXT_PUBLIC_API_URL;
+    process.env.NEXT_PUBLIC_API_URL?.replace(/\/+$/, "");
+
+const API_BASE_URL = API_URL
+    ? `${API_URL.replace(/\/api$/i, "")}/api`
+    : "";
+
+const getApiUrl = (endpoint) => {
+    if (!API_BASE_URL) {
+        throw new Error(
+            "API URL is not configured. Set NEXT_PUBLIC_API_URL."
+        );
+    }
+
+    return `${API_BASE_URL}${endpoint}`;
+};
 
 let csrfToken = null;
 
 const getCsrfToken = async () => {
-    const response = await fetch(`${API_URL}/auth/csrf`, {
+    const response = await fetch(getApiUrl("/auth/csrf"), {
         method: "GET",
         credentials: "include",
         cache: "no-store",
@@ -40,7 +54,7 @@ export const api = async (
         options.body instanceof FormData;
 
     const response = await fetch(
-        `${API_URL}${endpoint}`,
+        getApiUrl(endpoint),
         {
             ...options,
 
