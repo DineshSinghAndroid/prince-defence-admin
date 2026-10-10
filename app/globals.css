@@ -1,0 +1,126 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f7f8f9;
+  --foreground: #10243a;
+  --navy: #102a43;
+  --green: #234f3d;
+  --gold: #b89242;
+
+  --muted: #64748b;
+  --white: #ffffff;
+
+  --glass-bg: rgba(255, 255, 255, 0.70);
+  --glass-border: rgba(255, 255, 255, 0.75);
+  --shadow-glass: rgba(7, 33, 58, 0.08);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  font: inherit;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+.glass {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 8px 30px var(--shadow-glass);
+}
+.facilities-box {
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.16),
+            rgba(255, 255, 255, 0.06)
+        );
+
+    border: 1px solid rgba(255, 255, 255, 0.25);
+
+    backdrop-filter: blur(22px) saturate(160%);
+    -webkit-backdrop-filter: blur(22px) saturate(160%);
+
+    box-shadow:
+        0 20px 50px rgba(0, 20, 50, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.25),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.08);
+
+    transition:
+        transform 0.5s ease,
+        box-shadow 0.5s ease,
+        border-color 0.5s ease;
+}
+
+.facilities-box:hover {
+    border-color: rgba(255, 255, 255, 0.42);
+
+    box-shadow:
+        0 25px 60px rgba(0, 20, 50, 0.35),
+        0 0 35px rgba(120, 200, 255, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.glass-card {
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);}
+
+  .glass-card-dark{
+  border: 1px solid rgba(14, 13, 13, 0.3);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+}
+
+.container {
+  width: min(1200px, calc(100% - 40px));
+  margin-inline: auto;
+}
+
+::selection {
+  background: var(--green);
+  color: var(--white);
+}
+
+.cinzel {
+  font-family: var(--cinzel-fonts), serif;
+}
+
+.inter {
+  font-family: var(--inter-fonts), sans-serif;
+}
+
+.montserrat {
+  font-family: var(--montserrat-fonts), sans-serif;
+}
+
+.momoSignature {
+  font-family: var(--momoSignature-fonts), sans-serif;
+}
+
