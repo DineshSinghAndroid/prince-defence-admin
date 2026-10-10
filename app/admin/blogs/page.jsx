@@ -27,7 +27,7 @@ import {
 
 import BlogFilters from "@/component/blogs/BlogFilters";
 import BlogGrid from "@/component/blogs/BlogGrid";
-import BlogPagination from "@/component/blogS/BlogPagination";
+import BlogPagination from "@/component/blogs/BlogPagination";
 import DeleteConfirmModal from "@/component/common/DeleteConfirmModal";
 import BlogCategoriesManager from "@/component/blogs/BlogCategoriesManager";
 
