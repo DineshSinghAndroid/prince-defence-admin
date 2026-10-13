@@ -60,12 +60,6 @@ const links = [
         icon: Images,
     },
     {
-        href: "/admin/admins",
-        label: "Admins",
-        icon: ShieldCheck,
-        allowedRoles: ["superAdmin"],
-    }, 
-    {
         href: "/admin/blogs",
         label: "Blogs",
         icon: NotebookPen,
@@ -74,6 +68,12 @@ const links = [
         href: "/admin/achievers",
         label: "Achievers",
         icon: Trophy,
+        allowedRoles: ["superAdmin"],
+    },
+    {
+        href: "/admin/admins",
+        label: "Admins",
+        icon: ShieldCheck,
         allowedRoles: ["superAdmin"],
     },
 ];
@@ -134,11 +134,10 @@ const Sidebar = () => {
             )}
 
             <aside
-                className={`fixed inset-y-0 left-0 z-50 flex h-screen min-h-screen w-72 shrink-0 flex-col overflow-hidden bg-[#102A43] text-white shadow-2xl transition-transform duration-300 lg:sticky lg:top-0 lg:translate-x-0 ${
-                    open
+                className={`fixed inset-y-0 left-0 z-50 flex h-screen min-h-screen w-72 shrink-0 flex-col overflow-hidden bg-[#102A43] text-white shadow-2xl transition-transform duration-300 lg:sticky lg:top-0 lg:translate-x-0 ${open
                         ? "translate-x-0"
                         : "-translate-x-full"
-                }`}
+                    }`}
             >
                 {/* Decorative Glow */}
 
@@ -209,22 +208,20 @@ const Sidebar = () => {
                                         onClick={() =>
                                             setOpen(false)
                                         }
-                                        className={`group relative flex items-center gap-3 rounded-xl px-4 py-4 text-base font-semibold transition-all duration-300 ${
-                                            active
+                                        className={`group relative flex items-center gap-3 rounded-xl px-4 py-4 text-base font-semibold transition-all duration-300 ${active
                                                 ? "bg-gradient-to-r from-[#3869D0] to-[#244A9A] text-white shadow-lg shadow-[#3869D0]/25"
                                                 : "text-[#CBD5E1] hover:translate-x-1 hover:bg-[#F0F4FF]/10 hover:text-white"
-                                        }`}
+                                            }`}
                                     >
                                         {active && (
                                             <span className="absolute -left-4 top-1/2 h-7 w-1.5 -translate-y-1/2 rounded-r-full bg-[#B89242]" />
                                         )}
 
                                         <span
-                                            className={`flex h-9 w-9 items-center justify-center rounded-lg transition-colors ${
-                                                active
+                                            className={`flex h-9 w-9 items-center justify-center rounded-lg transition-colors ${active
                                                     ? "bg-white/20 text-white"
                                                     : "bg-[#F0F4FF]/5 text-[#CBD5E1] group-hover:bg-[#F0F4FF]/10 group-hover:text-white"
-                                            }`}
+                                                }`}
                                         >
                                             <Icon size={18} />
                                         </span>
