@@ -153,10 +153,11 @@ const Sidebar = () => {
                 <div className="relative flex items-center justify-between px-6 pb-6 pt-7">
                     <div className="flex items-center gap-3">
 
-                        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-[#3869D0] to-[#94CCF9] shadow-lg shadow-[#3869D0]/30">
-                            <Shield
-                                size={22}
-                                className="text-white"
+                        <div className="flex items-center justify-center rounded-full shadow-lg shadow-[#3869D0]/30">
+                            <img
+                                src="/logos/mainLogo.png"
+                                alt="Prince Defence logo"
+                                className="h-10 w-10 object-contain"
                             />
                         </div>
 
