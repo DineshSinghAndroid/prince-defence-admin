@@ -1,3 +1,4 @@
+
 const API_URL =
     process.env.NEXT_PUBLIC_API_URL?.replace(/\/+$/, "");
 
@@ -24,25 +25,32 @@ const getCsrfToken = async () => {
         cache: "no-store",
     });
 
-    const data = await response.json();
+    let data = null;
+
+    try {
+        data = await response.json();
+    } catch {
+        throw new Error("Unable to read the security token response.");
+    }
 
     if (!response.ok || !data?.data?.csrfToken) {
         throw new Error(
-            data?.message || "Unable to verify the security token"
+            data?.message || "Unable to verify the security token."
         );
     }
 
     csrfToken = data.data.csrfToken;
+
     return csrfToken;
 };
 
-export const api = async (
-    endpoint,
-    options = {}
-) => {
+export const api = async (endpoint, options = {}) => {
     const method = (options.method || "GET").toUpperCase();
+
     const isProtectedMutation =
-        /^\/(?:blogs|gallery|quiz)(?:\/|\?|$)/.test(endpoint) &&
+        /^\/(?:blogs|gallery|quiz|achievers|achiever-categories)(?:\/|\?|$)/.test(
+            endpoint
+        ) &&
         !["GET", "HEAD", "OPTIONS"].includes(method);
 
     if (isProtectedMutation) {
@@ -53,54 +61,37 @@ export const api = async (
         typeof FormData !== "undefined" &&
         options.body instanceof FormData;
 
-    const response = await fetch(
-        getApiUrl(endpoint),
-        {
-            ...options,
-
-            credentials: "include",
-
-            headers: {
-                ...(isFormData
-                    ? {}
-                    : {
-                        "Content-Type":
-                            "application/json",
-                    }),
-
-                ...(isProtectedMutation
-                    ? {
-                        "X-CSRF-Token": csrfToken,
-                    }
-                    : {}),
-
-                ...options.headers,
-            },
-
-            cache: "no-store",
-        }
-    );
+    const response = await fetch(getApiUrl(endpoint), {
+        ...options,
+        credentials: "include",
+        headers: {
+            ...(isFormData
+                ? {}
+                : {
+                      "Content-Type": "application/json",
+                  }),
+            ...(isProtectedMutation
+                ? {
+                      "X-CSRF-Token": csrfToken,
+                  }
+                : {}),
+            ...options.headers,
+        },
+        cache: "no-store",
+    });
 
     let data = null;
 
-    const contentType =
-        response.headers.get("content-type");
+    const contentType = response.headers.get("content-type");
 
-    if (
-        contentType?.includes(
-            "application/json"
-        )
-    ) {
+    if (contentType?.includes("application/json")) {
         data = await response.json();
     } else {
-        const text =
-            await response.text();
+        const responseText = await response.text();
 
         data = {
             success: response.ok,
-            message:
-                text ||
-                "Unexpected server response",
+            message: responseText || "Unexpected server response.",
         };
     }
 
@@ -111,7 +102,7 @@ export const api = async (
 
         throw new Error(
             data?.message ||
-            `Request failed with status ${response.status}`
+                `Request failed with status ${response.status}`
         );
     }
 

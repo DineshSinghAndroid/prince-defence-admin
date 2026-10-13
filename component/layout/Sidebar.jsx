@@ -20,6 +20,7 @@ import {
     BarChart3,
     Users,
     Eye,
+    Trophy,
 } from "lucide-react";
 
 const links = [
@@ -68,6 +69,12 @@ const links = [
         href: "/admin/blogs",
         label: "Blogs",
         icon: NotebookPen,
+    },
+    {
+        href: "/admin/achievers",
+        label: "Achievers",
+        icon: Trophy,
+        allowedRoles: ["superAdmin"],
     },
 ];
 
