@@ -20,11 +20,11 @@ const cardThemes = {
         accent: "#173f75",
         panel: "from-[#f7faff] to-[#e0ebfb]",
         text: "text-[#173153]",
-        muted: "text-[#647994]",
+        muted: "text-[#647994]",        
         chip: "text-[#204b80]",
         label: "text-[#71849d]",
     },
-    cds: {
+    ssc: {
         background: "from-[#172554] via-[#344d91] to-[#8296d0]",
         accent: "#263d7e",
         panel: "from-[#fafaff] to-[#e5e9f9]",
@@ -33,7 +33,7 @@ const cardThemes = {
         chip: "text-[#273d7b]",
         label: "text-[#69779b]",
     },
-    afcat: {
+    airforce: {
         background: "from-[#103b46] via-[#087f8c] to-[#43b9b4]",
         accent: "#087781",
         panel: "from-[#f4fffe] to-[#d6f3ee]",
@@ -60,7 +60,7 @@ const cardThemes = {
         chip: "text-[#07547d]",
         label: "text-[#557a91]",
     },
-    airforce: {
+    afcat: {
         background: "from-[#183765] via-[#366db4] to-[#91baf0]",
         accent: "#315fa4",
         panel: "from-[#f7faff] to-[#e0eaff]",
@@ -69,15 +69,7 @@ const cardThemes = {
         chip: "text-[#28548e]",
         label: "text-[#687fa1]",
     },
-    police: {
-        background: "from-[#17233d] via-[#344b71] to-[#829bbf]",
-        accent: "#2c4267",
-        panel: "from-[#f8faff] to-[#e0e8f5]",
-        text: "text-[#1e2e47]",
-        muted: "text-[#596d89]",
-        chip: "text-[#2b4266]",
-        label: "text-[#6a7e9a]",
-    },
+    
     default: {
         background: "from-[#0b2148] via-[#194d91] to-[#4788d1]",
         accent: "#173f75",
@@ -89,26 +81,39 @@ const cardThemes = {
     },
 };
 
-function getCardTheme(exam = "") {
-    const value = exam.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+function getCardThemeForValue(value) {
+    const normalized = value.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
 
-    if (/\bnda\b/.test(value)) return cardThemes.nda;
-    if (/\bcds\b/.test(value)) return cardThemes.cds;
-    if (/\bafcat\b/.test(value)) return cardThemes.afcat;
-    if (/\bnavy\b|\bssr\b|\bagniveer\s+navy\b/.test(value)) {
+    if (/\bnda\b/.test(normalized)) return cardThemes.nda;
+    if (/\bcds\b/.test(normalized)) return cardThemes.cds;
+    if (/\bafcat\b/.test(normalized)) return cardThemes.afcat;
+    if (/\bnavy\b|\bssr\b|\bagniveer\s+navy\b/.test(normalized)) {
         return cardThemes.navy;
     }
-    if (/\bair\s*force\b|\bagniveer\s+vayu\b/.test(value)) {
+    if (/\bair\s*force\b|\bairforce\b|\bagniveer\s+vayu\b/.test(normalized)) {
         return cardThemes.airforce;
     }
-    if (/\barmy\b|\bagniveer\b|\btechnical\b|\bgd\b|\bclerk\b/.test(value)) {
+    if (/\barmy\b|\bagniveer\b|\btechnical\b|\bgd\b|\bclerk\b/.test(normalized)) {
         return cardThemes.army;
     }
-    if (/\bpolice\b|\bconstable\b|\bsub\s*inspector\b|\bsi\b/.test(value)) {
+    if (/\bpolice\b|\bconstable\b|\bsub\s*inspector\b|\bsi\b/.test(normalized)) {
         return cardThemes.police;
     }
 
-    return cardThemes.default;
+    return null;
+}
+
+function getCardTheme(category, exam = "") {
+    const categoryValue =
+        typeof category === "string"
+            ? category
+            : [category?.slug, category?.name].filter(Boolean).join(" ");
+
+    return (
+        getCardThemeForValue(categoryValue) ||
+        getCardThemeForValue(exam) ||
+        cardThemes.default
+    );
 }
 
 function getInitials(name = "") {
@@ -129,7 +134,7 @@ function AdminAchieverCard({ achiever, onEdit, onDelete }) {
     const batch = achiever.batch || "target";
     const fatherName = achiever.fatherName?.trim();
     const address = achiever.address?.trim();
-    const theme = getCardTheme(exam);
+    const theme = getCardTheme(achiever.categoryId, exam);
     const nameSize =
         name.length > 25
             ? "text-xs sm:text-sm"
