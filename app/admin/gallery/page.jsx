@@ -15,6 +15,9 @@ import {
     Image as ImageIcon,
     FolderOpen,
     Sparkles,
+    ArrowUp,
+    ArrowDown,
+    GripVertical,
 } from "lucide-react";
 
 import { AuthContext } from "@/context/AuthContext";
@@ -29,6 +32,7 @@ import {
     updateGalleryCategory,
     updateGalleryCategoryStatus,
     deleteGalleryCategory,
+    reorderGalleryCategories,
 } from "@/services/galleryService";
 
 import DeleteConfirmModal from "@/component/common/DeleteConfirmModal";
@@ -60,6 +64,12 @@ export default function GalleryPage() {
 
     const [categories, setCategories] =
         useState([]);
+
+    const [reordering, setReordering] =
+        useState(false);
+
+    const [draggedCategoryIndex, setDraggedCategoryIndex] =
+        useState(null);
 
     const [categoryLoading, setCategoryLoading] =
         useState(true);
@@ -829,6 +839,64 @@ export default function GalleryPage() {
         );
     };
 
+    const handleMoveCategory = async (index, direction) => {
+        const target = index + direction;
+        if (target < 0 || target >= categories.length) return;
+
+        const next = [...categories];
+        const [moved] = next.splice(index, 1);
+        next.splice(target, 0, moved);
+
+        setCategories(next);
+        setReordering(true);
+
+        try {
+            await reorderGalleryCategories(next.map((c) => c._id));
+            toast.success("Category order updated");
+        } catch (error) {
+            toast.error(error?.message || "Failed to update category order");
+            await fetchCategories();
+        } finally {
+            setReordering(false);
+        }
+    };
+
+    const handleCategoryDragStart = (index) => {
+        setDraggedCategoryIndex(index);
+    };
+
+    const handleCategoryDragOver = (e, index) => {
+        e.preventDefault();
+    };
+
+    const handleCategoryDrop = async (dropIndex) => {
+        if (
+            draggedCategoryIndex === null ||
+            draggedCategoryIndex === dropIndex
+        ) {
+            setDraggedCategoryIndex(null);
+            return;
+        }
+
+        const next = [...categories];
+        const [moved] = next.splice(draggedCategoryIndex, 1);
+        next.splice(dropIndex, 0, moved);
+
+        setCategories(next);
+        setDraggedCategoryIndex(null);
+        setReordering(true);
+
+        try {
+            await reorderGalleryCategories(next.map((c) => c._id));
+            toast.success("Category order updated");
+        } catch (error) {
+            toast.error(error?.message || "Failed to update category order");
+            await fetchCategories();
+        } finally {
+            setReordering(false);
+        }
+    };
+
     return (
         <div className="relative min-h-screen w-full overflow-hidden bg-[#F2F6FF] px-4 pb-10 pt-20 md:px-6 lg:pt-8">
 
@@ -911,6 +979,132 @@ export default function GalleryPage() {
                     </div>
 
                 </div>
+
+                {/* Manage Gallery Categories (Top Placement) */}
+                {canManageGalleryCategories && (
+                    <details
+                        id="gallery-categories"
+                        className="mb-6 rounded-2xl border border-[#C8D5EA]/70 bg-white/70 p-5 shadow-[0_8px_32px_rgba(16,42,67,0.10)] backdrop-blur-xl sm:p-6"
+                    >
+                        <summary className="cursor-pointer text-lg font-bold text-[var(--navy)] marker:text-[#3869D0]">
+                            Manage gallery categories
+                        </summary>
+
+                        <div className="mt-5">
+                            <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                                <p className="text-sm text-[var(--muted)]">
+                                    Reorder categories with buttons or drag and drop. Changes update across admin and frontend immediately.
+                                </p>
+                                <button
+                                    onClick={handleOpenCreateCategory}
+                                    className="inline-flex items-center gap-2 rounded-xl bg-[#3869D0] px-3.5 py-2 text-sm font-bold text-white shadow-lg shadow-[#3869D0]/20 transition hover:-translate-y-0.5 hover:bg-[#2f5dbd] w-fit"
+                                >
+                                    <Plus size={16} />
+                                    Add Category
+                                </button>
+                            </div>
+
+                            <div className="space-y-3">
+                                {categories.map((category, index) => (
+                                    <div
+                                        key={category._id}
+                                        draggable
+                                        onDragStart={() => handleCategoryDragStart(index)}
+                                        onDragOver={(e) => handleCategoryDragOver(e, index)}
+                                        onDrop={() => handleCategoryDrop(index)}
+                                        className={`flex flex-col gap-3 rounded-xl border border-[#C8D5EA] bg-white/60 p-4 backdrop-blur-md transition hover:bg-white sm:flex-row sm:items-center sm:justify-between ${
+                                            draggedCategoryIndex === index ? "opacity-50 border-dashed border-[#3869D0]" : ""
+                                        }`}
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            <button
+                                                type="button"
+                                                className="cursor-grab text-slate-400 hover:text-slate-600 active:cursor-grabbing"
+                                                title="Drag to reorder"
+                                            >
+                                                <GripVertical size={18} />
+                                            </button>
+
+                                            <span className="flex h-7 min-w-7 items-center justify-center rounded-lg bg-[#3869D0]/10 px-2 text-xs font-bold text-[#3869D0]">
+                                                #{index + 1}
+                                            </span>
+
+                                            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#3869D0]/10 text-[#3869D0]">
+                                                <FolderOpen size={16} />
+                                            </span>
+
+                                            <div>
+                                                <p className="font-semibold text-[var(--navy)]">
+                                                    {category.name}
+                                                </p>
+                                                <p className="text-xs text-[var(--muted)]">
+                                                    {category.slug}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex flex-wrap items-center gap-2">
+                                            <div className="flex items-center gap-1 border-r border-slate-200 pr-2">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleMoveCategory(index, -1)}
+                                                    disabled={index === 0 || reordering}
+                                                    title="Move up"
+                                                    className="rounded-lg p-1.5 text-slate-500 hover:bg-[#E7EEFA] hover:text-[#3869D0] disabled:opacity-30 disabled:hover:bg-transparent"
+                                                >
+                                                    <ArrowUp size={16} />
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleMoveCategory(index, 1)}
+                                                    disabled={index === categories.length - 1 || reordering}
+                                                    title="Move down"
+                                                    className="rounded-lg p-1.5 text-slate-500 hover:bg-[#E7EEFA] hover:text-[#3869D0] disabled:opacity-30 disabled:hover:bg-transparent"
+                                                >
+                                                    <ArrowDown size={16} />
+                                                </button>
+                                            </div>
+
+                                            <span
+                                                className={`inline-flex rounded-full border px-3 py-1 text-xs font-bold ${
+                                                    category.isActive
+                                                        ? "border-[#3869D0]/20 bg-[#3869D0]/10 text-[#3869D0]"
+                                                        : "border-[#C8D5EA] bg-[#E7EEFA] text-[var(--muted)]"
+                                                }`}
+                                            >
+                                                {category.isActive ? "Active" : "Inactive"}
+                                            </span>
+
+                                            <button
+                                                onClick={() => handleCategoryStatus(category)}
+                                                className="rounded-xl border border-[#C8D5EA] bg-white/60 px-3 py-1.5 text-xs font-semibold text-[#40556B] backdrop-blur-md transition hover:bg-white hover:text-[var(--navy)]"
+                                            >
+                                                {category.isActive ? "Deactivate" : "Activate"}
+                                            </button>
+
+                                            <button
+                                                onClick={() => handleOpenEditCategory(category)}
+                                                className="rounded-xl border border-[#C8D5EA] bg-white/60 p-2 text-[#3869D0] backdrop-blur-md transition hover:bg-[#3869D0] hover:text-white"
+                                                title="Edit category"
+                                            >
+                                                <Pencil size={15} />
+                                            </button>
+
+                                            <button
+                                                onClick={() => requestDeleteCategory(category)}
+                                                disabled={deletingCategoryId === category._id}
+                                                className="rounded-xl border border-red-100 bg-red-50 p-2 text-red-500 backdrop-blur-md transition hover:bg-red-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                                                title="Delete category"
+                                            >
+                                                <Trash2 size={15} />
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </details>
+                )}
 
                 {/* Selected Category */}
 
@@ -1321,148 +1515,6 @@ export default function GalleryPage() {
                                     )}
 
                             </div>
-                        )}
-
-                        {canManageGalleryCategories && (
-
-                            <section
-                                className={`${glass} mt-8 p-5`}
-                            >
-
-                                <div className="mb-5 flex items-center justify-between">
-
-                                    <div>
-
-                                        <h2 className="text-lg font-bold text-[var(--navy)]">
-                                            Category Management
-                                        </h2>
-
-                                        <p className="text-sm text-[var(--muted)]">
-                                            Manage gallery
-                                            categories.
-                                        </p>
-
-                                    </div>
-
-                                    <button
-                                        onClick={
-                                            handleOpenCreateCategory
-                                        }
-                                        className="inline-flex items-center gap-2 rounded-xl bg-[#3869D0] px-3.5 py-2 text-sm font-bold text-white shadow-lg shadow-[#3869D0]/20 transition hover:-translate-y-0.5 hover:bg-[#2f5dbd]"
-                                    >
-                                        <Plus
-                                            size={16}
-                                        />
-                                        Add
-                                    </button>
-
-                                </div>
-
-                                <div className="space-y-3">
-
-                                    {categories.map(
-                                        (category) => (
-
-                                            <div
-                                                key={
-                                                    category._id
-                                                }
-                                                className="flex flex-col gap-3 rounded-xl border border-[#C8D5EA] bg-white/60 p-4 backdrop-blur-md transition hover:bg-white sm:flex-row sm:items-center sm:justify-between"
-                                            >
-
-                                                <div className="flex items-center gap-3">
-
-                                                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#3869D0]/10 text-[#3869D0]">
-                                                        <FolderOpen size={16} />
-                                                    </span>
-
-                                                    <div>
-
-                                                        <p className="font-semibold text-[var(--navy)]">
-                                                            {
-                                                                category.name
-                                                            }
-                                                        </p>
-
-                                                        <p className="text-xs text-[var(--muted)]">
-                                                            {
-                                                                category.slug
-                                                            }
-                                                        </p>
-
-                                                    </div>
-
-                                                </div>
-
-                                                <div className="flex flex-wrap items-center gap-2">
-
-                                                    <span
-                                                        className={`inline-flex rounded-full border px-3 py-1 text-xs font-bold ${
-                                                            category.isActive
-                                                                ? "border-[#3869D0]/20 bg-[#3869D0]/10 text-[#3869D0]"
-                                                                : "border-[#C8D5EA] bg-[#E7EEFA] text-[var(--muted)]"
-                                                        }`}
-                                                    >
-                                                        {category.isActive
-                                                            ? "Active"
-                                                            : "Inactive"}
-                                                    </span>
-
-                                                    <button
-                                                        onClick={() =>
-                                                            handleCategoryStatus(
-                                                                category
-                                                            )
-                                                        }
-                                                        className="rounded-xl border border-[#C8D5EA] bg-white/60 px-3 py-1.5 text-xs font-semibold text-[#40556B] backdrop-blur-md transition hover:bg-white hover:text-[var(--navy)]"
-                                                    >
-                                                        {category.isActive
-                                                            ? "Deactivate"
-                                                            : "Activate"}
-                                                    </button>
-
-                                                    <button
-                                                        onClick={() =>
-                                                            handleOpenEditCategory(
-                                                                category
-                                                            )
-                                                        }
-                                                        className="rounded-xl border border-[#C8D5EA] bg-white/60 p-2 text-[#3869D0] backdrop-blur-md transition hover:bg-[#3869D0] hover:text-white"
-                                                        title="Edit category"
-                                                    >
-                                                        <Pencil
-                                                            size={15}
-                                                        />
-                                                    </button>
-
-                                                    <button
-                                                        onClick={() =>
-                                                            requestDeleteCategory(
-                                                                category
-                                                            )
-                                                        }
-                                                        disabled={
-                                                            deletingCategoryId ===
-                                                            category._id
-                                                        }
-                                                        className="rounded-xl border border-red-100 bg-red-50 p-2 text-red-500 backdrop-blur-md transition hover:bg-red-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
-                                                        title="Delete category"
-                                                    >
-                                                        <Trash2
-                                                            size={15}
-                                                        />
-                                                    </button>
-
-                                                </div>
-
-                                            </div>
-
-                                        )
-                                    )}
-
-                                </div>
-
-                            </section>
                         )}
 
                     </div>

@@ -89,6 +89,13 @@ const deleteQuizCategory = async (categoryId) => {
   );
 };
 
+const reorderQuizCategories = async (orderedIds) => {
+  return api("/quiz/categories/reorder", {
+    method: "PUT",
+    body: serializeQuizPayload({ orderedIds }),
+  });
+};
+
 const getQuizQuestions = async ({
   category = "",
   subject = "",
@@ -191,6 +198,7 @@ export {
   getQuizCategoryById,
   createQuizCategory,
   updateQuizCategory,
+  reorderQuizCategories,
   deleteQuizCategory,
   getQuizQuestions,
   createQuizQuestion,

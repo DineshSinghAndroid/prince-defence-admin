@@ -302,3 +302,10 @@ export const deleteGalleryCategory = async (
         method: "DELETE",
     });
 };
+
+export const reorderGalleryCategories = async (orderedIds) => {
+    return api("/gallery-categories/reorder", {
+        method: "PUT",
+        body: JSON.stringify({ orderedIds }),
+    });
+};

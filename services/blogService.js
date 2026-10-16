@@ -464,6 +464,13 @@ export const deleteBlogCategory = async (
     });
 };
 
+export const reorderBlogCategories = async (orderedIds) => {
+    return api("/blog-categories/reorder", {
+        method: "PUT",
+        body: JSON.stringify({ orderedIds }),
+    });
+};
+
 
 // HELPERS
 

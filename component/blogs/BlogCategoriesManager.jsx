@@ -11,6 +11,9 @@ import { useRouter } from "next/navigation";
 import {
     Plus,
     Tag,
+    ArrowUp,
+    ArrowDown,
+    GripVertical,
 } from "lucide-react";
 
 import toast from "react-hot-toast";
@@ -23,6 +26,7 @@ import {
     updateBlogCategory,
     updateBlogCategoryStatus,
     deleteBlogCategory,
+    reorderBlogCategories,
 } from "@/services/blogService";
 
 import DeleteConfirmModal from "@/component/common/DeleteConfirmModal";
@@ -44,6 +48,12 @@ export default function BlogCategoriesManager({ embedded = false }) {
     const [saving, setSaving] =
         useState(false);
 
+    const [reordering, setReordering] =
+        useState(false);
+
+    const [draggedIndex, setDraggedIndex] =
+        useState(null);
+
     const [categoryName, setCategoryName] =
         useState("");
 
@@ -55,6 +65,79 @@ export default function BlogCategoriesManager({ embedded = false }) {
 
     const [deletingId, setDeletingId] =
         useState(null);
+
+    const handleMove = async (index, direction) => {
+        const targetIndex = index + direction;
+        if (
+            targetIndex < 0 ||
+            targetIndex >= categories.length ||
+            reordering ||
+            saving
+        ) {
+            return;
+        }
+
+        const newCategories = [...categories];
+        const [moved] = newCategories.splice(index, 1);
+        newCategories.splice(targetIndex, 0, moved);
+
+        const orderedIds = newCategories.map((c) => c._id);
+
+        try {
+            setReordering(true);
+            await reorderBlogCategories(orderedIds);
+            toast.success("Category order updated");
+            await fetchCategories();
+        } catch (error) {
+            toast.error(error?.message || "Failed to update category order");
+            await fetchCategories();
+        } finally {
+            setReordering(false);
+        }
+    };
+
+    const handleDragStart = (e, index) => {
+        setDraggedIndex(index);
+        e.dataTransfer.effectAllowed = "move";
+        e.dataTransfer.setData("text/plain", String(index));
+    };
+
+    const handleDragOver = (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "move";
+    };
+
+    const handleDrop = async (e, targetIndex) => {
+        e.preventDefault();
+        if (
+            draggedIndex === null ||
+            draggedIndex === targetIndex ||
+            reordering ||
+            saving
+        ) {
+            setDraggedIndex(null);
+            return;
+        }
+
+        const newCategories = [...categories];
+        const [moved] = newCategories.splice(draggedIndex, 1);
+        newCategories.splice(targetIndex, 0, moved);
+        setDraggedIndex(null);
+
+        const orderedIds = newCategories.map((c) => c._id);
+
+        try {
+            setReordering(true);
+            await reorderBlogCategories(orderedIds);
+            toast.success("Category order updated");
+            await fetchCategories();
+        } catch (error) {
+            toast.error(error?.message || "Failed to update category order");
+            await fetchCategories();
+        } finally {
+            setReordering(false);
+        }
+    };
 
     const fetchCategories = async () => {
         try {
@@ -461,97 +544,143 @@ export default function BlogCategoriesManager({ embedded = false }) {
                                 </h2>
                             </div>
 
-                            <span className="text-sm text-[var(--muted)]">
-                                {
-                                    categories.length
-                                }{" "}
-                                categories
-                            </span>
+                            <div className="flex items-center gap-3">
+                                <span className="text-xs text-[var(--muted)]">
+                                    Use <span className="font-semibold text-[var(--navy)]">▲ ▼</span> or drag to reorder
+                                </span>
+                                <span className="text-xs font-semibold rounded-md bg-[#F0F4FA] px-2.5 py-1 text-[var(--navy)]">
+                                    {categories.length} categories
+                                </span>
+                            </div>
                         </div>
 
-                        {categories.length ===
-                        0 ? (
+                        {categories.length === 0 ? (
                             <div className="flex min-h-32 items-center justify-center rounded-xl border border-dashed border-[#C8D5EA] bg-[#F8FAFF]">
                                 <p className="text-sm text-[var(--muted)]">
                                     No categories found.
                                 </p>
                             </div>
                         ) : (
-                            <div className="space-y-3">
-                                {categories.map(
-                                    (
-                                        category
-                                    ) => (
-                                        <div
-                                            key={
-                                                category._id
-                                            }
-                                            className="flex flex-col gap-4 rounded-xl border border-[#C8D5EA]/70 bg-[#F8FAFF] p-4 sm:flex-row sm:items-center sm:justify-between"
-                                        >
-                                            <div>
-                                                <h3 className="font-semibold text-[var(--navy)]">
-                                                    {
-                                                        category.name
-                                                    }
+                            <div className="max-h-[460px] space-y-3 overflow-y-auto overscroll-contain pr-2">
+                                {categories.map((category, index) => (
+                                    <div
+                                        key={category._id}
+                                        draggable={!saving && !reordering}
+                                        onDragStart={(e) => handleDragStart(e, index)}
+                                        onDragOver={handleDragOver}
+                                        onDrop={(e) => handleDrop(e, index)}
+                                        className={`flex flex-col gap-4 rounded-xl border border-[#C8D5EA]/70 bg-[#F8FAFF] p-4 transition-all sm:flex-row sm:items-center sm:justify-between ${
+                                            draggedIndex === index
+                                                ? "opacity-50 border-dashed border-[#3869D0]"
+                                                : "hover:border-[#C8D5EA]"
+                                        }`}
+                                    >
+                                        <div className="flex items-center gap-3 min-w-0">
+                                            {/* Drag Handle & Order Badge */}
+                                            <div className="flex items-center gap-2 shrink-0">
+                                                <span
+                                                    title="Drag to reorder"
+                                                    className="cursor-grab text-slate-400 hover:text-[var(--navy)] active:cursor-grabbing"
+                                                >
+                                                    <GripVertical size={18} />
+                                                </span>
+                                                <span className="flex h-6 min-w-6 items-center justify-center rounded-md bg-white border border-[#C8D5EA] px-1.5 text-xs font-bold text-[var(--navy)]">
+                                                    #{index + 1}
+                                                </span>
+                                            </div>
+
+                                            <div className="min-w-0">
+                                                <h3 className="break-words font-semibold text-[var(--navy)]">
+                                                    {category.name}
                                                 </h3>
 
-                                                <p className="mt-1 text-xs text-[var(--muted)]">
-                                                    /
-                                                    {
-                                                        category.slug
-                                                    }
+                                                <p className="mt-0.5 break-all text-xs text-[var(--muted)]">
+                                                    /{category.slug}
                                                 </p>
                                             </div>
+                                        </div>
 
-                                            <div className="flex flex-wrap items-center gap-2">
+                                        <div className="flex shrink-0 flex-wrap items-center gap-2">
+                                            {/* Order Up / Down buttons */}
+                                            <div className="flex items-center rounded-lg border border-[#C8D5EA] bg-white p-0.5 shadow-xs">
                                                 <button
                                                     type="button"
-                                                    onClick={() =>
-                                                        handleStatusChange(
-                                                            category
-                                                        )
-                                                    }
-                                                    className={`rounded-lg px-3 py-2 text-xs font-semibold transition ${
-                                                        category.isActive
-                                                            ? "bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
-                                                            : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                                                    }`}
-                                                >
-                                                    {category.isActive
-                                                        ? "Active"
-                                                        : "Inactive"}
-                                                </button>
-
-                                                <button
-                                                    type="button"
-                                                    onClick={() =>
-                                                        handleEdit(
-                                                            category
-                                                        )
-                                                    }
-                                                    className="rounded-lg border border-[#C8D5EA] bg-white px-3 py-2 text-xs font-semibold text-[var(--navy)] transition hover:border-[#3869D0]/40 hover:bg-[#F8FAFF]"
-                                                >
-                                                    Edit
-                                                </button>
-
-                                                <button
-                                                    type="button"
-                                                    onClick={() =>
-                                                        requestDelete(
-                                                            category
-                                                        )
-                                                    }
+                                                    title="Move Up"
                                                     disabled={
-                                                        !!deletingId
+                                                        index === 0 ||
+                                                        reordering ||
+                                                        saving
                                                     }
-                                                    className="rounded-lg border border-red-200 bg-white px-3 py-2 text-xs font-semibold text-red-500 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
+                                                    onClick={() =>
+                                                        handleMove(index, -1)
+                                                    }
+                                                    className="rounded p-1 text-[var(--navy)] transition hover:bg-[#F8FAFF] disabled:cursor-not-allowed disabled:opacity-25"
                                                 >
-                                                    Delete
+                                                    <ArrowUp size={14} />
+                                                </button>
+                                                <div className="h-4 w-px bg-[#C8D5EA]" />
+                                                <button
+                                                    type="button"
+                                                    title="Move Down"
+                                                    disabled={
+                                                        index ===
+                                                            categories.length -
+                                                                1 ||
+                                                        reordering ||
+                                                        saving
+                                                    }
+                                                    onClick={() =>
+                                                        handleMove(index, 1)
+                                                    }
+                                                    className="rounded p-1 text-[var(--navy)] transition hover:bg-[#F8FAFF] disabled:cursor-not-allowed disabled:opacity-25"
+                                                >
+                                                    <ArrowDown size={14} />
                                                 </button>
                                             </div>
+
+                                            <button
+                                                type="button"
+                                                disabled={saving || reordering}
+                                                onClick={() =>
+                                                    handleStatusChange(category)
+                                                }
+                                                className={`rounded-lg px-3 py-2 text-xs font-semibold transition disabled:opacity-50 ${
+                                                    category.isActive
+                                                        ? "bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+                                                        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                                                }`}
+                                            >
+                                                {category.isActive
+                                                    ? "Active"
+                                                    : "Inactive"}
+                                            </button>
+
+                                            <button
+                                                type="button"
+                                                disabled={saving || reordering}
+                                                onClick={() =>
+                                                    handleEdit(category)
+                                                }
+                                                className="rounded-lg border border-[#C8D5EA] bg-white px-3 py-2 text-xs font-semibold text-[var(--navy)] transition hover:border-[#3869D0]/40 hover:bg-[#F8FAFF] disabled:opacity-50"
+                                            >
+                                                Edit
+                                            </button>
+
+                                            <button
+                                                type="button"
+                                                disabled={
+                                                    !!deletingId || reordering
+                                                }
+                                                onClick={() =>
+                                                    requestDelete(category)
+                                                }
+                                                className="rounded-lg border border-red-200 bg-white px-3 py-2 text-xs font-semibold text-red-500 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
+                                            >
+                                                Delete
+                                            </button>
                                         </div>
-                                    )
-                                )}
+                                    </div>
+                                ))}
                             </div>
                         )}
                     </section>

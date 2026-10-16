@@ -50,6 +50,13 @@ export const deleteAchieverCategory = async (id) => {
     });
 };
 
+export const reorderAchieverCategories = async (orderedIds) => {
+    return api("/achiever-categories/reorder", {
+        method: "PUT",
+        body: JSON.stringify({ orderedIds }),
+    });
+};
+
 // Achievers
 
 export const getAdminAchievers = async (

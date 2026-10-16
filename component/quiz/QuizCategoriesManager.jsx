@@ -2,13 +2,14 @@
 
 import { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { ClipboardList, Edit3, Plus, Power, Trash2 } from "lucide-react";
+import { ClipboardList, Edit3, Plus, Power, Trash2, ArrowUp, ArrowDown, GripVertical } from "lucide-react";
 
 import {
   createQuizCategory,
   deleteQuizCategory,
   getQuizCategories,
   updateQuizCategory,
+  reorderQuizCategories,
 } from "@/services/quizService";
 import DeleteConfirmModal from "@/component/common/DeleteConfirmModal";
 
@@ -18,6 +19,8 @@ const inputClass = "w-full rounded-xl border border-[#C8D5EA] bg-white px-3.5 py
 export default function QuizCategoriesManager({ embedded = false }) {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [reordering, setReordering] = useState(false);
+  const [draggedIndex, setDraggedIndex] = useState(null);
   const [saving, setSaving] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
@@ -122,6 +125,61 @@ export default function QuizCategoriesManager({ embedded = false }) {
     }
   };
 
+  const handleMove = async (index, direction) => {
+    const target = index + direction;
+    if (target < 0 || target >= categories.length) return;
+
+    const next = [...categories];
+    const [moved] = next.splice(index, 1);
+    next.splice(target, 0, moved);
+
+    setCategories(next);
+    setReordering(true);
+
+    try {
+      await reorderQuizCategories(next.map((c) => c._id));
+      toast.success("Category order updated.");
+    } catch (error) {
+      toast.error(error.message || "Failed to update category order.");
+      await loadCategories();
+    } finally {
+      setReordering(false);
+    }
+  };
+
+  const handleDragStart = (index) => {
+    setDraggedIndex(index);
+  };
+
+  const handleDragOver = (e, index) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = async (dropIndex) => {
+    if (draggedIndex === null || draggedIndex === dropIndex) {
+      setDraggedIndex(null);
+      return;
+    }
+
+    const next = [...categories];
+    const [moved] = next.splice(draggedIndex, 1);
+    next.splice(dropIndex, 0, moved);
+
+    setCategories(next);
+    setDraggedIndex(null);
+    setReordering(true);
+
+    try {
+      await reorderQuizCategories(next.map((c) => c._id));
+      toast.success("Category order updated.");
+    } catch (error) {
+      toast.error(error.message || "Failed to update category order.");
+      await loadCategories();
+    } finally {
+      setReordering(false);
+    }
+  };
+
   return (
     <main className={embedded ? "mt-6" : "relative min-h-screen overflow-hidden bg-[#F2F6FF] px-4 pb-10 pt-20 md:px-6 lg:pt-8"}>
       {!embedded && <div className="pointer-events-none absolute -left-24 top-10 h-80 w-80 rounded-full bg-[#3869D0]/10 blur-3xl" />}
@@ -151,7 +209,11 @@ export default function QuizCategoriesManager({ embedded = false }) {
           </div>
         </header>}
 
-        <section className={`${embedded ? "" : "mt-6"} grid gap-4 sm:grid-cols-2 xl:grid-cols-3`}>
+        <p className={`${embedded ? "" : "mt-6"} mb-4 text-xs font-medium text-[var(--muted)]`}>
+          Reorder categories using the buttons or by dragging. The order will be preserved across the quiz system.
+        </p>
+
+        <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {loading ? Array.from({ length: 6 }).map((_, index) => (
             <div key={index} className={`h-36 animate-pulse ${glass}`} />
           )) : categories.length === 0 ? (
@@ -160,18 +222,60 @@ export default function QuizCategoriesManager({ embedded = false }) {
               <p className="mt-4 font-bold text-[var(--navy)]">No quiz categories found.</p>
               <p className="mt-1 text-sm text-[var(--muted)]">Create a category before adding quiz questions.</p>
             </div>
-          ) : categories.map((category) => (
-            <article key={category._id} className={`p-5 transition hover:-translate-y-1 hover:bg-white ${glass}`}>
+          ) : categories.map((category, index) => (
+            <article
+              key={category._id}
+              draggable
+              onDragStart={() => handleDragStart(index)}
+              onDragOver={(e) => handleDragOver(e, index)}
+              onDrop={() => handleDrop(index)}
+              className={`p-5 transition hover:-translate-y-1 hover:bg-white ${glass} ${
+                draggedIndex === index ? "opacity-50 border-dashed border-[#3869D0]" : ""
+              }`}
+            >
               <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <h2 className="truncate text-lg font-extrabold text-[var(--navy)]">{category.name}</h2>
-                  <span className={`mt-2 inline-flex rounded-full px-2.5 py-1 text-xs font-bold ${category.active === false ? "bg-slate-100 text-slate-500" : "bg-green-50 text-green-700"}`}>
-                    {category.active === false ? "Inactive" : "Active"}
+                <div className="flex items-center gap-2 min-w-0">
+                  <button
+                    type="button"
+                    className="cursor-grab text-slate-400 hover:text-slate-600 active:cursor-grabbing"
+                    title="Drag to reorder"
+                  >
+                    <GripVertical size={18} />
+                  </button>
+                  <span className="flex h-7 min-w-7 items-center justify-center rounded-lg bg-[#3869D0]/10 px-2 text-xs font-bold text-[#3869D0]">
+                    #{index + 1}
                   </span>
+                  <div className="min-w-0">
+                    <h2 className="truncate text-lg font-extrabold text-[var(--navy)]">{category.name}</h2>
+                    <span className={`mt-1 inline-flex rounded-full px-2.5 py-0.5 text-xs font-bold ${category.active === false ? "bg-slate-100 text-slate-500" : "bg-green-50 text-green-700"}`}>
+                      {category.active === false ? "Inactive" : "Active"}
+                    </span>
+                  </div>
                 </div>
                 <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#3869D0]/10 text-[#3869D0]"><ClipboardList size={20} /></span>
               </div>
-              <div className="mt-5 flex flex-wrap gap-2">
+              <div className="mt-5 flex flex-wrap items-center gap-2">
+                <div className="flex items-center gap-1 border-r border-slate-200 pr-2">
+                  <button
+                    type="button"
+                    onClick={() => handleMove(index, -1)}
+                    disabled={index === 0 || reordering}
+                    title="Move up"
+                    className="rounded-lg p-1.5 text-slate-500 hover:bg-[#E7EEFA] hover:text-[#3869D0] disabled:opacity-30 disabled:hover:bg-transparent"
+                  >
+                    <ArrowUp size={15} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleMove(index, 1)}
+                    disabled={index === categories.length - 1 || reordering}
+                    title="Move down"
+                    className="rounded-lg p-1.5 text-slate-500 hover:bg-[#E7EEFA] hover:text-[#3869D0] disabled:opacity-30 disabled:hover:bg-transparent"
+                  >
+                    <ArrowDown size={15} />
+                  </button>
+                </div>
+
                 <button type="button" onClick={() => openEdit(category)} disabled={saving} className="inline-flex items-center gap-1.5 rounded-xl border border-[#3869D0]/20 bg-[#3869D0]/10 px-3 py-2 text-xs font-bold text-[#3869D0] transition hover:bg-[#3869D0] hover:text-white disabled:opacity-50">
                   <Edit3 size={14} /> Edit
                 </button>
