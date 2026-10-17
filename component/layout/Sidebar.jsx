@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { useContext } from "react";
+import { useEffect, useState, useContext } from "react";
 import { AuthContext } from "@/context/AuthContext";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -21,6 +20,8 @@ import {
     Users,
     Eye,
     Trophy,
+    ChevronLeft,
+    ChevronRight,
 } from "lucide-react";
 
 const links = [
@@ -81,6 +82,30 @@ const links = [
 const Sidebar = () => {
     const pathname = usePathname();
     const [open, setOpen] = useState(false);
+    const [collapsed, setCollapsed] = useState(false);
+
+    useEffect(() => {
+        try {
+            const saved = localStorage.getItem("admin_sidebar_collapsed");
+            if (saved !== null) {
+                setCollapsed(saved === "true");
+            }
+        } catch {
+            // ignore
+        }
+    }, []);
+
+    const toggleCollapse = () => {
+        setCollapsed((prev) => {
+            const next = !prev;
+            try {
+                localStorage.setItem("admin_sidebar_collapsed", String(next));
+            } catch {
+                // ignore
+            }
+            return next;
+        });
+    };
 
     const { user, handleLogout } = useContext(AuthContext);
     const visibleLinks = links.filter(
@@ -133,12 +158,41 @@ const Sidebar = () => {
                 />
             )}
 
-            <aside
-                className={`fixed inset-y-0 left-0 z-50 flex h-screen min-h-screen w-72 shrink-0 flex-col overflow-hidden bg-[#102A43] text-white shadow-2xl transition-transform duration-300 lg:sticky lg:top-0 lg:translate-x-0 ${open
-                        ? "translate-x-0"
-                        : "-translate-x-full"
-                    }`}
+            {/* Unhide Arrow Button (Desktop - when sidebar is hidden) */}
+            {collapsed && (
+                <button
+                    type="button"
+                    onClick={toggleCollapse}
+                    title="Unhide sidebar"
+                    aria-label="Unhide sidebar"
+                    className="fixed left-0 top-7 z-40 hidden items-center gap-2 rounded-r-xl border border-l-0 border-white/20 bg-[#102A43] py-2.5 pl-2.5 pr-3.5 text-xs font-bold text-white shadow-[4px_8px_30px_rgba(16,42,67,0.3)] backdrop-blur-md transition-all hover:bg-[#1A365D] hover:pl-3.5 hover:border-[#3869D0]/60 lg:flex group"
+                >
+                    <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-[#3869D0]/30 text-[#B89242] transition-all group-hover:bg-[#3869D0] group-hover:text-white">
+                        <ChevronRight size={16} className="transition-transform duration-200 group-hover:translate-x-0.5" />
+                    </span>
+                    <span className="tracking-wider text-[11px] uppercase text-[#CBD5E1] group-hover:text-white">
+                        Sidebar
+                    </span>
+                </button>
+            )}
+
+            {/* Sidebar Desktop Wrapper */}
+            <div
+                className={`relative shrink-0 transition-all duration-300 ease-in-out ${
+                    collapsed ? "lg:w-0" : "lg:w-72"
+                }`}
             >
+                <aside
+                    className={`fixed inset-y-0 left-0 z-50 flex h-screen min-h-screen w-72 shrink-0 flex-col overflow-hidden bg-[#102A43] text-white shadow-2xl transition-all duration-300 lg:sticky lg:top-0 ${
+                        open
+                            ? "translate-x-0"
+                            : "-translate-x-full"
+                    } ${
+                        collapsed
+                            ? "lg:-translate-x-full lg:opacity-0 lg:pointer-events-none"
+                            : "lg:translate-x-0 lg:opacity-100"
+                    }`}
+                >
                 {/* Decorative Glow */}
 
                 <div className="pointer-events-none absolute -left-20 -top-20 h-64 w-64 rounded-full bg-[#3869D0]/20 blur-3xl" />
@@ -171,12 +225,25 @@ const Sidebar = () => {
                         </div>
                     </div>
 
+                    {/* Desktop Arrow Toggle Button in Header */}
+                    <button
+                        type="button"
+                        onClick={toggleCollapse}
+                        aria-label="Hide sidebar"
+                        title="Hide sidebar"
+                        className="hidden h-8 w-8 items-center justify-center rounded-lg border border-[#F0F4FF]/15 bg-[#F0F4FF]/5 text-[#CBD5E1] transition-all hover:border-[#3869D0]/50 hover:bg-[#3869D0] hover:text-white lg:flex"
+                    >
+                        <ChevronLeft size={18} />
+                    </button>
+
+                    {/* Mobile Close Button */}
                     <button
                         onClick={() => setOpen(false)}
                         aria-label="Close menu"
+                        title="Close menu"
                         className="rounded-lg p-1.5 text-[#CBD5E1] transition hover:bg-white/10 hover:text-white lg:hidden"
                     >
-                        <X size={20} />
+                        <ChevronLeft size={22} />
                     </button>
                 </div>
 
@@ -271,8 +338,9 @@ const Sidebar = () => {
                     </div>
                 </div>
             </aside>
-        </>
-    );
+        </div>
+    </>
+);
 };
 
 export default Sidebar;
