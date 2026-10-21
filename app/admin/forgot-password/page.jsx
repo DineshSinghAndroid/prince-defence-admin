@@ -87,7 +87,7 @@ export default function ForgotPasswordPage() {
                 <button
                     type="button"
                     onClick={() =>
-                        router.push("/admin/login")
+                        router.push("/login")
                     }
                     disabled={loading}
                     className="relative mb-7 flex items-center gap-2 text-sm font-medium text-white/60 transition-colors hover:text-white disabled:cursor-not-allowed disabled:opacity-50"

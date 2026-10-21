@@ -108,7 +108,7 @@ function ResetPasswordForm() {
                 "Password reset successfully."
             );
 
-            router.replace("/admin/login");
+            router.replace("/login");
         } catch (error) {
             console.error("Reset Password Error:", error);
             toast.error(
