@@ -182,11 +182,16 @@ function AdminAchieverCard({ achiever, onEdit, onDelete }) {
                     {achiever.isPublished ? "Published" : "Draft"}
                 </span>
 
-                {year && (
-                    <span className="absolute right-3 top-3 z-20 rounded-lg border border-amber-200/70 bg-gradient-to-br from-[#fff0bb] to-[#e5bd59] px-2.5 py-1.5 text-xs font-extrabold tracking-wide text-[#243958] shadow-md sm:right-4 sm:top-4 sm:text-sm">
-                        {year}
+                <div className="absolute right-3 top-3 z-20 flex items-center gap-1.5 sm:right-4 sm:top-4">
+                    <span className="rounded-lg border border-indigo-200/90 bg-indigo-50/95 px-2 py-1 text-[10px] font-extrabold text-indigo-900 shadow-sm sm:px-2.5 sm:py-1.5 sm:text-xs">
+                        Order: {achiever.displayOrder ?? 0}
                     </span>
-                )}
+                    {year && (
+                        <span className="rounded-lg border border-amber-200/70 bg-gradient-to-br from-[#fff0bb] to-[#e5bd59] px-2.5 py-1.5 text-xs font-extrabold tracking-wide text-[#243958] shadow-md sm:text-sm">
+                            {year}
+                        </span>
+                    )}
+                </div>
 
                 <div
                     className="absolute inset-x-3 top-[68%] z-30 flex min-h-10 -translate-y-1/2 items-center justify-center rounded-xl border border-white/40 px-3 py-2 shadow-lg sm:inset-x-4 sm:rounded-2xl sm:py-2.5"
@@ -443,16 +448,16 @@ export default function AchieverList({
                             Sort By
                         </label>
                         <select
-                            value={filters.sort || "newest"}
+                            value={filters.sort || "order"}
                             onChange={(event) =>
                                 changeFilter("sort", event.target.value)
                             }
                             className={inputClass}
                         >
+                            <option value="order">Display order (Highest first)</option>
                             <option value="newest">Newest first</option>
                             <option value="oldest">Oldest first</option>
                             <option value="name">Name A–Z</option>
-                            <option value="order">Display order</option>
                         </select>
                     </div>
                 </div>
@@ -476,7 +481,7 @@ export default function AchieverList({
             <div className="p-5">
                 {loading ? (
                     <div className="py-12 text-center text-sm text-slate-500">
-                        Achievers load ho rahe hain...
+                        Achievers are loading...
                     </div>
                 ) : achievers.length === 0 ? (
                     <div className="rounded-xl border border-dashed border-slate-300 py-12 text-center">
@@ -488,7 +493,7 @@ export default function AchieverList({
                             No achievers found
                         </p>
                         <p className="mt-1 text-sm text-slate-500">
-                            Filters change karo ya naya achiever add karo.
+                           Change the filters or add a new achiever.
                         </p>
                     </div>
                 ) : (

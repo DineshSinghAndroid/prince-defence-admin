@@ -41,7 +41,7 @@ const initialFilters = {
     year: "",
     batch: "",
     status: "all",
-    sort: "newest",
+    sort: "order",
     page: 1,
     limit: 12,
 };

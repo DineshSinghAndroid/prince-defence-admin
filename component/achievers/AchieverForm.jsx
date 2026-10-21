@@ -478,7 +478,7 @@ export default function AchieverForm({
                                         className="w-full rounded-xl border border-[#C8D5EA] px-4 py-3 text-sm outline-none transition focus:border-[#3869D0] focus:ring-4 focus:ring-[#3869D0]/10 disabled:bg-gray-100"
                                     />
                                     <p className="mt-1.5 text-xs text-slate-500">
-                                        Lower numbers will appear first.
+                                        Higher numbers will appear first (sabse bada number sabse pehle aayega).
                                     </p>
                                 </div>
                             </div>
