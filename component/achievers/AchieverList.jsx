@@ -131,7 +131,12 @@ function AdminAchieverCard({ achiever, onEdit, onDelete }) {
     const name = achiever.name || "Achiever";
     const exam = achiever.examName || "Defence Examination";
     const year = achiever.year ? String(achiever.year) : "";
-    const batch = achiever.batch || "target";
+    const rawBatch = (achiever.batch || "").trim();
+    const isBatchEmpty =
+        !rawBatch ||
+        rawBatch.toLowerCase() === "null" ||
+        rawBatch.toLowerCase() === "none";
+    const batch = isBatchEmpty ? "" : rawBatch;
     const fatherName = achiever.fatherName?.trim();
     const address = achiever.address?.trim();
     const theme = getCardTheme(achiever.categoryId, exam);
@@ -238,7 +243,7 @@ function AdminAchieverCard({ achiever, onEdit, onDelete }) {
                                 Batch
                             </span>
                             <span className={`mt-1 block truncate text-[11px] font-extrabold leading-tight capitalize sm:text-sm ${theme.chip}`}>
-                                {batch}
+                                {isBatchEmpty ? "\u00A0" : batch}
                             </span>
                         </div>
                     </div>
@@ -429,6 +434,7 @@ export default function AchieverList({
                             <option value="">All batches</option>
                             <option value="foundation">Foundation</option>
                             <option value="target">Target</option>
+                            <option value="null">Null</option>
                         </select>
                     </div>
 

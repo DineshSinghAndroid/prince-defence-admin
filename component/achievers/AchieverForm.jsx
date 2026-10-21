@@ -52,7 +52,12 @@ export default function AchieverForm({
                 categorySlug: achiever.categoryId?.slug || selectedCategory,
                 examName: achiever.examName || "",
                 year: achiever.year || new Date().getFullYear(),
-                batch: achiever.batch || "target",
+                batch:
+                    achiever.batch === null || (achiever.batch && achiever.batch.toLowerCase() === "null")
+                        ? "null"
+                        : achiever.batch
+                          ? achiever.batch.toLowerCase()
+                          : "target",
                 isPublished: Boolean(achiever.isPublished),
                 displayOrder: achiever.displayOrder ?? 0,
             });
@@ -455,6 +460,7 @@ export default function AchieverForm({
                                     >
                                         <option value="foundation">Foundation</option>
                                         <option value="target">Target</option>
+                                        <option value="null">Null</option>
                                     </select>
                                 </div>
 
