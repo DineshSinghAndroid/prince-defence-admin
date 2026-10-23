@@ -60,11 +60,11 @@ const links = [
         label: "Gallery",
         icon: Images,
     },
-    {
-        href: "/admin/blogs",
-        label: "Blogs",
-        icon: NotebookPen,
-    },
+    // {
+    //     href: "/admin/blogs",
+    //     label: "Blogs",
+    //     icon: NotebookPen,
+    // },
     {
         href: "/admin/achievers",
         label: "Achievers",

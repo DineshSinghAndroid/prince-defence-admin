@@ -1,6 +1,11 @@
 
+const DEFAULT_API_URL =
+    process.env.NODE_ENV === "development"
+        ? "http://localhost:5000/api"
+        : "https://api.princedefence.com/api";
+
 const API_URL =
-    process.env.NEXT_PUBLIC_API_URL?.replace(/\/+$/, "");
+    (process.env.NEXT_PUBLIC_API_URL || DEFAULT_API_URL).trim().replace(/\/+$/, "");
 
 const API_BASE_URL = API_URL
     ? `${API_URL.replace(/\/api$/i, "")}/api`
@@ -48,13 +53,16 @@ export const api = async (endpoint, options = {}) => {
     const method = (options.method || "GET").toUpperCase();
 
     const isProtectedMutation =
-        /^\/(?:blogs|gallery|quiz|achievers|achiever-categories)(?:\/|\?|$)/.test(
-            endpoint
-        ) &&
-        !["GET", "HEAD", "OPTIONS"].includes(method);
+        !["GET", "HEAD", "OPTIONS"].includes(method) &&
+        !endpoint.startsWith("/auth/login") &&
+        !endpoint.startsWith("/forgot-password");
 
     if (isProtectedMutation) {
-        await getCsrfToken();
+        try {
+            await getCsrfToken();
+        } catch {
+            // If fetching token fails, continue to let server return standard 401/403
+        }
     }
 
     const isFormData =

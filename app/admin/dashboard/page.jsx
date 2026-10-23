@@ -7,7 +7,6 @@ import {
     BarChart3,
     CalendarDays,
     Contact,
-    FolderOpen,
     Images,
     Loader2,
     NotebookPen,
@@ -15,6 +14,7 @@ import {
     ShieldCheck,
     Sparkles,
     Target,
+    Trophy,
     Users,
 } from "lucide-react";
 import { AuthContext } from "@/context/AuthContext";
@@ -40,6 +40,8 @@ export default function DashboardPage() {
         totalContacts: 0,
         totalGalleryImages: 0,
         totalGalleryCategories: 0,
+        totalAchievers: 0,
+        // totalBlogs: 0,
         totalAdmins: 0,
         totalQuizAttempts: 0,
     });
@@ -66,6 +68,8 @@ export default function DashboardPage() {
                 totalContacts: dashboardData.totalContacts || 0,
                 totalGalleryImages: dashboardData.totalGalleryImages || 0,
                 totalGalleryCategories: dashboardData.totalGalleryCategories || 0,
+                totalAchievers: dashboardData.totalAchievers || 0,
+                // totalBlogs: dashboardData.totalBlogs || 0,
                 totalAdmins: dashboardData.totalAdmins || 0,
                 totalQuizAttempts: analyticsData.summary?.quizStarts || 0,
             });
@@ -94,7 +98,8 @@ export default function DashboardPage() {
     const cards = [
         { label: "Contacts", value: stats.totalContacts, href: "/admin/contacts", icon: Contact, gradient: "from-[#3869D0] to-[#244A9A]" },
         { label: "Gallery Images", value: stats.totalGalleryImages, href: "/admin/gallery", icon: Images, gradient: "from-[#244A9A] to-[#3869D0]" },
-        { label: "Gallery Categories", value: stats.totalGalleryCategories, href: "/admin/gallery", icon: FolderOpen, gradient: "from-[#3869D0] to-[#5D83D8]" },
+        // { label: "Total Blogs", value: stats.totalBlogs, href: "/admin/blogs", icon: NotebookPen, gradient: "from-[#3869D0] to-[#5D83D8]" },
+        { label: "Achievers", value: stats.totalAchievers, href: "/admin/achievers", icon: Trophy, gradient: "from-[#d97706] to-[#b89242]" },
         { label: "Visitors (once per day)", value: traffic.visitors, href: "/admin/quiz/visitors", icon: Users, gradient: "from-[#2d7a63] to-[#1b5748]" },
         { label: "Quiz Page Views", value: traffic.quizPageViews, href: "/admin/quiz", icon: BarChart3, gradient: "from-[#0ea5e9] to-[#0284c7]" },
         { label: "Quiz Starts", value: traffic.quizStarts ?? stats.totalQuizAttempts, href: "/admin/quiz", icon: Target, gradient: "from-[#8b5cf6] to-[#6d28d9]" },
@@ -151,7 +156,7 @@ export default function DashboardPage() {
                 </section>
 
                 <section className="mt-6 grid gap-3 sm:grid-cols-3" aria-label="Content management shortcuts">
-                    <Link
+                    {/* <Link
                         href="/admin/blogs"
                         className={`flex items-center justify-between rounded-2xl p-4 transition hover:-translate-y-0.5 hover:bg-white/90 ${glass}`}
                     >
@@ -160,8 +165,8 @@ export default function DashboardPage() {
                             Manage blogs
                         </span>
                         <ArrowUpRight size={17} className="text-[#526579]" />
-                    </Link>
-                    <Link
+                    </Link> */}
+                    {/* <Link
                         href="/admin/blogs/create"
                         className={`flex items-center justify-between rounded-2xl p-4 transition hover:-translate-y-0.5 hover:bg-white/90 ${glass}`}
                     >
@@ -170,7 +175,7 @@ export default function DashboardPage() {
                             Create a blog
                         </span>
                         <ArrowUpRight size={17} className="text-[#526579]" />
-                    </Link>
+                    </Link> */}
                     <Link
                         href="/admin/gallery"
                         className={`flex items-center justify-between rounded-2xl p-4 transition hover:-translate-y-0.5 hover:bg-white/90 ${glass}`}
