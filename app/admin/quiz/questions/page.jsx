@@ -15,6 +15,7 @@ import {
     Pencil,
     Download,
     Save,
+    RefreshCw,
 } from "lucide-react";
 
 import {
@@ -153,6 +154,8 @@ export default function QuizQuestionsPage() {
     const isDeleteAllowedForDate =
         Boolean(filters.date) && filters.date <= getToday();
 
+    const [refreshing, setRefreshing] = useState(false);
+
     const fetchCategories = useCallback(async () => {
         try {
             setCategoryLoading(true);
@@ -266,6 +269,36 @@ export default function QuizQuestionsPage() {
             cancelled = true;
         };
     }, [filters.date]);
+
+    const handleRefresh = async () => {
+        setRefreshing(true);
+        try {
+            const promises = [
+                fetchCategories(),
+                fetchQuestions(pagination.page || 1),
+            ];
+            if (filters.date) {
+                promises.push(
+                    getQuizSetting(filters.date)
+                        .then((response) => {
+                            setQuizDurationMinutes(
+                                Number(response?.setting?.durationMinutes || 15)
+                            );
+                            setQuizIsActive(
+                                response?.setting?.isActive !== false
+                            );
+                        })
+                        .catch(() => {})
+                );
+            }
+            await Promise.all(promises);
+            toast.success("Quiz questions refreshed.");
+        } catch (error) {
+            toast.error(error?.message || "Failed to refresh quiz questions.");
+        } finally {
+            setRefreshing(false);
+        }
+    };
 
     const handleSaveQuizDuration = async () => {
         const duration = Number(quizDurationMinutes);
@@ -708,6 +741,20 @@ export default function QuizQuestionsPage() {
                         <div className="flex flex-wrap items-center gap-3">
                             <button
                                 type="button"
+                                onClick={handleRefresh}
+                                disabled={refreshing || loading || categoryLoading || quizSettingLoading}
+                                aria-label="Refresh questions"
+                                className="inline-flex w-fit items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-4 py-2.5 text-sm font-bold text-white shadow-sm backdrop-blur-md transition hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-60"
+                            >
+                                <RefreshCw
+                                    size={16}
+                                    className={refreshing || loading || categoryLoading || quizSettingLoading ? "animate-spin" : ""}
+                                />
+                                Refresh
+                            </button>
+
+                            <button
+                                type="button"
                                 onClick={
                                     openCreateModal
                                 }
@@ -957,9 +1004,24 @@ export default function QuizQuestionsPage() {
                         </p>
                     </div>
 
-                    <div className="rounded-xl border border-[#C8D5EA] bg-white/60 px-4 py-2 text-sm font-semibold text-[#40556B] backdrop-blur-md">
-                        {filters.date ||
-                            "All dates"}
+                    <div className="flex flex-wrap items-center gap-2">
+                        <button
+                            type="button"
+                            onClick={handleRefresh}
+                            disabled={refreshing || loading}
+                            className="inline-flex items-center gap-1.5 rounded-xl border border-[#C8D5EA] bg-white/60 px-3 py-2 text-xs font-semibold text-[var(--navy)] backdrop-blur-md transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-60"
+                            title="Refresh questions list"
+                        >
+                            <RefreshCw
+                                size={14}
+                                className={refreshing || loading ? "animate-spin" : ""}
+                            />
+                            Refresh
+                        </button>
+
+                        <div className="rounded-xl border border-[#C8D5EA] bg-white/60 px-4 py-2 text-sm font-semibold text-[#40556B] backdrop-blur-md">
+                            {filters.date || "All dates"}
+                        </div>
                     </div>
                     {questions.length > 0 && isDeleteAllowedForDate && (
                         <div className="flex flex-wrap items-center gap-3">

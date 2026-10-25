@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Tag, ArrowUp, ArrowDown, GripVertical } from "lucide-react";
+import { Plus, Tag, ArrowUp, ArrowDown, GripVertical, RefreshCw } from "lucide-react";
 import toast from "react-hot-toast";
 
 import {
@@ -318,6 +318,18 @@ export default function AchieverCategoriesManager({
                                 <span className="text-xs font-semibold rounded-md bg-[#F0F4FA] px-2.5 py-1 text-[var(--navy)]">
                                     {categories.length} categories
                                 </span>
+                                {onRefresh && (
+                                    <button
+                                        type="button"
+                                        onClick={onRefresh}
+                                        disabled={loading || saving || reordering}
+                                        className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50 transition"
+                                        title="Refresh categories"
+                                    >
+                                        <RefreshCw size={13} className={loading ? "animate-spin" : ""} />
+                                        Refresh
+                                    </button>
+                                )}
                             </div>
                         </div>
 

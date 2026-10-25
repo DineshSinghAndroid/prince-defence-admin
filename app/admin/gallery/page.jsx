@@ -18,6 +18,7 @@ import {
     ArrowUp,
     ArrowDown,
     GripVertical,
+    RefreshCw,
 } from "lucide-react";
 
 import { AuthContext } from "@/context/AuthContext";
@@ -165,6 +166,8 @@ export default function GalleryPage() {
     const [deletingCategoryId, setDeletingCategoryId] =
         useState(null);
 
+    const [refreshing, setRefreshing] = useState(false);
+
     const fetchCategories = async () => {
         try {
             setCategoryLoading(true);
@@ -302,6 +305,53 @@ export default function GalleryPage() {
             return () => window.clearTimeout(timer);
         }
     }, [categoryLoading, fetchCategoryPreviews]);
+
+    const handleRefresh = async () => {
+        setRefreshing(true);
+        try {
+            if (selectedCategory) {
+                await Promise.all([
+                    fetchCategories(),
+                    fetchSelectedCategory(
+                        selectedCategory,
+                        pagination.page || 1
+                    ),
+                ]);
+            } else {
+                const response = await getGalleryCategories();
+                const fetchedCats = response?.data || [];
+                setCategories(fetchedCats);
+                const activeCategories = fetchedCats.filter((c) => c.isActive);
+                if (activeCategories.length) {
+                    const results = await Promise.all(
+                        activeCategories.map(async (category) => {
+                            const res = await getGallery({
+                                category: category._id,
+                                page: 1,
+                                limit: 4,
+                            });
+                            return {
+                                categoryId: category._id,
+                                images: res?.data || [],
+                            };
+                        })
+                    );
+                    const previewMap = {};
+                    results.forEach((item) => {
+                        previewMap[item.categoryId] = item.images;
+                    });
+                    setCategoryPreviews(previewMap);
+                } else {
+                    setCategoryPreviews({});
+                }
+            }
+            toast.success("Gallery refreshed successfully.");
+        } catch (error) {
+            toast.error(error?.message || "Failed to refresh gallery.");
+        } finally {
+            setRefreshing(false);
+        }
+    };
 
     const showSuccess = (message) => {
         toast.success(message);
@@ -938,7 +988,21 @@ export default function GalleryPage() {
 
                         </div>
 
-                        <div className="flex flex-wrap gap-3">
+                        <div className="flex flex-wrap items-center gap-3">
+
+                            <button
+                                type="button"
+                                onClick={handleRefresh}
+                                disabled={refreshing || categoryLoading || galleryLoading || previewLoading}
+                                aria-label="Refresh gallery"
+                                className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-4 py-2.5 text-sm font-semibold text-white backdrop-blur-md transition hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-60"
+                            >
+                                <RefreshCw
+                                    size={16}
+                                    className={refreshing || categoryLoading || galleryLoading || previewLoading ? "animate-spin" : ""}
+                                />
+                                Refresh
+                            </button>
 
                             {canManageGalleryCategories && (
                                 <button
@@ -1137,6 +1201,19 @@ export default function GalleryPage() {
                                 </p>
 
                             </div>
+
+                            <button
+                                type="button"
+                                onClick={handleRefresh}
+                                disabled={refreshing || galleryLoading}
+                                className="inline-flex items-center justify-center gap-2 rounded-xl border border-[#C8D5EA] bg-white/60 px-4 py-2 text-sm font-semibold text-[var(--navy)] backdrop-blur-md transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-60 w-fit"
+                            >
+                                <RefreshCw
+                                    size={15}
+                                    className={refreshing || galleryLoading ? "animate-spin" : ""}
+                                />
+                                Refresh Images
+                            </button>
 
                         </div>
 

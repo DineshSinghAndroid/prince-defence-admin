@@ -71,6 +71,7 @@ export default function AchieversPage() {
     const [formOpen, setFormOpen] = useState(false);
     const [editingAchiever, setEditingAchiever] = useState(null);
     const [deletingAchiever, setDeletingAchiever] = useState(null);
+    const [refreshing, setRefreshing] = useState(false);
 
     // Authentication
     useEffect(() => {
@@ -185,6 +186,18 @@ export default function AchieversPage() {
 
         void fetchAchievers();
     }, [authChecked, isSuperAdmin, fetchAchievers]);
+
+    const handleRefresh = async () => {
+        setRefreshing(true);
+        try {
+            await Promise.all([fetchCategories(), fetchAchievers()]);
+            toast.success("Achievers refreshed successfully.");
+        } catch (error) {
+            toast.error(error?.message || "Could not refresh achievers.");
+        } finally {
+            setRefreshing(false);
+        }
+    };
 
     // Filters
     const handleFilterChange = useCallback((nextFilters) => {
@@ -344,14 +357,30 @@ export default function AchieversPage() {
                             </p>
                         </div>
 
-                        <button
-                            type="button"
-                            onClick={openCreateForm}
-                            className="inline-flex items-center justify-center gap-2 rounded-xl bg-[var(--gold)] px-5 py-3 text-sm font-semibold text-[var(--navy)] shadow-lg transition hover:scale-[1.02] hover:shadow-xl"
-                        >
-                            <Plus size={18} />
-                            Add Achiever
-                        </button>
+                        <div className="flex flex-wrap items-center gap-3">
+                            <button
+                                type="button"
+                                onClick={handleRefresh}
+                                disabled={refreshing || loading || categoriesLoading}
+                                aria-label="Refresh achievers"
+                                className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-sm font-semibold text-white shadow-sm backdrop-blur-md transition hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-60"
+                            >
+                                <RefreshCw
+                                    size={16}
+                                    className={refreshing || loading || categoriesLoading ? "animate-spin" : ""}
+                                />
+                                Refresh
+                            </button>
+
+                            <button
+                                type="button"
+                                onClick={openCreateForm}
+                                className="inline-flex items-center justify-center gap-2 rounded-xl bg-[var(--gold)] px-5 py-3 text-sm font-semibold text-[var(--navy)] shadow-lg transition hover:scale-[1.02] hover:shadow-xl"
+                            >
+                                <Plus size={18} />
+                                Add Achiever
+                            </button>
+                        </div>
                     </div>
                 </section>
 

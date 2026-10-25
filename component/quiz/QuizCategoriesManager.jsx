@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { ClipboardList, Edit3, Plus, Power, Trash2, ArrowUp, ArrowDown, GripVertical } from "lucide-react";
+import { ClipboardList, Edit3, Plus, Power, Trash2, ArrowUp, ArrowDown, GripVertical, RefreshCw } from "lucide-react";
 
 import {
   createQuizCategory,
@@ -191,9 +191,21 @@ export default function QuizCategoriesManager({ embedded = false }) {
               <h2 className="text-lg font-bold text-[var(--navy)]">Quiz categories</h2>
               <p className="mt-1 text-sm text-[var(--muted)]">Manage categories used by quiz questions.</p>
             </div>
-            <button type="button" onClick={openCreate} className="inline-flex w-fit items-center gap-2 rounded-xl bg-[#3869D0] px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-[#3869D0]/20 transition hover:-translate-y-0.5 hover:bg-[#2f5dbd]">
-              <Plus size={16} /> Add Category
-            </button>
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={loadCategories}
+                disabled={loading}
+                className="inline-flex items-center gap-1.5 rounded-xl border border-[#C8D5EA] bg-white/70 px-3 py-2 text-xs font-semibold text-[var(--navy)] backdrop-blur-md transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-60"
+                title="Refresh quiz categories"
+              >
+                <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
+                Refresh
+              </button>
+              <button type="button" onClick={openCreate} className="inline-flex w-fit items-center gap-2 rounded-xl bg-[#3869D0] px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-[#3869D0]/20 transition hover:-translate-y-0.5 hover:bg-[#2f5dbd]">
+                <Plus size={16} /> Add Category
+              </button>
+            </div>
           </div>
         )}
         {!embedded && <header className="relative overflow-hidden rounded-3xl bg-[var(--navy)] px-6 py-8 text-white shadow-[0_18px_50px_rgba(16,42,67,0.16)] md:px-10 md:py-10">
@@ -203,9 +215,21 @@ export default function QuizCategoriesManager({ embedded = false }) {
               <h1 className="montserrat mt-4 text-3xl font-extrabold italic leading-tight md:text-4xl">Quiz Categories</h1>
               <p className="mt-2 text-sm text-white/70">Manage subjects used by the daily quiz.</p>
             </div>
-            <button type="button" onClick={openCreate} className="inline-flex w-fit items-center gap-2 rounded-xl bg-[#3869D0] px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-[#3869D0]/20 transition hover:-translate-y-0.5 hover:bg-[#2f5dbd]">
-              <Plus size={16} /> Add Category
-            </button>
+            <div className="flex flex-wrap items-center gap-3">
+              <button
+                type="button"
+                onClick={loadCategories}
+                disabled={loading}
+                aria-label="Refresh quiz categories"
+                className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-4 py-2.5 text-sm font-semibold text-white backdrop-blur-md transition hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                <RefreshCw size={16} className={loading ? "animate-spin" : ""} />
+                Refresh
+              </button>
+              <button type="button" onClick={openCreate} className="inline-flex w-fit items-center gap-2 rounded-xl bg-[#3869D0] px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-[#3869D0]/20 transition hover:-translate-y-0.5 hover:bg-[#2f5dbd]">
+                <Plus size={16} /> Add Category
+              </button>
+            </div>
           </div>
         </header>}
 
