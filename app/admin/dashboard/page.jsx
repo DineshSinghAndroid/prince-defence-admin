@@ -9,7 +9,6 @@ import {
     Contact,
     Images,
     Loader2,
-    NotebookPen,
     RefreshCw,
     ShieldCheck,
     Sparkles,

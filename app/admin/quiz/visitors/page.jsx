@@ -5,7 +5,6 @@ import { BarChart3, CalendarDays, Eye, Loader2, RefreshCw, Search, ShieldAlert, 
 import toast from "react-hot-toast";
 
 import AnalyticsTrendChart from "@/component/quiz/AnalyticsTrendChart";
-import DeleteConfirmModal from "@/component/common/DeleteConfirmModal";
 import { AuthContext } from "@/context/AuthContext";
 import { clearAnalyticsHistory, getVisitorAnalytics } from "@/services/dashboardService";
 
