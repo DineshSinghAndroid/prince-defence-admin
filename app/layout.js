@@ -33,11 +33,16 @@ const montserrat = localFont({
     fallback: ["sans-serif"],
 });
 
-// SEO Metadata
+// Admin Portal Metadata (Excluded from search indexing)
 export const metadata = {
-    title: "Prince Defence Academy | NDA, CDS & AFCAT Preparation",
-    description:
-        "Prepare for NDA, CDS and AFCAT with structured defence exam preparation, expert guidance and focused training.",
+    title: "Admin Portal | Prince Defence Academy",
+    description: "Prince Defence Academy Administrative Management Portal",
+    robots: {
+        index: false,
+        follow: false,
+        noarchive: true,
+        nosnippet: true,
+    },
 };
 
 export default function RootLayout({ children }) {
