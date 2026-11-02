@@ -213,13 +213,13 @@ function AdminAchieverCard({ achiever, onEdit, onDelete }) {
                     <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-1.5 text-center">
                         {fatherName && (
                             <p className={`m-0 max-w-full truncate text-xs font-bold sm:text-sm ${theme.text}`}>
-                                S/o Sh. <span className="capitalize">{fatherName}</span>
+                                S/o Sh. <span className="uppercase">{fatherName}</span>
                             </p>
                         )}
                         {address && (
                             <p
                                 title={address}
-                                className={`m-0 max-w-full truncate text-[11px] font-medium sm:text-xs ${theme.muted}`}
+                                className={`m-0 max-w-full truncate text-[11px] uppercase font-medium sm:text-xs ${theme.muted}`}
                             >
                                 {address}
                             </p>
