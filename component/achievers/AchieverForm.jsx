@@ -12,6 +12,7 @@ import {
 const initialForm = {
     name: "",
     fatherName: "",
+    gender: "male",
     address: "",
     categorySlug: "",
     examName: "",
@@ -48,6 +49,7 @@ export default function AchieverForm({
             setForm({
                 name: achiever.name || "",
                 fatherName: achiever.fatherName || "",
+                gender: achiever.gender || "male",
                 address: achiever.address || "",
                 categorySlug: achiever.categoryId?.slug || selectedCategory,
                 examName: achiever.examName || "",
@@ -203,6 +205,7 @@ export default function AchieverForm({
 
         formData.append("name", form.name.trim());
         formData.append("fatherName", form.fatherName.trim());
+        formData.append("gender", form.gender);
         formData.append("address", form.address.trim());
         formData.append("categorySlug", form.categorySlug);
         formData.append("examName", form.examName.trim());
@@ -386,6 +389,22 @@ export default function AchieverForm({
                                             placeholder="Enter father's name"
                                             className="w-full rounded-xl border border-[#C8D5EA] px-4 py-3 text-sm outline-none transition focus:border-[#3869D0] focus:ring-4 focus:ring-[#3869D0]/10 disabled:bg-gray-100"
                                         />
+                                    </div>
+
+                                    <div>
+                                        <label className="mb-2 block text-sm font-semibold text-[var(--navy)]">
+                                            Gender
+                                        </label>
+                                        <select
+                                            name="gender"
+                                            value={form.gender}
+                                            onChange={handleChange}
+                                            disabled={saving}
+                                            className="w-full rounded-xl border border-[#C8D5EA] bg-white px-4 py-3 text-sm outline-none transition focus:border-[#3869D0] focus:ring-4 focus:ring-[#3869D0]/10 disabled:bg-gray-100"
+                                        >
+                                            <option value="male">Male (S/o)</option>
+                                            <option value="female">Female (D/o)</option>
+                                        </select>
                                     </div>
 
                                     <div className="sm:col-span-2">
