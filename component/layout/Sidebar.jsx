@@ -85,7 +85,9 @@ const Sidebar = () => {
         try {
             const saved = localStorage.getItem("admin_sidebar_collapsed");
             if (saved !== null) {
-                setCollapsed(saved === "true");
+                queueMicrotask(() => {
+                    setCollapsed(saved === "true");
+                });
             }
         } catch {
             // ignore
@@ -175,169 +177,166 @@ const Sidebar = () => {
 
             {/* Sidebar Desktop Wrapper */}
             <div
-                className={`relative shrink-0 transition-all duration-300 ease-in-out ${
-                    collapsed ? "lg:w-0" : "lg:w-72"
-                }`}
+                className={`relative shrink-0 transition-all duration-300 ease-in-out ${collapsed ? "lg:w-0" : "lg:w-72"
+                    }`}
             >
                 <aside
-                    className={`fixed inset-y-0 left-0 z-50 flex h-screen min-h-screen w-72 shrink-0 flex-col overflow-hidden bg-[#102A43] text-white shadow-2xl transition-all duration-300 lg:sticky lg:top-0 ${
-                        open
-                            ? "translate-x-0"
-                            : "-translate-x-full"
-                    } ${
-                        collapsed
+                    className={`fixed inset-y-0 left-0 z-50 flex h-screen min-h-screen w-72 shrink-0 flex-col overflow-hidden bg-[#102A43] text-white shadow-2xl transition-all duration-300 lg:sticky lg:top-0 ${open
+                        ? "translate-x-0"
+                        : "-translate-x-full"
+                        } ${collapsed
                             ? "lg:-translate-x-full lg:opacity-0 lg:pointer-events-none"
                             : "lg:translate-x-0 lg:opacity-100"
-                    }`}
+                        }`}
                 >
-                {/* Decorative Glow */}
+                    {/* Decorative Glow */}
 
-                <div className="pointer-events-none absolute -left-20 -top-20 h-64 w-64 rounded-full bg-[#3869D0]/20 blur-3xl" />
+                    <div className="pointer-events-none absolute -left-20 -top-20 h-64 w-64 rounded-full bg-[#3869D0]/20 blur-3xl" />
 
-                <div className="pointer-events-none absolute -bottom-24 -right-24 h-64 w-64 rounded-full bg-[#94CCF9]/15 blur-3xl" />
+                    <div className="pointer-events-none absolute -bottom-24 -right-24 h-64 w-64 rounded-full bg-[#94CCF9]/15 blur-3xl" />
 
-                <div className="pointer-events-none absolute right-1/3 top-1/3 h-48 w-48 rounded-full bg-[#F0F4FF]/5 blur-3xl" />
+                    <div className="pointer-events-none absolute right-1/3 top-1/3 h-48 w-48 rounded-full bg-[#F0F4FF]/5 blur-3xl" />
 
-                {/* Brand */}
+                    {/* Brand */}
 
-                <div className="relative flex items-center justify-between px-6 pb-6 pt-7">
-                    <div className="flex items-center gap-3">
+                    <div className="relative flex items-center justify-between px-6 pb-6 pt-7">
+                        <div className="flex items-center gap-3">
 
-                        <div className="flex items-center justify-center rounded-full shadow-lg shadow-[#3869D0]/30">
-                            <img
-                                src="/logos/mainLogo.png"
-                                alt="Prince Defence logo"
-                                className="h-10 w-10 object-contain"
-                            />
+                            <div className="flex items-center justify-center rounded-full shadow-lg shadow-[#3869D0]/30">
+                                <img
+                                    src="/logos/mainLogo.png"
+                                    alt="Prince Defence logo"
+                                    className="h-10 w-10 object-contain"
+                                />
+                            </div>
+
+                            <div>
+                                <h2 className="montserrat text-lg font-extrabold italic leading-tight text-white">
+                                    Prince Defence
+                                </h2>
+
+                                <p className="text-[10px] font-bold tracking-[0.25em] text-[#B89242]">
+                                    ADMIN PANEL
+                                </p>
+                            </div>
                         </div>
 
-                        <div>
-                            <h2 className="montserrat text-lg font-extrabold italic leading-tight text-white">
-                                Prince Defence
-                            </h2>
-
-                            <p className="text-[10px] font-bold tracking-[0.25em] text-[#B89242]">
-                                ADMIN PANEL
-                            </p>
-                        </div>
-                    </div>
-
-                    {/* Desktop Arrow Toggle Button in Header */}
-                    <button
-                        type="button"
-                        onClick={toggleCollapse}
-                        aria-label="Hide sidebar"
-                        title="Hide sidebar"
-                        className="hidden h-8 w-8 items-center justify-center rounded-lg border border-[#F0F4FF]/15 bg-[#F0F4FF]/5 text-[#CBD5E1] transition-all hover:border-[#3869D0]/50 hover:bg-[#3869D0] hover:text-white lg:flex"
-                    >
-                        <ChevronLeft size={18} />
-                    </button>
-
-                    {/* Mobile Close Button */}
-                    <button
-                        onClick={() => setOpen(false)}
-                        aria-label="Close menu"
-                        title="Close menu"
-                        className="rounded-lg p-1.5 text-[#CBD5E1] transition hover:bg-white/10 hover:text-white lg:hidden"
-                    >
-                        <ChevronLeft size={22} />
-                    </button>
-                </div>
-
-                {/* Divider */}
-
-                <div className="mx-6 h-px bg-gradient-to-r from-transparent via-[#F0F4FF]/20 to-transparent" />
-
-                {/* Navigation */}
-
-                <nav className="relative flex-1 space-y-3 overflow-y-auto px-4 py-10 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-
-                    <p className="mb-3 px-3 text-[10px] font-bold tracking-[0.25em] text-[#CBD5E1]/50">
-                        MENU
-                    </p>
-
-                    {visibleLinks
-                        .map(
-                            ({
-                                href,
-                                label,
-                                icon: Icon,
-                            }) => {
-                                const active = activeHref === href;
-
-                                return (
-                                    <Link
-                                        key={href}
-                                        href={href}
-                                        onClick={() =>
-                                            setOpen(false)
-                                        }
-                                        className={`group relative flex items-center gap-3 rounded-xl px-4 py-4 text-base font-semibold transition-all duration-300 ${active
-                                                ? "bg-gradient-to-r from-[#3869D0] to-[#244A9A] text-white shadow-lg shadow-[#3869D0]/25"
-                                                : "text-[#CBD5E1] hover:translate-x-1 hover:bg-[#F0F4FF]/10 hover:text-white"
-                                            }`}
-                                    >
-                                        {active && (
-                                            <span className="absolute -left-4 top-1/2 h-7 w-1.5 -translate-y-1/2 rounded-r-full bg-[#B89242]" />
-                                        )}
-
-                                        <span
-                                            className={`flex h-9 w-9 items-center justify-center rounded-lg transition-colors ${active
-                                                    ? "bg-white/20 text-white"
-                                                    : "bg-[#F0F4FF]/5 text-[#CBD5E1] group-hover:bg-[#F0F4FF]/10 group-hover:text-white"
-                                                }`}
-                                        >
-                                            <Icon size={18} />
-                                        </span>
-
-                                        {label}
-                                    </Link>
-                                );
-                            }
-                        )}
-                </nav>
-
-                {/* User Card + Logout */}
-
-                <div className="relative border-t border-[#F0F4FF]/10 p-4">
-
-                    <div className="flex items-center gap-3 rounded-xl border border-[#F0F4FF]/10 bg-[#F0F4FF]/5 p-3">
-
-                        {/* Avatar */}
-
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#3869D0] to-[#94CCF9] text-sm font-extrabold text-white shadow-md">
-                            {getAvatarLetter(user?.name)}
-                        </div>
-
-                        {/* User Details */}
-
-                        <div className="min-w-0 flex-1">
-
-                            <p className="whitespace-nowrap text-sm font-bold text-white">
-                                {user?.name || "Admin"}
-                            </p>
-
-                            <p className="break-all text-xs leading-5 text-[#CBD5E1]">
-                                {user?.email ||
-                                    "Email not available"}
-                            </p>
-                        </div>
-
-                        {/* Logout */}
-
+                        {/* Desktop Arrow Toggle Button in Header */}
                         <button
-                            aria-label="Logout"
-                            className="rounded-lg p-2 text-[#CBD5E1] transition-colors hover:bg-[#B89242]/15 hover:text-[#B89242]"
-                            onClick={handleLogout}
+                            type="button"
+                            onClick={toggleCollapse}
+                            aria-label="Hide sidebar"
+                            title="Hide sidebar"
+                            className="hidden h-8 w-8 items-center justify-center rounded-lg border border-[#F0F4FF]/15 bg-[#F0F4FF]/5 text-[#CBD5E1] transition-all hover:border-[#3869D0]/50 hover:bg-[#3869D0] hover:text-white lg:flex"
                         >
-                            <LogOut size={17} />
+                            <ChevronLeft size={18} />
+                        </button>
+
+                        {/* Mobile Close Button */}
+                        <button
+                            onClick={() => setOpen(false)}
+                            aria-label="Close menu"
+                            title="Close menu"
+                            className="rounded-lg p-1.5 text-[#CBD5E1] transition hover:bg-white/10 hover:text-white lg:hidden"
+                        >
+                            <ChevronLeft size={22} />
                         </button>
                     </div>
-                </div>
-            </aside>
-        </div>
-    </>
-);
+
+                    {/* Divider */}
+
+                    <div className="mx-6 h-px bg-gradient-to-r from-transparent via-[#F0F4FF]/20 to-transparent" />
+
+                    {/* Navigation */}
+
+                    <nav className="relative flex-1 space-y-3 overflow-y-auto px-4 py-10 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+
+                        <p className="mb-3 px-3 text-[10px] font-bold tracking-[0.25em] text-[#CBD5E1]/50">
+                            MENU
+                        </p>
+
+                        {visibleLinks
+                            .map(
+                                ({
+                                    href,
+                                    label,
+                                    icon: Icon,
+                                }) => {
+                                    const active = activeHref === href;
+
+                                    return (
+                                        <Link
+                                            key={href}
+                                            href={href}
+                                            onClick={() =>
+                                                setOpen(false)
+                                            }
+                                            className={`group relative flex items-center gap-3 rounded-xl px-4 py-4 text-base font-semibold transition-all duration-300 ${active
+                                                ? "bg-gradient-to-r from-[#3869D0] to-[#244A9A] text-white shadow-lg shadow-[#3869D0]/25"
+                                                : "text-[#CBD5E1] hover:translate-x-1 hover:bg-[#F0F4FF]/10 hover:text-white"
+                                                }`}
+                                        >
+                                            {active && (
+                                                <span className="absolute -left-4 top-1/2 h-7 w-1.5 -translate-y-1/2 rounded-r-full bg-[#B89242]" />
+                                            )}
+
+                                            <span
+                                                className={`flex h-9 w-9 items-center justify-center rounded-lg transition-colors ${active
+                                                    ? "bg-white/20 text-white"
+                                                    : "bg-[#F0F4FF]/5 text-[#CBD5E1] group-hover:bg-[#F0F4FF]/10 group-hover:text-white"
+                                                    }`}
+                                            >
+                                                <Icon size={18} />
+                                            </span>
+
+                                            {label}
+                                        </Link>
+                                    );
+                                }
+                            )}
+                    </nav>
+
+                    {/* User Card + Logout */}
+
+                    <div className="relative border-t border-[#F0F4FF]/10 p-4">
+
+                        <div className="flex items-center gap-3 rounded-xl border border-[#F0F4FF]/10 bg-[#F0F4FF]/5 p-3">
+
+                            {/* Avatar */}
+
+                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#3869D0] to-[#94CCF9] text-sm font-extrabold text-white shadow-md">
+                                {getAvatarLetter(user?.name)}
+                            </div>
+
+                            {/* User Details */}
+
+                            <div className="min-w-0 flex-1">
+
+                                <p className="whitespace-nowrap text-sm font-bold text-white">
+                                    {user?.name || "Admin"}
+                                </p>
+
+                                <p className="break-all text-xs leading-5 text-[#CBD5E1]">
+                                    {user?.email ||
+                                        "Email not available"}
+                                </p>
+                            </div>
+
+                            {/* Logout */}
+
+                            <button
+                                aria-label="Logout"
+                                className="rounded-lg p-2 text-[#CBD5E1] transition-colors hover:bg-[#B89242]/15 hover:text-[#B89242]"
+                                onClick={handleLogout}
+                            >
+                                <LogOut size={17} />
+                            </button>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </>
+    );
 };
 
 export default Sidebar;
