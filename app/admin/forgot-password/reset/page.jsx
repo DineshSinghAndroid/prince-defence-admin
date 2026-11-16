@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useState } from "react";
+import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
 
@@ -13,6 +14,7 @@ import {
     Loader2,
     CheckCircle2,
     ArrowLeft,
+    XCircle,
 } from "lucide-react";
 
 import {
@@ -27,7 +29,14 @@ export default function ResetPasswordPage() {
     return (
         <Suspense
             fallback={
-                <main className="min-h-screen bg-gradient-to-br from-[#0f1f4a] via-[#1a3577] to-[#3869D0]" />
+                <main className="flex min-h-screen items-center justify-center bg-[#F4F7FB]">
+                    <div className="flex items-center gap-3">
+                        <Loader2 size={24} className="animate-spin text-[#3869D0]" />
+                        <p className="text-sm font-semibold text-slate-600">
+                            Loading password reset...
+                        </p>
+                    </div>
+                </main>
             }
         >
             <ResetPasswordForm />
@@ -40,22 +49,12 @@ function ResetPasswordForm() {
     const searchParams = useSearchParams();
     const email = searchParams.get("email") || "";
 
-    const { hydrated, resetToken } =
-        usePasswordResetSession();
-    const [newPassword, setNewPassword] =
-        useState("");
-
-    const [confirmPassword, setConfirmPassword] =
-        useState("");
-
-    const [showPassword, setShowPassword] =
-        useState(false);
-
-    const [showConfirmPassword, setShowConfirmPassword] =
-        useState(false);
-
-    const [loading, setLoading] =
-        useState(false);
+    const { hydrated, resetToken } = usePasswordResetSession();
+    const [newPassword, setNewPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const validatePassword = () => {
         if (newPassword.length < 12) {
@@ -79,14 +78,11 @@ function ResetPasswordForm() {
         if (loading || !hydrated) return;
 
         if (!email || !resetToken) {
-            toast.error(
-                "Invalid or expired password reset session."
-            );
+            toast.error("Invalid or expired password reset session.");
             return;
         }
 
-        const validationError =
-            validatePassword();
+        const validationError = validatePassword();
 
         if (validationError) {
             toast.error(validationError);
@@ -96,17 +92,11 @@ function ResetPasswordForm() {
         setLoading(true);
 
         try {
-            await resetPassword(
-                email,
-                resetToken,
-                newPassword
-            );
+            await resetPassword(email, resetToken, newPassword);
 
             clearPasswordResetSession();
 
-            toast.success(
-                "Password reset successfully."
-            );
+            toast.success("Password reset successfully.");
 
             router.replace("/login");
         } catch (error) {
@@ -125,12 +115,12 @@ function ResetPasswordForm() {
 
     if (!email || !resetToken) {
         return (
-            <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-[#0f1f4a] via-[#1a3577] to-[#3869D0] p-4">
-                <div className="w-full max-w-md rounded-3xl border border-white/30 bg-white/15 p-8 text-center text-white shadow-[0_20px_60px_rgba(0,0,0,0.35)] backdrop-blur-2xl">
-                    <h1 className="text-xl font-bold">
-                        Recovery session expired
+            <main className="flex min-h-screen items-center justify-center bg-[#F4F7FB] p-3 sm:p-6 lg:p-10">
+                <div className="w-full max-w-md rounded-2xl sm:rounded-3xl border border-slate-200/80 bg-white p-8 text-center shadow-[0_20px_60px_rgba(16,42,67,0.08)]">
+                    <h1 className="montserrat text-xl font-bold text-[var(--navy)]">
+                        Recovery Session Expired
                     </h1>
-                    <p className="mt-3 text-sm text-white/70">
+                    <p className="mt-2 text-xs text-slate-500 sm:text-sm">
                         {!email
                             ? "Your recovery email is missing. Start password recovery again."
                             : "Verify a new code to continue resetting your password."}
@@ -138,295 +128,210 @@ function ResetPasswordForm() {
                     <button
                         type="button"
                         onClick={() => router.replace("/admin/forgot-password")}
-                        className="mt-6 rounded-xl bg-[#fde68a] px-5 py-3 text-sm font-bold text-[#0f1f4a]"
+                        className="mt-6 rounded-xl bg-[#3869D0] px-5 py-3 text-sm font-bold text-white shadow-lg shadow-[#3869D0]/20 transition hover:bg-[#2e5bbd]"
                     >
-                        Restart recovery
+                        Restart Recovery
                     </button>
                 </div>
             </main>
         );
     }
+
     return (
-        <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-br from-[#0f1f4a] via-[#1a3577] to-[#3869D0] p-4">
+        <main className="flex min-h-screen items-center justify-center bg-[#F4F7FB] p-3 sm:p-6 lg:p-10">
 
-            {/* Background Effects */}
+            {/* Card Container */}
+            <div className="relative w-full max-w-md overflow-hidden rounded-2xl sm:rounded-3xl border border-slate-200/80 bg-white p-6 shadow-[0_20px_60px_rgba(16,42,67,0.08)] sm:p-10">
 
-            <div className="pointer-events-none absolute -left-24 -top-24 h-96 w-96 rounded-full bg-[#94CCF9]/40 blur-3xl" />
-
-            <div className="pointer-events-none absolute -bottom-32 -right-24 h-[28rem] w-[28rem] rounded-full bg-[#3869D0]/60 blur-3xl" />
-
-            <div className="pointer-events-none absolute right-1/4 top-1/4 h-64 w-64 rounded-full bg-[#7c3aed]/30 blur-3xl" />
-
-            <div className="pointer-events-none absolute bottom-1/4 left-1/4 h-56 w-56 rounded-full bg-[#fbbf24]/25 blur-3xl" />
-
-            {/* Card */}
-
-            <div className="relative w-full max-w-md overflow-hidden rounded-3xl border border-white/30 bg-white/15 p-6 shadow-[0_20px_60px_rgba(0,0,0,0.35)] backdrop-blur-2xl sm:p-10">
-
-                {/* Top Glow */}
-
-                <div className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-white/20 to-transparent" />
-
-                {/* Back */}
-
+                {/* Back to Login */}
                 <button
                     type="button"
-                    onClick={() =>
-                        router.push(
-                            "/login"
-                        )
-                    }
+                    onClick={() => router.push("/login")}
                     disabled={loading}
-                    className="relative mb-7 flex items-center gap-2 text-sm font-medium text-white/60 transition-colors hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                    className="group mb-6 inline-flex items-center gap-2 text-xs font-bold text-slate-500 transition hover:text-[#3869D0] disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                    <ArrowLeft size={16} />
-
+                    <ArrowLeft size={16} className="transition-transform group-hover:-translate-x-0.5" />
                     Back to Login
                 </button>
 
                 {/* Header */}
+                <div className="mb-5 text-center">
 
-                <div className="relative mb-8 text-center">
-
-                    <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-white/40 bg-gradient-to-br from-[#3869D0] via-[#5b8de0] to-[#94CCF9] text-white shadow-lg shadow-[#3869D0]/50">
-
-                        <Lock size={30} />
-
+                    {/* Academy Badge */}
+                    <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-slate-200/80 bg-slate-50/80 px-3 py-1 shadow-xs">
+                        <div className="relative h-4.5 w-4.5 shrink-0 overflow-hidden rounded-full">
+                            <Image
+                                src="/logos/mainLogo.png"
+                                alt="Prince Defence Academy"
+                                fill
+                                sizes="20px"
+                                className="object-contain"
+                            />
+                        </div>
+                        <span className="montserrat text-[10px] font-black tracking-wide text-[var(--navy)] sm:text-[11px]">
+                            PRINCE DEFENCE ACADEMY
+                        </span>
                     </div>
 
-                    <h1 className="montserrat mt-4 text-3xl font-extrabold text-white">
+                    {/* Lock Icon Badge */}
+                    <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl border border-blue-100 bg-gradient-to-br from-[#EAF2FD] via-[#F0F5FE] to-[#DFECFD] text-[#3869D0] shadow-sm">
+                        <Lock size={26} />
+                    </div>
+
+                    <h1 className="montserrat text-2xl font-black text-[var(--navy)] sm:text-3xl">
                         Reset Password
                     </h1>
 
-                    <p className="mx-auto mt-3 max-w-sm text-sm leading-6 text-white/60">
-                        Create a new password for your
-                        admin account.
+                    <p className="mt-2 text-xs text-slate-500 sm:text-sm">
+                        Create a strong new password for your admin account.
                     </p>
-
                 </div>
 
-                {/* Email */}
-
-                <div className="mb-6 rounded-xl border border-white/15 bg-white/10 px-4 py-3">
-
-                    <p className="text-xs text-white/45">
-                        Account
-                    </p>
-
-                    <p className="mt-1 truncate text-sm font-medium text-white/80">
-                        {email || "Email not available"}
-                    </p>
-
+                {/* Account info */}
+                <div className="mb-6 flex items-center justify-between rounded-xl border border-slate-200/80 bg-slate-50/80 px-3.5 py-2.5 text-xs">
+                    <span className="font-semibold text-slate-400">Account:</span>
+                    <span className="truncate max-w-[240px] font-bold text-[var(--navy)]">
+                        {email}
+                    </span>
                 </div>
 
                 {/* Form */}
-
-                <form
-                    onSubmit={handleSubmit}
-                    className="relative space-y-5"
-                >
+                <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
 
                     {/* New Password */}
-
                     <div>
-
                         <label
                             htmlFor="newPassword"
-                            className="mb-2 block text-sm font-semibold text-white/90"
+                            className="mb-1.5 block text-xs font-bold text-[var(--navy)]"
                         >
                             New Password
                         </label>
 
                         <div className="relative">
-
                             <Lock
                                 size={18}
-                                className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-white/50"
+                                className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
                             />
 
                             <input
                                 id="newPassword"
                                 name="newPassword"
-                                type={
-                                    showPassword
-                                        ? "text"
-                                        : "password"
-                                }
-                                placeholder="Enter new password"
+                                type={showPassword ? "text" : "password"}
+                                placeholder="Enter at least 12 characters"
                                 autoComplete="new-password"
                                 value={newPassword}
-                                onChange={(e) =>
-                                    setNewPassword(
-                                        e.target.value
-                                    )
-                                }
+                                onChange={(e) => setNewPassword(e.target.value)}
                                 minLength={12}
                                 disabled={loading}
-                                className="w-full rounded-xl border border-white/25 bg-white/10 py-3.5 pl-12 pr-12 text-sm text-white outline-none backdrop-blur-md transition-all placeholder:text-white/40 focus:border-[#94CCF9] focus:bg-white/20 focus:ring-4 focus:ring-[#94CCF9]/20 disabled:cursor-not-allowed disabled:opacity-60"
+                                className="w-full rounded-xl border border-slate-200 bg-slate-50/60 py-3 pl-11 pr-11 text-sm text-[var(--navy)] outline-none transition focus:border-[#3869D0] focus:bg-white focus:ring-4 focus:ring-[#3869D0]/10 disabled:cursor-not-allowed disabled:opacity-60"
                             />
 
                             <button
                                 type="button"
-                                onClick={() =>
-                                    setShowPassword(
-                                        (current) =>
-                                            !current
-                                    )
-                                }
+                                onClick={() => setShowPassword((current) => !current)}
                                 disabled={loading}
-                                aria-label={
-                                    showPassword
-                                        ? "Hide password"
-                                        : "Show password"
-                                }
-                                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-white/60 transition-colors hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                                aria-label={showPassword ? "Hide password" : "Show password"}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600 disabled:cursor-not-allowed disabled:opacity-50"
                             >
-                                {showPassword ? (
-                                    <EyeOff size={18} />
-                                ) : (
-                                    <Eye size={18} />
-                                )}
+                                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                             </button>
-
                         </div>
 
-                        <p className="mt-2 text-xs text-white/45">
-                            Use at least 12 characters (maximum 72 bytes).
+                        <p className="mt-1.5 text-[11px] text-slate-400">
+                            Must be at least 12 characters (maximum 72 bytes).
                         </p>
-
                     </div>
 
                     {/* Confirm Password */}
-
                     <div>
-
                         <label
                             htmlFor="confirmPassword"
-                            className="mb-2 block text-sm font-semibold text-white/90"
+                            className="mb-1.5 block text-xs font-bold text-[var(--navy)]"
                         >
                             Confirm Password
                         </label>
 
                         <div className="relative">
-
                             <Lock
                                 size={18}
-                                className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-white/50"
+                                className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
                             />
 
                             <input
                                 id="confirmPassword"
                                 name="confirmPassword"
-                                type={
-                                    showConfirmPassword
-                                        ? "text"
-                                        : "password"
-                                }
-                                placeholder="Confirm new password"
+                                type={showConfirmPassword ? "text" : "password"}
+                                placeholder="Re-enter new password"
                                 autoComplete="new-password"
-                                value={
-                                    confirmPassword
-                                }
-                                onChange={(e) =>
-                                    setConfirmPassword(
-                                        e.target.value
-                                    )
-                                }
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
                                 disabled={loading}
-                                className="w-full rounded-xl border border-white/25 bg-white/10 py-3.5 pl-12 pr-12 text-sm text-white outline-none backdrop-blur-md transition-all placeholder:text-white/40 focus:border-[#94CCF9] focus:bg-white/20 focus:ring-4 focus:ring-[#94CCF9]/20 disabled:cursor-not-allowed disabled:opacity-60"
+                                className="w-full rounded-xl border border-slate-200 bg-slate-50/60 py-3 pl-11 pr-11 text-sm text-[var(--navy)] outline-none transition focus:border-[#3869D0] focus:bg-white focus:ring-4 focus:ring-[#3869D0]/10 disabled:cursor-not-allowed disabled:opacity-60"
                             />
 
                             <button
                                 type="button"
-                                onClick={() =>
-                                    setShowConfirmPassword(
-                                        (current) =>
-                                            !current
-                                    )
-                                }
+                                onClick={() => setShowConfirmPassword((current) => !current)}
                                 disabled={loading}
-                                aria-label={
-                                    showConfirmPassword
-                                        ? "Hide password"
-                                        : "Show password"
-                                }
-                                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-white/60 transition-colors hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                                aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600 disabled:cursor-not-allowed disabled:opacity-50"
                             >
-                                {showConfirmPassword ? (
-                                    <EyeOff size={18} />
-                                ) : (
-                                    <Eye size={18} />
-                                )}
+                                {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                             </button>
-
                         </div>
-
                     </div>
 
-                    {/* Password Match */}
-
+                    {/* Password Match Status */}
                     {confirmPassword && (
                         <div
-                            className={`flex items-center gap-2 text-xs ${
-                                newPassword ===
-                                confirmPassword
-                                    ? "text-emerald-300"
-                                    : "text-red-300"
+                            className={`flex items-center gap-1.5 text-xs font-semibold ${
+                                newPassword === confirmPassword
+                                    ? "text-emerald-600"
+                                    : "text-red-500"
                             }`}
                         >
-                            <CheckCircle2
-                                size={14}
-                            />
-
-                            {newPassword ===
-                            confirmPassword
-                                ? "Passwords match"
-                                : "Passwords do not match"}
+                            {newPassword === confirmPassword ? (
+                                <>
+                                    <CheckCircle2 size={14} />
+                                    Passwords match
+                                </>
+                            ) : (
+                                <>
+                                    <XCircle size={14} />
+                                    Passwords do not match
+                                </>
+                            )}
                         </div>
                     )}
 
-                    {/* Submit */}
-
+                    {/* Submit Button */}
                     <button
                         type="submit"
                         disabled={loading}
-                        className="group flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#fbbf24] via-[#fcd34d] to-[#fde68a] px-4 py-3.5 text-sm font-extrabold text-[#0f1f4a] shadow-lg shadow-[#fbbf24]/30 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-[#fbbf24]/50 disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:translate-y-0"
+                        className="group flex w-full items-center justify-center gap-2 rounded-xl bg-[#3869D0] py-3.5 text-sm font-bold text-white shadow-lg shadow-[#3869D0]/20 transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#2e5bbd] hover:shadow-xl hover:shadow-[#3869D0]/30 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
                     >
-
                         {loading ? (
                             <>
-                                <Loader2
-                                    size={17}
-                                    className="animate-spin"
-                                />
-
+                                <Loader2 size={17} className="animate-spin" />
                                 Resetting Password...
                             </>
                         ) : (
                             <>
                                 Reset Password
-
                                 <ArrowRight
                                     size={17}
-                                    className="transition-transform duration-300 group-hover:translate-x-1"
+                                    className="transition-transform duration-200 group-hover:translate-x-1"
                                 />
                             </>
                         )}
-
                     </button>
 
                 </form>
 
-                {/* Security */}
-
-                <div className="relative mt-7 flex items-center justify-center gap-2 text-center text-[11px] text-white/45">
-
-                    <Shield size={12} />
-
-                    <span>
-                        Your password is securely encrypted
-                    </span>
-
+                {/* Security Note */}
+                <div className="mt-6 flex items-center justify-center gap-1.5 text-center text-[11px] text-slate-400">
+                    <Shield size={13} className="text-slate-400" />
+                    <span>Your password is securely encrypted • Prince Defence Academy</span>
                 </div>
 
             </div>

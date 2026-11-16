@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
@@ -62,86 +63,71 @@ export default function ForgotPasswordPage() {
     };
 
     return (
-        <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-br from-[#0f1f4a] via-[#1a3577] to-[#3869D0] p-4">
+        <main className="flex min-h-screen items-center justify-center bg-[#F4F7FB] p-3 sm:p-6 lg:p-10">
 
-            {/* Background Effects */}
+            {/* Card Container */}
+            <div className="relative w-full max-w-md overflow-hidden rounded-2xl sm:rounded-3xl border border-slate-200/80 bg-white p-6 shadow-[0_20px_60px_rgba(16,42,67,0.08)] sm:p-10">
 
-            <div className="pointer-events-none absolute -left-24 -top-24 h-96 w-96 rounded-full bg-[#94CCF9]/40 blur-3xl" />
-
-            <div className="pointer-events-none absolute -bottom-32 -right-24 h-[28rem] w-[28rem] rounded-full bg-[#3869D0]/60 blur-3xl" />
-
-            <div className="pointer-events-none absolute right-1/4 top-1/4 h-64 w-64 rounded-full bg-[#7c3aed]/30 blur-3xl" />
-
-            <div className="pointer-events-none absolute bottom-1/4 left-1/4 h-56 w-56 rounded-full bg-[#fbbf24]/25 blur-3xl" />
-
-            {/* Card */}
-
-            <div className="relative w-full max-w-md overflow-hidden rounded-3xl border border-white/30 bg-white/15 p-6 shadow-[0_20px_60px_rgba(0,0,0,0.35)] backdrop-blur-2xl sm:p-10">
-
-                {/* Top Glow */}
-
-                <div className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-white/20 to-transparent" />
-
-                {/* Back */}
-
+                {/* Back to Login */}
                 <button
                     type="button"
-                    onClick={() =>
-                        router.push("/login")
-                    }
+                    onClick={() => router.push("/login")}
                     disabled={loading}
-                    className="relative mb-7 flex items-center gap-2 text-sm font-medium text-white/60 transition-colors hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                    className="group mb-6 inline-flex items-center gap-2 text-xs font-bold text-slate-500 transition hover:text-[#3869D0] disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                    <ArrowLeft size={16} />
-
+                    <ArrowLeft size={16} className="transition-transform group-hover:-translate-x-0.5" />
                     Back to Login
                 </button>
 
-                {/* Header */}
+                {/* Header with Academy Badge & Key Icon */}
+                <div className="mb-6 text-center">
 
-                <div className="relative mb-8 text-center">
-
-                    <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-white/40 bg-gradient-to-br from-[#3869D0] via-[#5b8de0] to-[#94CCF9] text-white shadow-lg shadow-[#3869D0]/50">
-
-                        <KeyRound size={30} />
-
+                    {/* Academy Badge */}
+                    <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-slate-200/80 bg-slate-50/80 px-3 py-1 shadow-xs">
+                        <div className="relative h-4.5 w-4.5 shrink-0 overflow-hidden rounded-full">
+                            <Image
+                                src="/logos/mainLogo.png"
+                                alt="Prince Defence Academy"
+                                fill
+                                sizes="20px"
+                                className="object-contain"
+                            />
+                        </div>
+                        <span className="montserrat text-[10px] font-black tracking-wide text-[var(--navy)] sm:text-[11px]">
+                            PRINCE DEFENCE ACADEMY
+                        </span>
                     </div>
 
-                    <h1 className="montserrat mt-4 text-3xl font-extrabold text-white">
+                    {/* Key Icon Badge */}
+                    <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl border border-blue-100 bg-gradient-to-br from-[#EAF2FD] via-[#F0F5FE] to-[#DFECFD] text-[#3869D0] shadow-sm">
+                        <KeyRound size={26} />
+                    </div>
+
+                    <h1 className="montserrat text-2xl font-black text-[var(--navy)] sm:text-3xl">
                         Forgot Password?
                     </h1>
 
-                    <p className="mx-auto mt-3 max-w-sm text-sm leading-6 text-white/60">
-                        Enter your registered admin email
-                        address and we&apos;ll send you a
-                        verification code.
+                    <p className="mt-2 text-xs text-slate-500 sm:text-sm">
+                        Enter your registered admin email address and we&apos;ll send you a verification code.
                     </p>
-
                 </div>
 
                 {/* Form */}
+                <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
 
-                <form
-                    onSubmit={handleSubmit}
-                    className="relative space-y-5"
-                >
-
-                    {/* Email */}
-
+                    {/* Email Input */}
                     <div>
-
                         <label
                             htmlFor="email"
-                            className="mb-2 block text-sm font-semibold text-white/90"
+                            className="mb-1.5 block text-xs font-bold text-[var(--navy)]"
                         >
-                            Registered Email
+                            Registered Email Address
                         </label>
 
                         <div className="relative">
-
                             <Mail
                                 size={18}
-                                className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-white/50"
+                                className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
                             />
 
                             <input
@@ -152,62 +138,42 @@ export default function ForgotPasswordPage() {
                                 autoComplete="email"
                                 maxLength={254}
                                 value={email}
-                                onChange={(e) =>
-                                    setEmail(
-                                        e.target.value
-                                    )
-                                }
+                                onChange={(e) => setEmail(e.target.value)}
                                 required
                                 disabled={loading}
-                                className="w-full rounded-xl border border-white/25 bg-white/10 py-3.5 pl-12 pr-4 text-sm text-white outline-none backdrop-blur-md transition-all placeholder:text-white/40 focus:border-[#94CCF9] focus:bg-white/20 focus:ring-4 focus:ring-[#94CCF9]/20 disabled:cursor-not-allowed disabled:opacity-60"
+                                className="w-full rounded-xl border border-slate-200 bg-slate-50/60 py-3 pl-11 pr-4 text-sm text-[var(--navy)] outline-none transition placeholder:text-slate-400 focus:border-[#3869D0] focus:bg-white focus:ring-4 focus:ring-[#3869D0]/10 disabled:cursor-not-allowed disabled:opacity-60"
                             />
-
                         </div>
-
                     </div>
 
-                    {/* Submit */}
-
+                    {/* Submit Button */}
                     <button
                         type="submit"
                         disabled={loading}
-                        className="group flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#fbbf24] via-[#fcd34d] to-[#fde68a] px-4 py-3.5 text-sm font-extrabold text-[#0f1f4a] shadow-lg shadow-[#fbbf24]/30 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-[#fbbf24]/50 disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:translate-y-0"
+                        className="group flex w-full items-center justify-center gap-2 rounded-xl bg-[#3869D0] py-3.5 text-sm font-bold text-white shadow-lg shadow-[#3869D0]/20 transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#2e5bbd] hover:shadow-xl hover:shadow-[#3869D0]/30 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
                     >
-
                         {loading ? (
                             <>
-                                <Loader2
-                                    size={17}
-                                    className="animate-spin"
-                                />
-
+                                <Loader2 size={17} className="animate-spin" />
                                 Sending Code...
                             </>
                         ) : (
                             <>
                                 Send Verification Code
-
                                 <ArrowRight
                                     size={17}
-                                    className="transition-transform duration-300 group-hover:translate-x-1"
+                                    className="transition-transform duration-200 group-hover:translate-x-1"
                                 />
                             </>
                         )}
-
                     </button>
 
                 </form>
 
-                {/* Security Message */}
-
-                <div className="relative mt-7 flex items-center justify-center gap-2 text-center text-[11px] text-white/45">
-
-                    <Shield size={12} />
-
-                    <span>
-                        Your account information remains secure
-                    </span>
-
+                {/* Security Note */}
+                <div className="mt-6 flex items-center justify-center gap-1.5 text-center text-[11px] text-slate-400">
+                    <Shield size={13} className="text-slate-400" />
+                    <span>Your account information remains secure • Prince Defence Academy</span>
                 </div>
 
             </div>
