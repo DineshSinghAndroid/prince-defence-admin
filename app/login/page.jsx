@@ -1,20 +1,20 @@
 "use client";
 
 import { useContext, useEffect, useState } from "react";
+import Image from "next/image";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { login } from "@/services/authService";
 import { AuthContext } from "@/context/AuthContext";
 
 import {
-    Shield,
     User,
     Lock,
     Eye,
     EyeOff,
     ArrowRight,
     Loader2,
-    KeyRound,
 } from "lucide-react";
 
 export default function LoginPage() {
@@ -29,7 +29,6 @@ export default function LoginPage() {
     const [showPassword, setShowPassword] = useState(false);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -102,20 +101,13 @@ export default function LoginPage() {
 
             await checkAuth();
 
-            toast.success(
-                "Login successful. Redirecting..."
-            );
+            toast.success("Login successful. Redirecting...");
 
             router.replace("/admin/dashboard");
         } catch (error) {
-            console.error(
-                "Login Error:",
-                error
-            );
+            console.error("Login Error:", error);
 
-            toast.error(
-                getErrorMessage(error)
-            );
+            toast.error(getErrorMessage(error));
         } finally {
             setLoading(false);
         }
@@ -123,233 +115,264 @@ export default function LoginPage() {
 
     if (authLoading || user) {
         return (
-            <div className="flex min-h-screen items-center justify-center">
-                <p>Checking your session...</p>
+            <div className="flex min-h-screen items-center justify-center bg-[#F4F7FB]">
+                <div className="flex items-center gap-3">
+                    <Loader2 size={24} className="animate-spin text-[#3869D0]" />
+                    <p className="text-sm font-semibold text-slate-600">
+                        Checking your session...
+                    </p>
+                </div>
             </div>
         );
     }
 
     return (
-        <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-br from-[#0f1f4a] via-[#1a3577] to-[#3869D0] p-4">
+        <main className="flex min-h-screen items-center justify-center bg-[#F4F7FB] p-3.5 sm:p-6 lg:p-10">
 
-            {/* Background Effects */}
+            {/* Split Card Container */}
+            <div className="relative grid w-full max-w-md lg:max-w-5xl grid-cols-1 overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-[0_20px_60px_rgba(16,42,67,0.08)] lg:grid-cols-2">
 
-            <div className="pointer-events-none absolute -left-24 -top-24 h-96 w-96 rounded-full bg-[#94CCF9]/40 blur-3xl" />
+                {/* Left Column: Lottie Animation & Brand (Visible on Desktop only) */}
+                <div className="relative hidden flex-col justify-between overflow-hidden bg-gradient-to-br from-[#EAF2FD] via-[#F1F6FE] to-[#DFECFD] p-8 xl:p-10 lg:flex">
 
-            <div className="pointer-events-none absolute -bottom-32 -right-24 h-[28rem] w-[28rem] rounded-full bg-[#3869D0]/60 blur-3xl" />
-
-            <div className="pointer-events-none absolute right-1/4 top-1/4 h-64 w-64 rounded-full bg-[#7c3aed]/30 blur-3xl" />
-
-            <div className="pointer-events-none absolute bottom-1/4 left-1/4 h-56 w-56 rounded-full bg-[#fbbf24]/25 blur-3xl" />
-
-            {/* Login Card */}
-
-            <div className="relative w-full max-w-md overflow-hidden rounded-3xl border border-white/30 bg-white/15 p-6 shadow-[0_20px_60px_rgba(0,0,0,0.35)] backdrop-blur-2xl sm:p-10">
-
-                {/* Top Glow */}
-
-                <div className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-white/20 to-transparent" />
-
-                {/* Header */}
-
-                <div className="relative mb-8 text-center">
-
-                    <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-white/40 bg-gradient-to-br from-[#3869D0] via-[#5b8de0] to-[#94CCF9] text-white shadow-lg shadow-[#3869D0]/50">
-
-                        <Shield size={30} />
-
+                    {/* Subtle Organic Background Waves */}
+                    <div className="pointer-events-none absolute inset-0 opacity-40">
+                        <svg
+                            className="h-full w-full"
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 800 800"
+                            preserveAspectRatio="none"
+                        >
+                            <path
+                                d="M0,200 C150,150 350,250 500,200 C650,150 750,220 800,200 L800,800 L0,800 Z"
+                                fill="#D2E3FC"
+                                opacity="0.35"
+                            />
+                            <path
+                                d="M0,400 C200,320 300,480 500,420 C700,360 700,450 800,400 L800,800 L0,800 Z"
+                                fill="#C2DAFB"
+                                opacity="0.3"
+                            />
+                            <path
+                                d="M0,600 C180,550 350,650 550,590 C720,540 760,620 800,600 L800,800 L0,800 Z"
+                                fill="#B1D0FA"
+                                opacity="0.25"
+                            />
+                        </svg>
                     </div>
 
-                    <p className="mt-5 text-[10px] font-bold tracking-[0.25em] text-[#fde68a]">
-                        ADMIN PANEL
-                    </p>
+                    {/* Top: Brand Logo */}
+                    <div className="relative z-10 flex items-center gap-3">
+                        <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-full border border-slate-200/80 bg-white p-0.5 shadow-sm">
+                            <Image
+                                src="/logos/mainLogo.png"
+                                alt="Prince Defence Academy"
+                                fill
+                                sizes="44px"
+                                className="object-contain p-0.5"
+                            />
+                        </div>
+                        <div>
+                            <h2 className="montserrat text-sm font-extrabold tracking-tight text-[var(--navy)]">
+                                Prince Defence Academy
+                            </h2>
+                        </div>
+                    </div>
 
-                    <h1 className="montserrat mt-2 text-3xl font-extrabold text-white sm:text-4xl">
-                        Admin Login
-                    </h1>
+                    {/* Title */}
+                    <div className="relative z-10 mt-6 max-w-sm">
+                        <h1 className="montserrat text-2xl xl:text-3xl font-extrabold leading-snug text-[var(--navy)]">
+                            Manage Academy Portal <span className="text-[#3869D0]">&amp; Operations</span>
+                        </h1>
+                        <p className="mt-2 text-xs xl:text-sm text-slate-600 leading-relaxed">
+                            Access student records, quiz database, admissions and site controls in one unified platform.
+                        </p>
+                    </div>
 
-                    <p className="mt-2 text-sm text-white/60">
-                        Sign in to access your dashboard
-                    </p>
+                    {/* Center: Lottie Login Animation */}
+                    <div className="relative z-10 my-auto flex items-center justify-center py-4">
+                        <div className="relative aspect-square w-full max-w-[320px] xl:max-w-[360px]">
+                            <DotLottieReact
+                                src="https://lottie.host/c2752204-0cec-41df-a3ff-40e47ec9fc89/er8HN6i2ly.lottie"
+                                loop
+                                autoplay
+                                className="h-full w-full object-contain"
+                            />
+                        </div>
+                    </div>
+
+                    {/* Bottom simple line */}
+                    <div className="relative z-10">
+                        <p className="text-[11px] font-semibold text-slate-500">
+                            Authorized personnel only • Secure Gateway
+                        </p>
+                    </div>
                 </div>
 
-                {/* Form */}
+                {/* Right Column: Form Area (Mobile-Enhanced & Desktop-Refined) */}
+                <div className="flex flex-col justify-center bg-white p-5 sm:p-8 lg:p-12 xl:p-14">
 
-                <form
-                    onSubmit={handleSubmit}
-                    className="relative space-y-5"
-                >
+                    {/* MOBILE-ONLY HEADER: Enhanced Card with Brand & Lottie Animation */}
+                    <div className="mb-6 overflow-hidden rounded-2xl border border-blue-100/80 bg-gradient-to-b from-[#EAF2FD] via-[#F2F7FE] to-[#F8FAFD] p-5 text-center shadow-xs lg:hidden">
 
-                    {/* Email */}
-
-                    <div>
-
-                        <label
-                            htmlFor="email"
-                            className="mb-2 block text-sm font-semibold text-white/90"
-                        >
-                            Email
-                        </label>
-
-                        <div className="relative">
-
-                            <User
-                                size={18}
-                                className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-white/50"
-                            />
-
-                            <input
-                                id="email"
-                                name="email"
-                                type="email"
-                                placeholder="Enter your email"
-                                autoComplete="email"
-                                value={email}
-                                onChange={(e) =>
-                                    setEmail(
-                                        e.target.value
-                                    )
-                                }
-                                required
-                                disabled={loading}
-                                className="w-full rounded-xl border border-white/25 bg-white/10 py-3.5 pl-12 pr-4 text-sm text-white outline-none backdrop-blur-md transition-all placeholder:text-white/40 focus:border-[#94CCF9] focus:bg-white/20 focus:ring-4 focus:ring-[#94CCF9]/20 disabled:cursor-not-allowed disabled:opacity-60"
-                            />
-
+                        {/* Logo Badge */}
+                        <div className="inline-flex items-center gap-2 rounded-full border border-white/90 bg-white/95 px-3 py-1 shadow-xs">
+                            <div className="relative h-5 w-5 shrink-0 overflow-hidden rounded-full">
+                                <Image
+                                    src="/logos/mainLogo.png"
+                                    alt="Prince Defence Academy"
+                                    fill
+                                    sizes="20px"
+                                    className="object-contain"
+                                />
+                            </div>
+                            <span className="montserrat text-[11px] font-black tracking-wide text-[var(--navy)]">
+                                PRINCE DEFENCE ACADEMY
+                            </span>
                         </div>
 
+                        {/* Animated Lottie Character on Mobile */}
+                        <div className="mx-auto my-2.5 h-32 w-32 sm:h-36 sm:w-36">
+                            <DotLottieReact
+                                src="https://lottie.host/c2752204-0cec-41df-a3ff-40e47ec9fc89/er8HN6i2ly.lottie"
+                                loop
+                                autoplay
+                                className="h-full w-full object-contain"
+                            />
+                        </div>
+
+                        <h2 className="montserrat text-xl font-black text-[var(--navy)]">
+                            Admin Login
+                        </h2>
+                        <p className="mt-1 text-xs text-slate-500">
+                            Sign in to manage your academy portal
+                        </p>
                     </div>
 
-                    {/* Password */}
+                    {/* DESKTOP-ONLY HEADER */}
+                    <div className="hidden lg:block mb-8">
+                        <h2 className="montserrat text-2xl xl:text-3xl font-extrabold text-[var(--navy)]">
+                            Admin Login
+                        </h2>
+                        <p className="mt-2 text-sm text-slate-500">
+                            Enter your credentials to access the admin dashboard
+                        </p>
+                    </div>
 
-                    <div>
+                    {/* Form */}
+                    <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
 
-                        <label
-                            htmlFor="password"
-                            className="mb-2 block text-sm font-semibold text-white/90"
-                        >
-                            Password
-                        </label>
-
-                        <div className="relative">
-
-                            <Lock
-                                size={18}
-                                className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-white/50"
-                            />
-
-                            <input
-                                id="password"
-                                name="password"
-                                type={
-                                    showPassword
-                                        ? "text"
-                                        : "password"
-                                }
-                                placeholder="Enter your password"
-                                autoComplete="current-password"
-                                value={password}
-                                onChange={(e) =>
-                                    setPassword(
-                                        e.target.value
-                                    )
-                                }
-                                required
-                                disabled={loading}
-                                className="w-full rounded-xl border border-white/25 bg-white/10 py-3.5 pl-12 pr-12 text-sm text-white outline-none backdrop-blur-md transition-all placeholder:text-white/40 focus:border-[#94CCF9] focus:bg-white/20 focus:ring-4 focus:ring-[#94CCF9]/20 disabled:cursor-not-allowed disabled:opacity-60"
-                            />
-
-                            <button
-                                type="button"
-                                onClick={() =>
-                                    setShowPassword(
-                                        (current) =>
-                                            !current
-                                    )
-                                }
-                                disabled={loading}
-                                aria-label={
-                                    showPassword
-                                        ? "Hide password"
-                                        : "Show password"
-                                }
-                                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-white/60 transition-colors hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                        {/* Email */}
+                        <div>
+                            <label
+                                htmlFor="email"
+                                className="mb-1.5 block text-xs font-bold text-[var(--navy)]"
                             >
-                                {showPassword ? (
-                                    <EyeOff size={18} />
-                                ) : (
-                                    <Eye size={18} />
-                                )}
-                            </button>
+                                Email Address
+                            </label>
 
+                            <div className="relative">
+                                <User
+                                    size={18}
+                                    className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
+                                />
+
+                                <input
+                                    id="email"
+                                    name="email"
+                                    type="email"
+                                    placeholder="Enter your email"
+                                    autoComplete="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    required
+                                    disabled={loading}
+                                    className="w-full rounded-xl border border-slate-200 bg-slate-50/60 py-3 pl-11 pr-4 text-sm text-[var(--navy)] outline-none transition focus:border-[#3869D0] focus:bg-white focus:ring-4 focus:ring-[#3869D0]/10 disabled:cursor-not-allowed disabled:opacity-60"
+                                />
+                            </div>
                         </div>
 
-                    </div>
+                        {/* Password */}
+                        <div>
+                            <div className="mb-1.5 flex items-center justify-between">
+                                <label
+                                    htmlFor="password"
+                                    className="block text-xs font-bold text-[var(--navy)]"
+                                >
+                                    Password
+                                </label>
 
-                    {/* Forgot Password */}
 
-                    <div className="flex justify-end -mt-2">
+                            </div>
+
+                            <div className="relative">
+                                <Lock
+                                    size={18}
+                                    className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
+                                />
+
+                                <input
+                                    id="password"
+                                    name="password"
+                                    type={showPassword ? "text" : "password"}
+                                    placeholder="Enter your password"
+                                    autoComplete="current-password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    required
+                                    disabled={loading}
+                                    className="w-full rounded-xl border border-slate-200 bg-slate-50/60 py-3 pl-11 pr-11 text-sm text-[var(--navy)] outline-none transition focus:border-[#3869D0] focus:bg-white focus:ring-4 focus:ring-[#3869D0]/10 disabled:cursor-not-allowed disabled:opacity-60"
+                                />
+
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword((current) => !current)}
+                                    disabled={loading}
+                                    aria-label={showPassword ? "Hide password" : "Show password"}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600 disabled:cursor-not-allowed disabled:opacity-50"
+                                >
+                                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                </button>
+                            </div>
+                        </div>
 
                         <button
                             type="button"
-                            onClick={() =>
-                                router.push(
-                                    "/admin/forgot-password"
-                                )
-                            }
+                            onClick={() => router.push("/admin/forgot-password")}
                             disabled={loading}
-                            className="group inline-flex items-center gap-1.5 text-sm font-semibold text-[#fde68a] transition-all hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                            className="text-xs font-semibold text-[#3869D0] transition hover:text-[#2852aa] hover:underline disabled:cursor-not-allowed disabled:opacity-50"
                         >
-                            <KeyRound
-                                size={15}
-                                className="transition-transform duration-300 group-hover:rotate-12"
-                            />
-
                             Forgot Password?
                         </button>
 
+                        {/* Login Button */}
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className="group mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-[#3869D0] py-3.5 text-sm font-bold text-white shadow-lg shadow-[#3869D0]/20 transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#2e5bbd] hover:shadow-xl hover:shadow-[#3869D0]/30 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
+                        >
+                            {loading ? (
+                                <>
+                                    <Loader2 size={17} className="animate-spin" />
+                                    Signing in...
+                                </>
+                            ) : (
+                                <>
+                                    Login
+                                    <ArrowRight
+                                        size={17}
+                                        className="transition-transform duration-200 group-hover:translate-x-1"
+                                    />
+                                </>
+                            )}
+                        </button>
+
+                    </form>
+
+                    {/* Bottom note */}
+                    <div className="mt-6 text-center text-xs text-slate-400 sm:mt-8">
+                        Prince Defence Academy • Palwas Road, Sikar
                     </div>
-
-                    {/* Login Button */}
-
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className="group flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#fbbf24] via-[#fcd34d] to-[#fde68a] px-4 py-3.5 text-sm font-extrabold text-[#0f1f4a] shadow-lg shadow-[#fbbf24]/30 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-[#fbbf24]/50 disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:translate-y-0"
-                    >
-
-                        {loading ? (
-                            <>
-                                <Loader2
-                                    size={17}
-                                    className="animate-spin"
-                                />
-
-                                Logging in...
-                            </>
-                        ) : (
-                            <>
-                                Login
-
-                                <ArrowRight
-                                    size={17}
-                                    className="transition-transform duration-300 group-hover:translate-x-1"
-                                />
-                            </>
-                        )}
-
-                    </button>
-
-                </form>
-
-                {/* Security Text */}
-
-                <div className="relative mt-7 flex items-center justify-center gap-2 text-center text-[11px] text-white/45">
-
-                    <Lock size={12} />
-
-                    <span>
-                        Secure admin access
-                    </span>
 
                 </div>
 
