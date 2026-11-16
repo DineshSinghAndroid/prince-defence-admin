@@ -1169,7 +1169,10 @@ export default function ContactsPage() {
                             )}
                         </div>
 
-                        <div ref={courseDropdownRef} className="relative">
+                        <div
+                            ref={courseDropdownRef}
+                            className={`relative ${isCourseOpen ? "z-50" : "z-10"}`}
+                        >
                             <BookOpen
                                 size={17}
                                 className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[var(--muted)]"
@@ -1225,7 +1228,7 @@ export default function ContactsPage() {
 
                             {/* Custom Dropdown Menu matching Academy Theme */}
                             {isCourseOpen && (
-                                <div className="absolute left-0 right-0 top-full z-50 mt-1.5 overflow-hidden rounded-xl border border-[#C8D5EA] bg-white p-1.5 shadow-[0_14px_36px_rgba(16,42,67,0.16)]">
+                                <div className="absolute left-0 right-0 top-full z-[100] mt-1.5 overflow-hidden rounded-xl border border-[#C8D5EA] bg-white p-1.5 shadow-[0_18px_45px_rgba(16,42,67,0.22)]">
                                     <div className="flex items-center justify-between border-b border-[#F0F4FA] px-3 py-1.5">
                                         <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--muted)]">
                                             Select Course
@@ -1245,7 +1248,7 @@ export default function ContactsPage() {
                                         )}
                                     </div>
 
-                                    <div className="max-h-60 overflow-y-auto py-1">
+                                    <div className="max-h-72 overflow-y-auto py-1">
                                         {commonCourses.filter((c) =>
                                             c
                                                 .toLowerCase()
@@ -1280,25 +1283,16 @@ export default function ContactsPage() {
                                                                     false
                                                                 );
                                                             }}
-                                                            className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition ${
+                                                            className={`flex w-full items-center justify-between rounded-lg px-3.5 py-2.5 text-left text-sm transition ${
                                                                 isSelected
                                                                     ? "bg-[#3869D0]/10 font-bold text-[#3869D0]"
-                                                                    : "font-medium text-[var(--navy)] hover:bg-[#F2F6FF] hover:text-[#3869D0]"
+                                                                    : "font-semibold text-[var(--navy)] hover:bg-[#F2F6FF] hover:text-[#3869D0]"
                                                             }`}
                                                         >
-                                                            <span className="flex items-center gap-2.5">
-                                                                <span
-                                                                    className={`h-2 w-2 rounded-full transition-colors ${
-                                                                        isSelected
-                                                                            ? "bg-[#3869D0]"
-                                                                            : "bg-[#D8E1EE]"
-                                                                    }`}
-                                                                />
-                                                                <span>{c}</span>
-                                                            </span>
+                                                            <span>{c}</span>
                                                             {isSelected && (
                                                                 <Check
-                                                                    size={15}
+                                                                    size={16}
                                                                     className="text-[#3869D0]"
                                                                 />
                                                             )}
