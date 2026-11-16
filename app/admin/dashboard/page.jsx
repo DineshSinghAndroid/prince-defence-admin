@@ -114,10 +114,10 @@ export default function DashboardPage() {
             <div className="relative mx-auto max-w-7xl">
                 <header className="relative overflow-hidden rounded-3xl border border-white/70 bg-[var(--navy)] px-6 py-8 text-white shadow-[0_18px_50px_rgba(16,42,67,0.16)] sm:px-10">
                     <div className="pointer-events-none absolute -right-10 -top-10 h-56 w-56 rounded-full bg-[#3869D0]/20 blur-3xl" />
+                    <div className="pointer-events-none absolute -bottom-16 left-1/3 h-48 w-48 rounded-full bg-[var(--gold)]/10 blur-3xl" />
                     <div className="relative flex flex-wrap items-end justify-between gap-4">
                         <div>
-                            <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[10px] font-bold tracking-[0.2em]"><Sparkles size={12} />ADMIN PANEL</span>
-                            <h1 className="montserrat mt-4 text-3xl font-extrabold italic sm:text-5xl">Dashboard</h1>
+                            <h1 className="montserrat text-3xl font-extrabold leading-tight text-white sm:text-4xl">Dashboard</h1>
                             <p className="mt-2 text-sm text-white/70">A quick view of academy pages, traffic, and quiz totals.</p>
                         </div>
                         <button type="button" onClick={refreshData} disabled={loading} aria-label="Refresh dashboard" className="inline-flex h-11 items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-4 text-sm font-semibold hover:bg-white/20 disabled:opacity-50">

@@ -717,19 +717,13 @@ export default function QuizQuestionsPage() {
             <div className="relative mx-auto max-w-7xl">
                 {/* Header */}
 
-                <div className="relative mb-6 overflow-hidden rounded-3xl border border-white/70 bg-[var(--navy)] px-6 py-8 text-white shadow-[0_18px_50px_rgba(16,42,67,0.16)] backdrop-blur-xl md:px-10 md:py-10">
-                    <div className="pointer-events-none absolute -right-16 -top-24 h-64 w-64 rounded-full bg-[#3869D0]/15 blur-3xl" />
-
-                    <div className="pointer-events-none absolute -bottom-24 left-1/3 h-56 w-56 rounded-full bg-[var(--gold)]/10 blur-3xl" />
+                <div className="relative mb-6 overflow-hidden rounded-3xl border border-white/70 bg-[var(--navy)] px-6 py-8 text-white shadow-[0_18px_50px_rgba(16,42,67,0.16)] backdrop-blur-xl sm:px-10">
+                    <div className="pointer-events-none absolute -right-10 -top-10 h-56 w-56 rounded-full bg-sky-500/15 blur-3xl" />
+                    <div className="pointer-events-none absolute -bottom-16 left-1/3 h-48 w-48 rounded-full bg-[#3869D0]/20 blur-3xl" />
 
                     <div className="relative flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
                         <div>
-                            <span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[10px] font-bold tracking-[0.2em] text-white/90 backdrop-blur-md">
-                                <Sparkles size={12} />
-                                QUIZ
-                            </span>
-
-                            <h1 className="montserrat mt-4 text-3xl font-extrabold italic leading-tight md:text-4xl">
+                            <h1 className="montserrat text-3xl font-extrabold leading-tight text-white sm:text-4xl">
                                 Quiz Questions
                             </h1>
 

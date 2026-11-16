@@ -45,43 +45,47 @@ export default function AchieverForm({
     useEffect(() => {
         if (!open) return;
 
-        if (achiever) {
-            setForm({
-                name: achiever.name || "",
-                fatherName: achiever.fatherName || "",
-                gender: achiever.gender || "male",
-                address: achiever.address || "",
-                categorySlug: achiever.categoryId?.slug || selectedCategory,
-                examName: achiever.examName || "",
-                year: achiever.year || new Date().getFullYear(),
-                batch:
-                    achiever.batch === null || (achiever.batch && achiever.batch.toLowerCase() === "null")
-                        ? "null"
-                        : achiever.batch
-                          ? achiever.batch.toLowerCase()
-                          : "target",
-                isPublished: Boolean(achiever.isPublished),
-                displayOrder: achiever.displayOrder ?? 0,
-            });
+        const timer = window.setTimeout(() => {
+            if (achiever) {
+                setForm({
+                    name: achiever.name || "",
+                    fatherName: achiever.fatherName || "",
+                    gender: achiever.gender || "male",
+                    address: achiever.address || "",
+                    categorySlug: achiever.categoryId?.slug || selectedCategory,
+                    examName: achiever.examName || "",
+                    year: achiever.year || new Date().getFullYear(),
+                    batch:
+                        achiever.batch === null || (achiever.batch && achiever.batch.toLowerCase() === "null")
+                            ? "null"
+                            : achiever.batch
+                              ? achiever.batch.toLowerCase()
+                              : "target",
+                    isPublished: Boolean(achiever.isPublished),
+                    displayOrder: achiever.displayOrder ?? 0,
+                });
 
-            setPhotoPreview(achiever.photo?.url || "");
-        } else {
-            setForm({
-                ...initialForm,
-                categorySlug: selectedCategory,
-                year: new Date().getFullYear(),
-            });
+                setPhotoPreview(achiever.photo?.url || "");
+            } else {
+                setForm({
+                    ...initialForm,
+                    categorySlug: selectedCategory,
+                    year: new Date().getFullYear(),
+                });
 
-            setPhotoPreview("");
-        }
+                setPhotoPreview("");
+            }
 
-        setPhoto(null);
-        setPreviewError(false);
-        setFormError("");
+            setPhoto(null);
+            setPreviewError(false);
+            setFormError("");
 
-        if (fileInputRef.current) {
-            fileInputRef.current.value = "";
-        }
+            if (fileInputRef.current) {
+                fileInputRef.current.value = "";
+            }
+        }, 0);
+
+        return () => window.clearTimeout(timer);
     }, [open, achiever, selectedCategory]);
 
     useEffect(() => {

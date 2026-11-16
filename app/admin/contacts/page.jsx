@@ -19,12 +19,16 @@ import {
     CalendarDays,
     Filter,
     Users,
+    FileSpreadsheet,
+    Copy,
+    Check,
 } from "lucide-react";
 
 import {
     getContacts,
     updateContactStatus,
     deleteContact,
+    exportContacts,
 } from "@/services/contactService";
 
 import DeleteConfirmModal from "@/component/common/DeleteConfirmModal";
@@ -34,7 +38,7 @@ const statusStyles = {
 
     open: "border-[#b89242]/30 bg-[#b89242]/10 text-[#8A6820]",
 
-    closed: "border-[#3D7A57]/30 bg-[#3D7A57]/10 text-[#2F6546]",
+    closed: "border-emerald-500/30 bg-emerald-50 text-emerald-700 font-semibold",
 };
 
 const statusOptions = [
@@ -54,6 +58,15 @@ const statusOptions = [
         label: "Closed",
         value: "closed",
     },
+];
+
+const commonCourses = [
+    "NDA",
+    "AIRFORCE",
+    "Army",
+    "Navy",
+    "SSC",
+    "Other",
 ];
 
 const glass =
@@ -185,6 +198,50 @@ export default function ContactsPage() {
     const [course, setCourse] =
         useState("");
 
+    const formatLocalDate = (d) => {
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, "0");
+        const day = String(d.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+    };
+
+    const getCurrentMonthStart = () => {
+        const d = new Date();
+        return formatLocalDate(new Date(d.getFullYear(), d.getMonth(), 1));
+    };
+
+    const getCurrentMonthEnd = () => {
+        const d = new Date();
+        return formatLocalDate(new Date(d.getFullYear(), d.getMonth() + 1, 0));
+    };
+
+    const getLastMonthStart = () => {
+        const d = new Date();
+        return formatLocalDate(new Date(d.getFullYear(), d.getMonth() - 1, 1));
+    };
+
+    const getLastMonthEnd = () => {
+        const d = new Date();
+        return formatLocalDate(new Date(d.getFullYear(), d.getMonth(), 0));
+    };
+
+    const getTodayDateStr = () => {
+        return formatLocalDate(new Date());
+    };
+
+    const getLast30DaysStart = () => {
+        const d = new Date();
+        d.setDate(d.getDate() - 29);
+        return formatLocalDate(d);
+    };
+
+    // Defaults automatically to CURRENT MONTH on load
+    const [startDate, setStartDate] =
+        useState(getCurrentMonthStart);
+
+    const [endDate, setEndDate] =
+        useState(getCurrentMonthEnd);
+
     const [updatingId, setUpdatingId] =
         useState(null);
 
@@ -194,6 +251,49 @@ export default function ContactsPage() {
     const [deleteTarget, setDeleteTarget] =
         useState(null);
 
+    const [exporting, setExporting] =
+        useState(false);
+
+    const [copiedNumber, setCopiedNumber] =
+        useState(null);
+
+    const isCurrentMonthActive =
+        startDate === getCurrentMonthStart() && endDate === getCurrentMonthEnd();
+
+    const isLastMonthActive =
+        startDate === getLastMonthStart() && endDate === getLastMonthEnd();
+
+    const isTodayActive =
+        startDate === getTodayDateStr() && endDate === getTodayDateStr();
+
+    const isLast30DaysActive =
+        startDate === getLast30DaysStart() && endDate === getTodayDateStr();
+
+    const isAllTimeActive =
+        !startDate && !endDate;
+
+    const handleCopyNumber = (num, e) => {
+        e?.stopPropagation?.();
+        if (!num) return;
+        const clean = String(num).trim();
+        if (typeof navigator !== "undefined" && navigator.clipboard) {
+            navigator.clipboard.writeText(clean);
+        }
+        setCopiedNumber(clean);
+        toast.success(`Copied: ${clean}`);
+        setTimeout(() => setCopiedNumber(null), 2000);
+    };
+
+    const handleDirectCall = (num, e) => {
+        e?.stopPropagation?.();
+        if (!num) return;
+        const clean = String(num).trim().replace(/[^\d+]/g, "");
+        if (!clean) return;
+        if (typeof window !== "undefined") {
+            window.location.href = `tel:${clean}`;
+        }
+    };
+
     const showToast = (
         message,
         type = "success"
@@ -202,6 +302,179 @@ export default function ContactsPage() {
             toast.error(message);
         } else {
             toast.success(message);
+        }
+    };
+
+    // Exports EXACTLY whatever filter is currently active on screen
+    const handleExportExcel = async () => {
+        if (exporting) return;
+
+        try {
+            setExporting(true);
+            const toastId = toast.loading("Preparing Excel sheet from active filters...");
+
+            let allContacts = [];
+
+            try {
+                const response = await exportContacts({
+                    search: searchQuery,
+                    course,
+                    status,
+                    startDate,
+                    endDate,
+                });
+                const payload = getApiPayload(response);
+                allContacts = Array.isArray(payload?.data)
+                    ? payload.data
+                    : Array.isArray(payload)
+                        ? payload
+                        : [];
+            } catch (apiErr) {
+                console.warn("Export API fallback:", apiErr);
+                const firstPageRes = await getContacts({
+                    page: 1,
+                    limit: 100,
+                    search: searchQuery,
+                    course,
+                    status,
+                    startDate,
+                    endDate,
+                });
+                const firstPayload = getApiPayload(firstPageRes);
+                allContacts = Array.isArray(firstPayload?.data)
+                    ? [...firstPayload.data]
+                    : [];
+                const totalPagesCount = Number(
+                    firstPayload?.pagination?.totalPages ||
+                    firstPayload?.pagination?.totalpages ||
+                    1
+                );
+
+                for (let p = 2; p <= totalPagesCount; p++) {
+                    const nextRes = await getContacts({
+                        page: p,
+                        limit: 100,
+                        search: searchQuery,
+                        course,
+                        status,
+                        startDate,
+                        endDate,
+                    });
+                    const nextPayload = getApiPayload(nextRes);
+                    if (Array.isArray(nextPayload?.data)) {
+                        allContacts.push(...nextPayload.data);
+                    }
+                }
+            }
+
+            if (!allContacts || allContacts.length === 0) {
+                toast.error("No enquiries found for current filters to export.", { id: toastId });
+                return;
+            }
+
+            const headers = [
+                "S.No.",
+                "Candidate Name",
+                "Mobile Number",
+                "Target Course",
+                "Status",
+                "Message / Enquiry",
+                "Submitted Date",
+                "Submitted Time",
+            ];
+
+            const escapeCSV = (val, isPhone = false) => {
+                if (val === null || val === undefined) return '""';
+                let s = String(val);
+                if (!isPhone && /^[=+\-@\t\r]/.test(s)) {
+                    s = "'" + s;
+                }
+                s = s.replace(/"/g, '""');
+                return `"${s}"`;
+            };
+
+            const csvRows = allContacts.map((item, idx) => {
+                const dateObj = item.createdAt ? new Date(item.createdAt) : null;
+                const formattedDate = dateObj
+                    ? dateObj.toLocaleDateString("en-IN", {
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                      })
+                    : "—";
+                const formattedTime = dateObj
+                    ? dateObj.toLocaleTimeString("en-IN", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                      })
+                    : "—";
+
+                const rawNumber = item.number ? String(item.number).trim() : "—";
+
+                return [
+                    idx + 1,
+                    escapeCSV(item.name || "—"),
+                    escapeCSV(rawNumber, true),
+                    escapeCSV(item.course || "—"),
+                    escapeCSV((item.status || "new").toUpperCase()),
+                    escapeCSV(item.message || "—"),
+                    escapeCSV(formattedDate),
+                    escapeCSV(formattedTime),
+                ].join(",");
+            });
+
+            const csvData = "\uFEFF" + [headers.join(","), ...csvRows].join("\r\n");
+            const blob = new Blob([csvData], {
+                type: "text/csv;charset=utf-8;",
+            });
+            const blobUrl = URL.createObjectURL(blob);
+            const downloadAnchor = document.createElement("a");
+
+            // Build dynamic filename based on active filters
+            const parts = ["Prince_Defence_Enquiries"];
+            if (status) parts.push(status.toUpperCase());
+            if (course) parts.push(course.trim().replace(/\s+/g, "_"));
+            if (startDate && endDate) {
+                if (isCurrentMonthActive) {
+                    const now = new Date();
+                    const monthName = now.toLocaleString("en-IN", { month: "short" });
+                    parts.push(`${monthName}_${now.getFullYear()}`);
+                } else {
+                    parts.push(`${startDate}_to_${endDate}`);
+                }
+            } else if (startDate) {
+                parts.push(`from_${startDate}`);
+            } else if (endDate) {
+                parts.push(`to_${endDate}`);
+            } else {
+                parts.push("All_Time");
+            }
+
+            downloadAnchor.href = blobUrl;
+            downloadAnchor.setAttribute(
+                "download",
+                `${parts.join("_")}.csv`
+            );
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            document.body.removeChild(downloadAnchor);
+            URL.revokeObjectURL(blobUrl);
+
+            const filterDesc = [
+                status ? status.toUpperCase() : null,
+                course ? course : null,
+                isCurrentMonthActive ? "This Month" : startDate && endDate ? `${startDate} to ${endDate}` : "All Time"
+            ].filter(Boolean).join(" • ");
+
+            toast.success(
+                `Successfully exported ${allContacts.length} enquiries! (${filterDesc})`,
+                { id: toastId }
+            );
+        } catch (err) {
+            console.error("Export failed:", err);
+            toast.error(err?.message || "Failed to download Excel sheet.");
+        } finally {
+            setExporting(false);
         }
     };
 
@@ -228,6 +501,8 @@ export default function ContactsPage() {
                     search: searchQuery,
                     course,
                     status,
+                    startDate,
+                    endDate,
                 });
 
             const payload =
@@ -249,28 +524,28 @@ export default function ContactsPage() {
             const responseLimit =
                 Number(
                     apiPagination.limit ||
-                        limit
+                    limit
                 );
 
             const responsePage =
                 Number(
                     apiPagination.page ||
-                        page
+                    page
                 );
 
             const receivedTotalPages =
                 Number(
                     apiPagination.totalpages ??
-                        apiPagination.totalPages ??
-                        0
+                    apiPagination.totalPages ??
+                    0
                 );
 
             const calculatedTotalPages =
                 total > 0
                     ? Math.ceil(
-                          total /
-                              responseLimit
-                      )
+                        total /
+                        responseLimit
+                    )
                     : 1;
 
             const totalPages =
@@ -308,7 +583,7 @@ export default function ContactsPage() {
         } finally {
             setLoading(false);
         }
-    }, [page, limit, searchQuery, course, status]);
+    }, [page, limit, searchQuery, course, status, startDate, endDate]);
 
     useEffect(() => {
         const timer = window.setTimeout(() => {
@@ -344,10 +619,10 @@ export default function ContactsPage() {
                         (contact) =>
                             contact._id === id
                                 ? updatedContact ||
-                                  {
-                                      ...contact,
-                                      status: newStatus,
-                                  }
+                                {
+                                    ...contact,
+                                    status: newStatus,
+                                }
                                 : contact
                     )
             );
@@ -493,6 +768,8 @@ export default function ContactsPage() {
         setSearchQuery("");
         setCourse("");
         setStatus("");
+        setStartDate(getCurrentMonthStart());
+        setEndDate(getCurrentMonthEnd());
         setPage(1);
     };
 
@@ -559,9 +836,9 @@ export default function ContactsPage() {
         totalContacts === 0
             ? 0
             : Math.min(
-                  page * limit,
-                  totalContacts
-              );
+                page * limit,
+                totalContacts
+            );
 
     const goToPreviousPage = () => {
         if (page > 1) {
@@ -594,145 +871,176 @@ export default function ContactsPage() {
 
                 {/* Header */}
 
-                <div className="relative mb-6 overflow-hidden rounded-3xl border border-white/70 bg-[var(--navy)] px-6 py-8 text-white shadow-[0_18px_50px_rgba(16,42,67,0.16)] backdrop-blur-xl sm:px-10 sm:py-9">
+                <div className="relative mb-6 overflow-hidden rounded-3xl border border-white/70 bg-[var(--navy)] px-6 py-8 text-white shadow-[0_18px_50px_rgba(16,42,67,0.16)] backdrop-blur-xl sm:px-10">
 
-                    <div className="pointer-events-none absolute -right-16 -top-24 h-64 w-64 rounded-full bg-[#3869D0]/15 blur-3xl" />
+                    <div className="pointer-events-none absolute -right-10 -top-10 h-56 w-56 rounded-full bg-[#3869D0]/20 blur-3xl" />
 
-                    <div className="pointer-events-none absolute -bottom-24 left-1/3 h-56 w-56 rounded-full bg-[var(--gold)]/10 blur-3xl" />
+                    <div className="pointer-events-none absolute -bottom-16 left-1/3 h-48 w-48 rounded-full bg-[var(--gold)]/10 blur-3xl" />
 
-                    <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="relative flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
 
-                        <div className="flex items-start gap-4">
+                        <div>
 
-                            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-white/20 bg-white/10 text-[var(--gold)] shadow-lg backdrop-blur-md">
-                                <Inbox size={27} />
-                            </div>
+                            <h1 className="montserrat text-3xl font-extrabold leading-tight text-white sm:text-4xl">
+                                Enquiries
+                            </h1>
 
-                            <div>
-
-                                <span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[10px] font-bold tracking-[0.2em] text-white/90 backdrop-blur-md sm:text-xs">
-                                    CONTACT MANAGEMENT
-                                </span>
-
-                                <h1 className="mt-3 text-3xl font-extrabold leading-tight sm:text-4xl">
-                                    Enquiries
-                                </h1>
-
-                                <p className="mt-2 max-w-2xl text-sm leading-6 text-white/70">
-                                    Manage student enquiries, contact details, courses and enquiry status from one place.
-                                </p>
-
-                            </div>
+                            <p className="mt-2 max-w-2xl text-sm leading-6 text-white/70">
+                                Manage student enquiries, contact details, courses and enquiry status from one place.
+                            </p>
 
                         </div>
 
-                        <button
-                            onClick={
-                                fetchContacts
-                            }
-                            disabled={loading}
-                            className="inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 px-5 text-sm font-semibold text-white shadow-sm backdrop-blur-md transition hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-60"
-                        >
-                            <RefreshCw
-                                size={17}
-                                className={
-                                    loading
-                                        ? "animate-spin"
-                                        : ""
-                                }
-                            />
+                        <div className="flex flex-wrap items-center gap-3">
+                            <button
+                                onClick={handleExportExcel}
+                                disabled={exporting || loading}
+                                className="group relative inline-flex h-12 shrink-0 items-center justify-center gap-2.5 overflow-hidden rounded-2xl bg-gradient-to-r from-[#1f4ba8] via-[#244A9A] to-[#3869D0] px-5 text-sm font-bold text-white shadow-[0_8px_25px_rgba(36,74,154,0.35)] ring-1 ring-white/25 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_32px_rgba(36,74,154,0.50)] hover:ring-white/40 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60"
+                                title="Download enquiries matching active filter"
+                            >
+                                <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 ease-in-out group-hover:translate-x-full" />
+                                {exporting ? (
+                                    <Loader2 size={18} className="animate-spin text-white" />
+                                ) : (
+                                    <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-white/20 shadow-inner">
+                                        <FileSpreadsheet size={16} className="text-white" />
+                                    </span>
+                                )}
+                                <span className="font-bold tracking-wide">
+                                    {exporting ? "Preparing Excel..." : "Download Excel"}
+                                </span>
+                                <span className="hidden rounded-full bg-black/25 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white/90 sm:inline-block">
+                                    {status ? status : isCurrentMonthActive ? "This Month" : "Filtered"}
+                                </span>
+                            </button>
 
-                            Refresh
-                        </button>
+                            <button
+                                onClick={fetchContacts}
+                                disabled={loading}
+                                className="inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-5 text-sm font-semibold text-white shadow-sm backdrop-blur-md transition hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-60"
+                            >
+                                <RefreshCw
+                                    size={17}
+                                    className={loading ? "animate-spin" : ""}
+                                />
+                                Refresh
+                            </button>
+                        </div>
 
                     </div>
 
                 </div>
 
-                {/* Stats */}
+                {/* Stats Cards - Interactive CRM Filter Cards */}
 
-                <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+                <div className="mb-6 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
 
                     <div
-                        className={`${glass} group p-5 transition-all duration-300 hover:-translate-y-1.5 hover:bg-white/90`}
+                        onClick={() => { setStatus(""); setPage(1); }}
+                        className={`cursor-pointer rounded-2xl border p-4 sm:p-5 transition-all duration-200 hover:-translate-y-1 ${
+                            status === ""
+                                ? "border-[#3869D0] bg-white shadow-md shadow-[#3869D0]/10 ring-2 ring-[#3869D0]/20"
+                                : `${glass} hover:bg-white`
+                        }`}
+                        title="Click to view all statuses"
                     >
-
                         <div className="flex items-center justify-between">
-
-                            <div>
-
-                                <p className="text-xs font-semibold uppercase tracking-wider text-[var(--muted)]">
-                                    Total Enquiries
-                                </p>
-
-                                <p className="mt-2 text-3xl font-extrabold text-[var(--navy)]">
-                                    {totalContacts}
-                                </p>
-
+                            <span className="text-xs font-bold uppercase tracking-wider text-[var(--muted)]">
+                                Total Enquiries
+                            </span>
+                            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#3869D0]/10 text-[#3869D0]">
+                                <Users size={18} />
                             </div>
-
-                            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#3869D0]/10 text-[#3869D0] shadow-sm">
-                                <Users size={21} />
-                            </div>
-
                         </div>
 
+                        <p className="mt-3 text-2xl font-extrabold text-[var(--navy)] sm:text-3xl">
+                            {totalContacts}
+                        </p>
+
+                        <p className="mt-1 text-[11px] font-medium text-[var(--muted)]">
+                            {isCurrentMonthActive ? "This Month" : startDate && endDate ? `${startDate} to ${endDate}` : "All Time"}
+                        </p>
                     </div>
 
                     <div
-                        className={`${glass} group p-5 transition-all duration-300 hover:-translate-y-1.5 hover:bg-white/90`}
+                        onClick={() => { setStatus("new"); setPage(1); }}
+                        className={`cursor-pointer rounded-2xl border p-4 sm:p-5 transition-all duration-200 hover:-translate-y-1 ${
+                            status === "new"
+                                ? "border-[#3869D0] bg-blue-50/70 shadow-md shadow-[#3869D0]/15 ring-2 ring-[#3869D0]/20"
+                                : `${glass} hover:bg-white`
+                        }`}
+                        title="Click to filter New enquiries"
                     >
-
                         <div className="flex items-center justify-between">
-
-                            <div>
-
-                                <p className="text-xs font-semibold uppercase tracking-wider text-[var(--muted)]">
-                                    Showing
-                                </p>
-
-                                <p className="mt-2 text-3xl font-extrabold text-[var(--navy)]">
-                                    {currentCount}
-                                </p>
-
+                            <span className="text-xs font-bold uppercase tracking-wider text-[#3869D0]">
+                                New Leads
+                            </span>
+                            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#3869D0]/15 text-[#3869D0]">
+                                <Inbox size={18} />
                             </div>
-
-                            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--gold)]/10 text-[#8A6820] shadow-sm">
-                                <Inbox size={21} />
-                            </div>
-
                         </div>
 
+                        <p className="mt-3 text-2xl font-extrabold text-[#1f4ba8] sm:text-3xl">
+                            {status === "new" ? totalContacts : "New"}
+                        </p>
+
+                        <p className="mt-1 text-[11px] font-semibold text-[#3869D0]">
+                            {status === "new" ? "● Currently Filtered" : "Filter New Enquiries"}
+                        </p>
                     </div>
 
                     <div
-                        className={`${glass} group p-5 transition-all duration-300 hover:-translate-y-1.5 hover:bg-white/90`}
+                        onClick={() => { setStatus("open"); setPage(1); }}
+                        className={`cursor-pointer rounded-2xl border p-4 sm:p-5 transition-all duration-200 hover:-translate-y-1 ${
+                            status === "open"
+                                ? "border-amber-500 bg-amber-50/70 shadow-md shadow-amber-500/15 ring-2 ring-amber-500/20"
+                                : `${glass} hover:bg-white`
+                        }`}
+                        title="Click to filter In Progress (Open) enquiries"
                     >
-
                         <div className="flex items-center justify-between">
-
-                            <div>
-
-                                <p className="text-xs font-semibold uppercase tracking-wider text-[var(--muted)]">
-                                    Current Page
-                                </p>
-
-                                <p className="mt-2 text-3xl font-extrabold text-[var(--navy)]">
-                                    {page}
-
-                                    <span className="ml-1 text-base font-medium text-[var(--muted)]">
-                                        / {totalPages}
-                                    </span>
-                                </p>
-
+                            <span className="text-xs font-bold uppercase tracking-wider text-[#8A6820]">
+                                In Progress (Open)
+                            </span>
+                            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-100 text-[#8A6820]">
+                                <CalendarDays size={18} />
                             </div>
-
-                            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#E7EEFA] text-[#3869D0] shadow-sm">
-                                <CalendarDays size={21} />
-                            </div>
-
                         </div>
 
+                        <p className="mt-3 text-2xl font-extrabold text-[#8A6820] sm:text-3xl">
+                            {status === "open" ? totalContacts : "Open"}
+                        </p>
+
+                        <p className="mt-1 text-[11px] font-semibold text-[#8A6820]">
+                            {status === "open" ? "● Currently Filtered" : "Filter Open Enquiries"}
+                        </p>
+                    </div>
+
+                    <div
+                        onClick={() => { setStatus("closed"); setPage(1); }}
+                        className={`cursor-pointer rounded-2xl border p-4 sm:p-5 transition-all duration-200 hover:-translate-y-1 ${
+                            status === "closed"
+                                ? "border-emerald-600 bg-emerald-50/80 shadow-md shadow-emerald-600/15 ring-2 ring-emerald-600/20"
+                                : `${glass} hover:bg-white`
+                        }`}
+                        title="Click to filter Closed (Resolved) enquiries"
+                    >
+                        <div className="flex items-center justify-between">
+                            <span className="text-xs font-bold uppercase tracking-wider text-emerald-700">
+                                Closed (Resolved)
+                            </span>
+                            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700">
+                                <Check size={18} />
+                            </div>
+                        </div>
+
+                        <p className="mt-3 text-2xl font-extrabold text-emerald-700 sm:text-3xl">
+                            {status === "closed" ? totalContacts : "Closed"}
+                        </p>
+
+                        <p className="mt-1 text-[11px] font-semibold text-emerald-700">
+                            {status === "closed" ? "● Currently Filtered" : "Filter Closed Enquiries"}
+                        </p>
                     </div>
 
                 </div>
@@ -777,34 +1085,41 @@ export default function ContactsPage() {
 
                 {/* Filters */}
 
-                <div
-                    className={`${glass} mb-6 p-5 sm:p-6`}
-                >
+                <div className={`${glass} mb-6 p-5 sm:p-6`}>
 
-                    <div className="mb-5 flex items-center gap-3">
+                    <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
 
-                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--navy)] text-[var(--gold)] shadow-md">
-                            <Filter size={18} />
+                        <div className="flex items-center gap-3">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--navy)] text-[var(--gold)] shadow-md">
+                                <Filter size={18} />
+                            </div>
+
+                            <div>
+                                <h2 className="text-sm font-bold text-[var(--navy)]">
+                                    Filters & Date Range
+                                </h2>
+                                <p className="mt-0.5 text-xs text-[var(--muted)]">
+                                    Filter enquiries by status, course, search, and custom date or month
+                                </p>
+                            </div>
                         </div>
 
-                        <div>
-
-                            <h2 className="text-sm font-bold text-[var(--navy)]">
-                                Filters
-                            </h2>
-
-                            <p className="mt-0.5 text-xs text-[var(--muted)]">
-                                Find enquiries quickly
-                            </p>
-
-                        </div>
+                        {(search || course || status || !isCurrentMonthActive) && (
+                            <button
+                                onClick={clearFilters}
+                                className="inline-flex h-9 items-center justify-center gap-1.5 rounded-xl border border-red-200 bg-red-50/80 px-3.5 text-xs font-semibold text-red-600 transition hover:bg-red-100 hover:text-red-700"
+                            >
+                                <X size={14} />
+                                Reset to Current Month
+                            </button>
+                        )}
 
                     </div>
 
-                    <div className="grid grid-cols-1 gap-3 lg:grid-cols-[1fr_250px_auto]">
+                    {/* Search & Course Inputs */}
+                    <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-[1fr_320px]">
 
                         <div className="relative">
-
                             <Search
                                 size={18}
                                 className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--muted)]"
@@ -818,8 +1133,8 @@ export default function ContactsPage() {
                                         e.target.value
                                     )
                                 }
-                                placeholder="Search name, number, course or message..."
-                                className="h-12 w-full rounded-xl border border-[#C8D5EA] bg-white/70 pl-11 pr-10 text-sm text-[var(--navy)] outline-none backdrop-blur-md transition placeholder:text-[var(--muted)] focus:border-[#3869D0]/50 focus:bg-white focus:ring-4 focus:ring-[#3869D0]/10"
+                                placeholder="Search name, number, course, or message..."
+                                className="h-11 w-full rounded-xl border border-[#C8D5EA] bg-white/70 pl-11 pr-10 text-sm text-[var(--navy)] outline-none backdrop-blur-md transition placeholder:text-[var(--muted)] focus:border-[#3869D0]/50 focus:bg-white focus:ring-4 focus:ring-[#3869D0]/10"
                             />
 
                             {search && (
@@ -829,14 +1144,12 @@ export default function ContactsPage() {
                                     }
                                     className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1 text-[var(--muted)] transition hover:bg-[#F2F6FF] hover:text-[var(--navy)]"
                                 >
-                                    <X size={16} />
+                                    <X size={15} />
                                 </button>
                             )}
-
                         </div>
 
                         <div className="relative">
-
                             <BookOpen
                                 size={17}
                                 className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--muted)]"
@@ -844,72 +1157,233 @@ export default function ContactsPage() {
 
                             <input
                                 type="text"
+                                list="course-suggestions"
                                 value={course}
                                 onChange={(e) => {
                                     setCourse(
                                         e.target.value
                                     );
-
                                     setPage(1);
                                 }}
-                                placeholder="Filter by course"
-                                className="h-12 w-full rounded-xl border border-[#C8D5EA] bg-white/70 pl-11 pr-4 text-sm text-[var(--navy)] outline-none backdrop-blur-md transition placeholder:text-[var(--muted)] focus:border-[#3869D0]/50 focus:bg-white focus:ring-4 focus:ring-[#3869D0]/10"
+                                placeholder="Filter by course (NDA, Army, etc.)"
+                                className="h-11 w-full rounded-xl border border-[#C8D5EA] bg-white/70 pl-11 pr-9 text-sm text-[var(--navy)] outline-none backdrop-blur-md transition placeholder:text-[var(--muted)] focus:border-[#3869D0]/50 focus:bg-white focus:ring-4 focus:ring-[#3869D0]/10"
                             />
 
-                        </div>
+                            <datalist id="course-suggestions">
+                                {commonCourses.map((c) => (
+                                    <option key={c} value={c} />
+                                ))}
+                            </datalist>
 
-                        <button
-                            onClick={
-                                clearFilters
-                            }
-                            className="inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-[#C8D5EA] bg-white/60 px-5 text-sm font-semibold text-[#40556B] backdrop-blur-md transition hover:bg-white hover:text-[var(--navy)] hover:shadow-sm"
-                        >
-                            <X size={16} />
-                            Clear Filters
-                        </button>
+                            {course && (
+                                <button
+                                    onClick={() => {
+                                        setCourse("");
+                                        setPage(1);
+                                    }}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1 text-[var(--muted)] transition hover:bg-[#F2F6FF] hover:text-[var(--navy)]"
+                                >
+                                    <X size={15} />
+                                </button>
+                            )}
+                        </div>
 
                     </div>
 
-                    <div className="mt-5 flex flex-wrap items-center gap-2">
+                    {/* Date Pickers & Presets */}
+                    <div className="mt-4 rounded-2xl border-2 border-[#D8E1EE] bg-white p-4 shadow-sm sm:p-5">
+                        <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
 
-                        <span className="mr-1 text-xs font-semibold text-[var(--muted)]">
-                            Status:
-                        </span>
+                            {/* Date inputs */}
+                            <div className="flex flex-wrap items-center gap-3 sm:gap-4">
+                                <div className="flex items-center gap-2">
+                                    <label className="flex items-center gap-1.5 text-xs font-extrabold text-[var(--navy)]">
+                                        <CalendarDays size={15} className="text-[#3869D0]" />
+                                        <span>From:</span>
+                                    </label>
+                                    <input
+                                        type="date"
+                                        value={startDate}
+                                        onChange={(e) => {
+                                            setStartDate(e.target.value);
+                                            setPage(1);
+                                        }}
+                                        className="h-10 rounded-xl border-2 border-[#C8D5EA] bg-[#F8FAFC] px-3.5 text-xs font-bold text-[var(--navy)] outline-none transition focus:border-[#3869D0] focus:bg-white focus:ring-4 focus:ring-[#3869D0]/10"
+                                    />
+                                </div>
 
-                        {statusOptions.map(
-                            (option) => {
-                                const active =
-                                    status ===
-                                    option.value;
+                                <div className="flex items-center gap-2">
+                                    <label className="flex items-center gap-1.5 text-xs font-extrabold text-[var(--navy)]">
+                                        <CalendarDays size={15} className="text-[#3869D0]" />
+                                        <span>To:</span>
+                                    </label>
+                                    <input
+                                        type="date"
+                                        value={endDate}
+                                        min={startDate || undefined}
+                                        onChange={(e) => {
+                                            setEndDate(e.target.value);
+                                            setPage(1);
+                                        }}
+                                        className="h-10 rounded-xl border-2 border-[#C8D5EA] bg-[#F8FAFC] px-3.5 text-xs font-bold text-[var(--navy)] outline-none transition focus:border-[#3869D0] focus:bg-white focus:ring-4 focus:ring-[#3869D0]/10"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Quick Presets */}
+                            <div className="flex flex-wrap items-center gap-2">
+                                <span className="mr-1 text-xs font-extrabold uppercase tracking-wider text-[var(--navy)]">
+                                    Presets:
+                                </span>
+                                {[
+                                    {
+                                        label: "This Month",
+                                        active: isCurrentMonthActive,
+                                        onClick: () => {
+                                            setStartDate(getCurrentMonthStart());
+                                            setEndDate(getCurrentMonthEnd());
+                                            setPage(1);
+                                        },
+                                    },
+                                    {
+                                        label: "Last Month",
+                                        active: isLastMonthActive,
+                                        onClick: () => {
+                                            setStartDate(getLastMonthStart());
+                                            setEndDate(getLastMonthEnd());
+                                            setPage(1);
+                                        },
+                                    },
+                                    {
+                                        label: "Last 30 Days",
+                                        active: isLast30DaysActive,
+                                        onClick: () => {
+                                            setStartDate(getLast30DaysStart());
+                                            setEndDate(getTodayDateStr());
+                                            setPage(1);
+                                        },
+                                    },
+                                    {
+                                        label: "Today",
+                                        active: isTodayActive,
+                                        onClick: () => {
+                                            setStartDate(getTodayDateStr());
+                                            setEndDate(getTodayDateStr());
+                                            setPage(1);
+                                        },
+                                    },
+                                    {
+                                        label: "All Time",
+                                        active: isAllTimeActive,
+                                        onClick: () => {
+                                            setStartDate("");
+                                            setEndDate("");
+                                            setPage(1);
+                                        },
+                                    },
+                                ].map((preset) => (
+                                    <button
+                                        key={preset.label}
+                                        type="button"
+                                        onClick={preset.onClick}
+                                        className={`rounded-xl px-3.5 py-2 text-xs font-bold transition-all ${
+                                            preset.active
+                                                ? "bg-[#3869D0] text-white shadow-md shadow-[#3869D0]/30 ring-2 ring-[#3869D0]/30 scale-[1.02]"
+                                                : "border-2 border-[#C8D5EA] bg-white text-[var(--navy)] hover:border-[#3869D0] hover:bg-[#F2F6FF]"
+                                        }`}
+                                    >
+                                        {preset.label}
+                                    </button>
+                                ))}
+                            </div>
+
+                        </div>
+
+                        {/* Visible Active Date Filter Callout */}
+                        <div className="mt-3.5 flex flex-wrap items-center justify-between gap-2 border-t border-[#E2E8F0] pt-3 text-xs">
+                            <div className="flex flex-wrap items-center gap-2">
+                                <span className="font-extrabold uppercase tracking-wider text-[var(--navy)]">
+                                    Active Date Filter:
+                                </span>
+                                <span className="inline-flex items-center gap-1.5 rounded-xl border-2 border-[#3869D0]/30 bg-[#3869D0]/10 px-3 py-1 font-bold text-[#1f4ba8]">
+                                    <CalendarDays size={14} className="text-[#3869D0]" />
+                                    {isCurrentMonthActive
+                                        ? `This Month (${startDate} to ${endDate})`
+                                        : isLastMonthActive
+                                        ? `Last Month (${startDate} to ${endDate})`
+                                        : isTodayActive
+                                        ? `Today (${startDate})`
+                                        : isLast30DaysActive
+                                        ? `Last 30 Days (${startDate} to ${endDate})`
+                                        : startDate && endDate
+                                        ? `Custom Dates (${startDate} to ${endDate})`
+                                        : startDate
+                                        ? `From ${startDate}`
+                                        : endDate
+                                        ? `Up to ${endDate}`
+                                        : "All Time (Complete History)"}
+                                </span>
+                            </div>
+
+                            {(!isCurrentMonthActive || search || course || status) && (
+                                <button
+                                    onClick={clearFilters}
+                                    className="font-bold text-red-600 hover:text-red-700 hover:underline"
+                                >
+                                    Reset to Current Month
+                                </button>
+                            )}
+                        </div>
+
+                    </div>
+
+                    {/* Status Filter Chips + Active Filter Summary */}
+                    <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+
+                        <div className="flex flex-wrap items-center gap-2">
+                            <span className="mr-1 text-xs font-extrabold uppercase tracking-wider text-[var(--navy)]">
+                                Status:
+                            </span>
+
+                            {statusOptions.map((option) => {
+                                const active = status === option.value;
 
                                 return (
                                     <button
-                                        key={
-                                            option.value ||
-                                            "all"
-                                        }
+                                        key={option.value || "all"}
                                         onClick={() => {
-                                            setStatus(
-                                                option.value
-                                            );
-
-                                            setPage(
-                                                1
-                                            );
+                                            setStatus(option.value);
+                                            setPage(1);
                                         }}
-                                        className={`rounded-full border px-4 py-2 text-xs font-semibold transition ${
+                                        className={`rounded-full border px-4 py-1.5 text-xs font-bold transition-all ${
                                             active
-                                                ? "border-[#3869D0] bg-[#3869D0] text-white shadow-md shadow-[#3869D0]/20"
-                                                : "border-[#C8D5EA] bg-white/60 text-[var(--muted)] hover:bg-white hover:text-[var(--navy)]"
+                                                ? "border-[#3869D0] bg-[#3869D0] text-white shadow-md shadow-[#3869D0]/25"
+                                                : "border-[#C8D5EA] bg-white text-[#526579] hover:border-[#3869D0]/40 hover:bg-[#F2F6FF] hover:text-[var(--navy)]"
                                         }`}
                                     >
-                                        {
-                                            option.label
-                                        }
+                                        {option.label}
                                     </button>
                                 );
-                            }
-                        )}
+                            })}
+                        </div>
+
+                        {/* Active Filter Pill badge */}
+                        <div className="flex items-center gap-2 text-xs font-medium text-[var(--navy)]">
+                            <span className="font-extrabold">Active Filter:</span>
+                            <span className="rounded-xl border-2 border-[#3869D0]/30 bg-white px-3 py-1 text-xs font-bold text-[var(--navy)] shadow-sm">
+                                {status ? `${status.toUpperCase()} Only` : "All Statuses"}
+                                {course ? ` • ${course}` : ""}
+                                {isCurrentMonthActive
+                                    ? " • This Month"
+                                    : startDate && endDate
+                                    ? ` • ${startDate} to ${endDate}`
+                                    : startDate
+                                    ? ` • From ${startDate}`
+                                    : endDate
+                                    ? ` • Till ${endDate}`
+                                    : " • All Time"}
+                            </span>
+                        </div>
 
                     </div>
 
@@ -933,25 +1407,38 @@ export default function ContactsPage() {
 
                                 <p className="mt-1 text-xs text-[var(--muted)]">
                                     {totalContacts >
-                                    0
+                                        0
                                         ? `Showing ${startItem}-${endItem} of ${totalContacts} enquiries`
                                         : "No enquiries found"}
                                 </p>
 
                             </div>
 
-                            {loading && (
-                                <div className="flex items-center gap-2 text-xs font-medium text-[var(--muted)]">
+                            <div className="flex flex-wrap items-center gap-3">
+                                <button
+                                    onClick={handleExportExcel}
+                                    disabled={exporting || loading || totalContacts === 0}
+                                    className="group relative inline-flex h-9 items-center justify-center gap-2 overflow-hidden rounded-xl bg-gradient-to-r from-[#244A9A] to-[#3869D0] px-3.5 text-xs font-bold text-white shadow-sm transition hover:from-[#1e3e82] hover:to-[#2f5dbd] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+                                    title="Export currently filtered enquiries to Excel"
+                                >
+                                    {exporting ? (
+                                        <Loader2 size={14} className="animate-spin text-white" />
+                                    ) : (
+                                        <FileSpreadsheet size={14} className="text-white" />
+                                    )}
+                                    <span>{exporting ? "Exporting..." : "Export Excel"}</span>
+                                </button>
 
-                                    <Loader2
-                                        size={15}
-                                        className="animate-spin"
-                                    />
-
-                                    Loading enquiries...
-
-                                </div>
-                            )}
+                                {loading && (
+                                    <div className="flex items-center gap-2 text-xs font-medium text-[var(--muted)]">
+                                        <Loader2
+                                            size={15}
+                                            className="animate-spin"
+                                        />
+                                        Loading enquiries...
+                                    </div>
+                                )}
+                            </div>
 
                         </div>
 
@@ -994,15 +1481,15 @@ export default function ContactsPage() {
                             {(search ||
                                 course ||
                                 status) && (
-                                <button
-                                    onClick={
-                                        clearFilters
-                                    }
-                                    className="mt-5 rounded-xl bg-[#3869D0] px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#3869D0]/20 transition hover:bg-[#2f5dbd]"
-                                >
-                                    Clear Filters
-                                </button>
-                            )}
+                                    <button
+                                        onClick={
+                                            clearFilters
+                                        }
+                                        className="mt-5 rounded-xl bg-[#3869D0] px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#3869D0]/20 transition hover:bg-[#2f5dbd]"
+                                    >
+                                        Clear Filters
+                                    </button>
+                                )}
 
                         </div>
                     ) : (
@@ -1096,22 +1583,46 @@ export default function ContactsPage() {
 
                                                     <td className="px-5 py-5 align-top">
 
-                                                        <div className="flex items-center gap-2">
+                                                        {contact?.number ? (
+                                                            (() => {
+                                                                const cleanNumber = String(contact.number).trim().replace(/[^\d+]/g, "");
+                                                                return (
+                                                                    <div className="flex items-center gap-2">
+                                                                        <a
+                                                                            href={`tel:${cleanNumber}`}
+                                                                            onClick={(e) => handleDirectCall(cleanNumber, e)}
+                                                                            className="group/call inline-flex items-center gap-2 rounded-xl border border-[#3869D0]/20 bg-blue-50/70 px-2.5 py-1.5 transition-all hover:border-[#3869D0] hover:bg-blue-100 hover:shadow-sm"
+                                                                            title={`Click to call ${contact.number}`}
+                                                                        >
+                                                                            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#3869D0] text-white shadow-sm transition group-hover/call:scale-110">
+                                                                                <Phone size={13} />
+                                                                            </div>
 
-                                                            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#3869D0]/10 text-[#3869D0]">
-                                                                <Phone
-                                                                    size={
-                                                                        15
-                                                                    }
-                                                                />
-                                                            </div>
+                                                                            <span className="whitespace-nowrap text-sm font-bold text-[var(--navy)] group-hover/call:text-[#3869D0] group-hover/call:underline">
+                                                                                {contact.number}
+                                                                            </span>
+                                                                        </a>
 
-                                                            <span className="whitespace-nowrap text-sm font-medium text-[#526579]">
-                                                                {contact?.number ||
-                                                                    "—"}
+                                                                        <button
+                                                                            type="button"
+                                                                            onClick={(e) => handleCopyNumber(contact.number, e)}
+                                                                            className="rounded-xl border border-[#C8D5EA] bg-white/80 p-2 text-[var(--muted)] transition hover:border-[#3869D0]/50 hover:bg-white hover:text-[#3869D0] hover:shadow-sm"
+                                                                            title="Copy phone number"
+                                                                        >
+                                                                            {copiedNumber === String(contact.number).trim() ? (
+                                                                                <Check size={13} className="text-[#3869D0]" />
+                                                                            ) : (
+                                                                                <Copy size={13} />
+                                                                            )}
+                                                                        </button>
+                                                                    </div>
+                                                                );
+                                                            })()
+                                                        ) : (
+                                                            <span className="whitespace-nowrap text-sm font-medium text-[var(--muted)]">
+                                                                —
                                                             </span>
-
-                                                        </div>
+                                                        )}
 
                                                     </td>
 
@@ -1178,12 +1689,11 @@ export default function ContactsPage() {
                                                                     updatingId ===
                                                                     contact._id
                                                                 }
-                                                                className={`rounded-full border px-3 py-2 text-xs font-bold outline-none transition disabled:cursor-not-allowed disabled:opacity-60 ${
-                                                                    statusStyles[
-                                                                        contact?.status
+                                                                className={`rounded-full border px-3 py-2 text-xs font-bold outline-none transition disabled:cursor-not-allowed disabled:opacity-60 ${statusStyles[
+                                                                    contact?.status
                                                                     ] ||
                                                                     statusStyles.new
-                                                                }`}
+                                                                    }`}
                                                             >
 
                                                                 <option value="new">
@@ -1202,13 +1712,13 @@ export default function ContactsPage() {
 
                                                             {updatingId ===
                                                                 contact._id && (
-                                                                <Loader2
-                                                                    size={
-                                                                        14
-                                                                    }
-                                                                    className="ml-2 animate-spin text-[var(--muted)]"
-                                                                />
-                                                            )}
+                                                                    <Loader2
+                                                                        size={
+                                                                            14
+                                                                        }
+                                                                        className="ml-2 animate-spin text-[var(--muted)]"
+                                                                    />
+                                                                )}
 
                                                         </div>
 
@@ -1261,7 +1771,7 @@ export default function ContactsPage() {
                                                             title="Delete enquiry"
                                                         >
                                                             {deletingId ===
-                                                            contact._id ? (
+                                                                contact._id ? (
                                                                 <Loader2
                                                                     size={
                                                                         16
@@ -1361,7 +1871,7 @@ export default function ContactsPage() {
                                                 >
 
                                                     {deletingId ===
-                                                    contact._id ? (
+                                                        contact._id ? (
                                                         <Loader2
                                                             size={
                                                                 16
@@ -1384,23 +1894,62 @@ export default function ContactsPage() {
 
                                                 <div className="rounded-xl border border-[#C8D5EA] bg-white/60 p-3">
 
-                                                    <div className="mb-1.5 flex items-center gap-2 text-xs font-semibold text-[var(--muted)]">
+                                                    <div className="mb-2 flex items-center justify-between text-xs font-semibold text-[var(--muted)]">
 
-                                                        <Phone
-                                                            size={
-                                                                14
-                                                            }
-                                                            className="text-[#3869D0]"
-                                                        />
+                                                        <span className="flex items-center gap-1.5">
+                                                            <Phone
+                                                                size={14}
+                                                                className="text-[#3869D0]"
+                                                            />
+                                                            Mobile Number
+                                                        </span>
 
-                                                        Number
+                                                        {contact?.number && (
+                                                            <button
+                                                                type="button"
+                                                                onClick={(e) => handleCopyNumber(contact.number, e)}
+                                                                className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#3869D0] hover:underline"
+                                                                title="Copy phone number"
+                                                            >
+                                                                {copiedNumber === String(contact.number).trim() ? (
+                                                                    <>
+                                                                        <Check size={12} className="text-[#3869D0]" />
+                                                                        <span className="font-bold text-[#3869D0]">Copied</span>
+                                                                    </>
+                                                                ) : (
+                                                                    <>
+                                                                        <Copy size={12} />
+                                                                        <span>Copy</span>
+                                                                    </>
+                                                                )}
+                                                            </button>
+                                                        )}
 
                                                     </div>
 
-                                                    <p className="break-all text-sm font-medium text-[#526579]">
-                                                        {contact?.number ||
-                                                            "—"}
-                                                    </p>
+                                                    {contact?.number ? (
+                                                        (() => {
+                                                            const cleanNumber = String(contact.number).trim().replace(/[^\d+]/g, "");
+                                                            return (
+                                                                <a
+                                                                    href={`tel:${cleanNumber}`}
+                                                                    onClick={(e) => handleDirectCall(cleanNumber, e)}
+                                                                    className="flex items-center justify-between gap-2 rounded-xl border border-[#3869D0]/30 bg-blue-50/70 p-2.5 transition active:scale-[0.98] hover:bg-blue-100/80"
+                                                                    title={`Click to call ${contact.number}`}
+                                                                >
+                                                                    <span className="text-sm font-bold text-[var(--navy)]">
+                                                                        {contact.number}
+                                                                    </span>
+                                                                    <span className="inline-flex items-center gap-1.5 rounded-lg bg-[#3869D0] px-3 py-1 text-xs font-bold text-white shadow-sm">
+                                                                        <Phone size={12} />
+                                                                        Call Now
+                                                                    </span>
+                                                                </a>
+                                                            );
+                                                        })()
+                                                    ) : (
+                                                        <p className="text-sm font-medium text-[var(--muted)]">—</p>
+                                                    )}
 
                                                 </div>
 
@@ -1479,12 +2028,11 @@ export default function ContactsPage() {
                                                                 updatingId ===
                                                                 contact._id
                                                             }
-                                                            className={`rounded-full border px-3 py-2 text-xs font-bold outline-none disabled:cursor-not-allowed disabled:opacity-60 ${
-                                                                statusStyles[
-                                                                    contact?.status
+                                                            className={`rounded-full border px-3 py-2 text-xs font-bold outline-none disabled:cursor-not-allowed disabled:opacity-60 ${statusStyles[
+                                                                contact?.status
                                                                 ] ||
                                                                 statusStyles.new
-                                                            }`}
+                                                                }`}
                                                         >
 
                                                             <option value="new">
@@ -1503,13 +2051,13 @@ export default function ContactsPage() {
 
                                                         {updatingId ===
                                                             contact._id && (
-                                                            <Loader2
-                                                                size={
-                                                                    14
-                                                                }
-                                                                className="ml-2 animate-spin text-[var(--muted)]"
-                                                            />
-                                                        )}
+                                                                <Loader2
+                                                                    size={
+                                                                        14
+                                                                    }
+                                                                    className="ml-2 animate-spin text-[var(--muted)]"
+                                                                />
+                                                            )}
 
                                                     </div>
 
@@ -1555,7 +2103,7 @@ export default function ContactsPage() {
                                     <p className="text-xs font-medium text-[var(--muted)]">
 
                                         {totalContacts >
-                                        0
+                                            0
                                             ? `Showing ${startItem}-${endItem} of ${totalContacts}`
                                             : "No records"}
 
@@ -1569,7 +2117,7 @@ export default function ContactsPage() {
                                             }
                                             disabled={
                                                 page <=
-                                                    1 ||
+                                                1 ||
                                                 loading
                                             }
                                             className="inline-flex h-10 items-center gap-1.5 rounded-xl border border-[#C8D5EA] bg-white/60 px-3 text-sm font-semibold text-[#40556B] transition hover:bg-white hover:text-[var(--navy)] hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
@@ -1604,7 +2152,7 @@ export default function ContactsPage() {
                                             }
                                             disabled={
                                                 page >=
-                                                    totalPages ||
+                                                totalPages ||
                                                 loading
                                             }
                                             className="inline-flex h-10 items-center gap-1.5 rounded-xl border border-[#C8D5EA] bg-white/60 px-3 text-sm font-semibold text-[#40556B] transition hover:bg-white hover:text-[var(--navy)] hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"

@@ -228,11 +228,7 @@ function VerifyOtpForm() {
 
                     </div>
 
-                    <p className="mt-5 text-[10px] font-bold tracking-[0.25em] text-[#fde68a]">
-                        VERIFY IDENTITY
-                    </p>
-
-                    <h1 className="montserrat mt-2 text-3xl font-extrabold text-white">
+                    <h1 className="montserrat mt-4 text-3xl font-extrabold text-white">
                         Verify OTP
                     </h1>
 

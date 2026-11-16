@@ -52,7 +52,7 @@ export default function AchieversPage() {
 
     const user = auth?.user;
     const authLoading = auth?.loading;
-    const isSuperAdmin = user?.role === "superAdmin";
+    const canManageAchievers = user?.role === "superAdmin" || user?.role === "admin";
 
     const [authChecked, setAuthChecked] = useState(false);
 
@@ -82,12 +82,15 @@ export default function AchieversPage() {
             return;
         }
 
-        if (user.role !== "superAdmin") {
+        if (user.role !== "superAdmin" && user.role !== "admin") {
             router.replace("/admin/dashboard");
             return;
         }
 
-        setAuthChecked((current) => current ? current : true);
+        const timer = setTimeout(() => {
+            setAuthChecked(true);
+        }, 0);
+        return () => clearTimeout(timer);
     }, [authLoading, user, router]);
 
     // Keep the category selection valid.
@@ -136,10 +139,13 @@ export default function AchieversPage() {
     }, [handleCategoriesChange]);
 
     useEffect(() => {
-        if (!authChecked || !isSuperAdmin) return;
+        if (!authChecked || !canManageAchievers) return;
 
-        void fetchCategories();
-    }, [authChecked, isSuperAdmin, fetchCategories]);
+        const timer = setTimeout(() => {
+            void fetchCategories();
+        }, 0);
+        return () => clearTimeout(timer);
+    }, [authChecked, canManageAchievers, fetchCategories]);
 
     // Fetch achievers
     const fetchAchievers = useCallback(async () => {
@@ -182,10 +188,13 @@ export default function AchieversPage() {
     }, [selectedCategory, filters]);
 
     useEffect(() => {
-        if (!authChecked || !isSuperAdmin) return;
+        if (!authChecked || !canManageAchievers) return;
 
-        void fetchAchievers();
-    }, [authChecked, isSuperAdmin, fetchAchievers]);
+        const timer = setTimeout(() => {
+            void fetchAchievers();
+        }, 0);
+        return () => clearTimeout(timer);
+    }, [authChecked, canManageAchievers, fetchAchievers]);
 
     const handleRefresh = async () => {
         setRefreshing(true);
@@ -297,7 +306,7 @@ export default function AchieversPage() {
         );
     }
 
-    if (!isSuperAdmin) {
+    if (!canManageAchievers) {
         return (
             <main className="flex min-h-screen items-center justify-center bg-[#F2F6FF] p-6">
                 <div className="w-full max-w-md rounded-2xl border border-red-200 bg-white p-8 text-center shadow-sm">
@@ -311,7 +320,7 @@ export default function AchieversPage() {
                     </h1>
 
                     <p className="mt-2 text-sm text-slate-600">
-                        Only Super Admins can access Achievers Management.
+                        Only administrators can access Achievers Management.
                     </p>
                 </div>
             </main>
@@ -339,21 +348,17 @@ export default function AchieversPage() {
             <div className="relative mx-auto max-w-7xl">
 
                 {/* Header */}
-                <section className="mb-6 overflow-hidden rounded-3xl border border-white/70 bg-[var(--navy)] p-5 shadow-[0_15px_50px_rgba(16,42,67,0.15)] backdrop-blur-xl md:p-7">
-                    <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+                <section className="relative mb-6 overflow-hidden rounded-3xl border border-white/70 bg-[var(--navy)] px-6 py-8 text-white shadow-[0_18px_50px_rgba(16,42,67,0.16)] backdrop-blur-xl sm:px-10">
+                    <div className="pointer-events-none absolute -right-10 -top-10 h-56 w-56 rounded-full bg-[var(--gold)]/15 blur-3xl" />
+                    <div className="pointer-events-none absolute -bottom-16 left-1/3 h-48 w-48 rounded-full bg-[#3869D0]/20 blur-3xl" />
+                    <div className="relative flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
                         <div>
-                            <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-white/60">
-                                <Sparkles size={15} />
-                                Student Achievements
-                            </div>
-
-                            <h1 className="font-[Montserrat] text-3xl font-bold italic text-white md:text-4xl">
+                            <h1 className="montserrat text-3xl font-extrabold leading-tight text-white sm:text-4xl">
                                 Achievers Management
                             </h1>
 
                             <p className="mt-2 max-w-2xl text-sm leading-6 text-white/70">
-                                Manage student profiles, categories, exam
-                                achievements and publication status.
+                                Manage student profiles, categories, exam achievements and publication status.
                             </p>
                         </div>
 
@@ -363,7 +368,7 @@ export default function AchieversPage() {
                                 onClick={handleRefresh}
                                 disabled={refreshing || loading || categoriesLoading}
                                 aria-label="Refresh achievers"
-                                className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-sm font-semibold text-white shadow-sm backdrop-blur-md transition hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-60"
+                                className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 px-4 text-sm font-semibold text-white shadow-sm backdrop-blur-md transition hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-60"
                             >
                                 <RefreshCw
                                     size={16}
@@ -375,7 +380,7 @@ export default function AchieversPage() {
                             <button
                                 type="button"
                                 onClick={openCreateForm}
-                                className="inline-flex items-center justify-center gap-2 rounded-xl bg-[var(--gold)] px-5 py-3 text-sm font-semibold text-[var(--navy)] shadow-lg transition hover:scale-[1.02] hover:shadow-xl"
+                                className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-[var(--gold)] px-5 text-sm font-semibold text-[var(--navy)] shadow-lg transition hover:scale-[1.02] hover:shadow-xl"
                             >
                                 <Plus size={18} />
                                 Add Achiever

@@ -118,10 +118,14 @@ export default function QuizQuestionForm({
     const [error, setError] = useState("");
 
     useEffect(() => {
-        setForm(
-            getInitialForm(initialData)
-        );
-        setError("");
+        const timer = window.setTimeout(() => {
+            setForm(
+                getInitialForm(initialData)
+            );
+            setError("");
+        }, 0);
+
+        return () => window.clearTimeout(timer);
     }, [initialData]);
 
     const update = (

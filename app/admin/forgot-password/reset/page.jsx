@@ -194,11 +194,7 @@ function ResetPasswordForm() {
 
                     </div>
 
-                    <p className="mt-5 text-[10px] font-bold tracking-[0.25em] text-[#fde68a]">
-                        ACCOUNT SECURITY
-                    </p>
-
-                    <h1 className="montserrat mt-2 text-3xl font-extrabold text-white">
+                    <h1 className="montserrat mt-4 text-3xl font-extrabold text-white">
                         Reset Password
                     </h1>
 

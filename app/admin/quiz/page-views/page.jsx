@@ -87,21 +87,19 @@ export default function QuizPageViewsPage() {
   return (
     <main className="min-h-screen bg-[#F2F6FF] px-4 pb-10 pt-20 sm:px-6 lg:px-8 lg:pt-8">
       <div className="mx-auto max-w-7xl">
-        <header className="relative overflow-hidden rounded-3xl bg-[var(--navy)] px-6 py-8 text-white shadow-[0_18px_50px_rgba(16,42,67,0.16)] sm:px-9">
-          <div className="pointer-events-none absolute -right-12 -top-12 h-56 w-56 rounded-full bg-[#b89242]/20 blur-3xl" />
-          <div className="relative flex flex-wrap items-center justify-between gap-4">
+        <header className="relative overflow-hidden rounded-3xl border border-white/70 bg-[var(--navy)] px-6 py-8 text-white shadow-[0_18px_50px_rgba(16,42,67,0.16)] backdrop-blur-xl sm:px-10">
+          <div className="pointer-events-none absolute -right-10 -top-10 h-56 w-56 rounded-full bg-amber-500/15 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-16 left-1/3 h-48 w-48 rounded-full bg-[#3869D0]/20 blur-3xl" />
+          <div className="relative flex flex-wrap items-end justify-between gap-4">
             <div>
-              <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[10px] font-bold tracking-[0.18em]">
-                <Eye size={14} /> TRAFFIC TERMINAL
-              </span>
-              <h1 className="montserrat mt-4 text-3xl font-extrabold sm:text-4xl">Quiz Page Views</h1>
+              <h1 className="montserrat text-3xl font-extrabold leading-tight text-white sm:text-4xl">Quiz Page Views</h1>
               <p className="mt-2 text-sm text-white/70">Live traffic, popular quiz routes, and individual view history.</p>
             </div>
             <button
               type="button"
               onClick={() => void loadData()}
               disabled={loading}
-              className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-4 text-sm font-semibold hover:bg-white/20 disabled:opacity-50"
+              className="inline-flex h-11 items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-4 text-sm font-semibold hover:bg-white/20 disabled:opacity-50"
             >
               <RefreshCw size={16} className={loading ? "animate-spin" : ""} /> Refresh
             </button>

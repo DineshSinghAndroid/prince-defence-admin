@@ -724,40 +724,25 @@ function AdminsContent() {
 
                 {/* Header */}
 
-                <div className="relative mb-6 overflow-hidden rounded-3xl border border-white/15 bg-[var(--navy)] px-6 py-7 text-white shadow-[0_18px_50px_rgba(16,42,67,0.16)] backdrop-blur-2xl sm:px-8 sm:py-9">
+                <div className="relative mb-6 overflow-hidden rounded-3xl border border-white/70 bg-[var(--navy)] px-6 py-8 text-white shadow-[0_18px_50px_rgba(16,42,67,0.16)] backdrop-blur-xl sm:px-10">
 
-                    <div className="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full bg-[#3869D0]/10 blur-3xl" />
+                    <div className="pointer-events-none absolute -right-10 -top-10 h-56 w-56 rounded-full bg-[#3869D0]/20 blur-3xl" />
 
-                    <div className="relative flex flex-col gap-6 xl:flex-row xl:items-center xl:justify-between">
+                    <div className="pointer-events-none absolute -bottom-16 left-1/3 h-48 w-48 rounded-full bg-[var(--gold)]/10 blur-3xl" />
 
-                        <div className="flex items-center gap-4">
+                    <div className="relative flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
 
-                            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-white/15 bg-white/10 text-[var(--gold)] shadow-sm backdrop-blur-md">
-                                <ShieldCheck
-                                    size={27}
-                                />
-                            </div>
+                        <div>
+                            <h1 className="montserrat text-3xl font-extrabold leading-tight text-white sm:text-4xl">
+                                Admin Management
+                            </h1>
 
-                            <div>
-                                <div className="mb-1 flex flex-wrap items-center gap-2">
-                                    <span className="rounded-full border border-[var(--gold)]/30 bg-[var(--gold)]/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.16em] text-[#E8D39A]">
-                                        Administration
-                                    </span>
-                                </div>
-
-                                <h1 className="text-2xl font-extrabold tracking-tight text-white sm:text-3xl">
-                                    Admin Management
-                                </h1>
-
-                                <p className="mt-1 max-w-2xl text-sm leading-6 text-white/70">
-                                    Manage admin accounts,
-                                    permissions and account
-                                    status from one place.
-                                </p>
-                            </div>
+                            <p className="mt-2 max-w-2xl text-sm leading-6 text-white/70">
+                                Manage admin accounts, permissions and account status from one place.
+                            </p>
                         </div>
 
-                        <div className="flex flex-col gap-3 sm:flex-row">
+                        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
 
                             <div className="relative">
 

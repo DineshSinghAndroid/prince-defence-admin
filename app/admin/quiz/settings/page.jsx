@@ -91,7 +91,10 @@ export default function QuizSettingsPage() {
     };
 
     useEffect(() => {
-        loadSetting(dateKey);
+        const timer = window.setTimeout(() => {
+            void loadSetting(dateKey);
+        }, 0);
+        return () => window.clearTimeout(timer);
     }, []);
 
     const handleDateChange = async (
@@ -184,24 +187,17 @@ export default function QuizSettingsPage() {
             <div className="relative mx-auto max-w-5xl">
                 {/* Header */}
 
-                <div className="relative mb-6 overflow-hidden rounded-3xl border border-white/70 bg-[var(--navy)] px-6 py-8 text-white shadow-[0_18px_50px_rgba(16,42,67,0.16)] md:px-10 md:py-10">
-                    <div className="pointer-events-none absolute -right-16 -top-24 h-64 w-64 rounded-full bg-[#3869D0]/15 blur-3xl" />
-
-                    <div className="pointer-events-none absolute -bottom-24 left-1/3 h-56 w-56 rounded-full bg-[var(--gold)]/10 blur-3xl" />
+                <div className="relative mb-6 overflow-hidden rounded-3xl border border-white/70 bg-[var(--navy)] px-6 py-8 text-white shadow-[0_18px_50px_rgba(16,42,67,0.16)] backdrop-blur-xl sm:px-10">
+                    <div className="pointer-events-none absolute -right-10 -top-10 h-56 w-56 rounded-full bg-violet-500/15 blur-3xl" />
+                    <div className="pointer-events-none absolute -bottom-16 left-1/3 h-48 w-48 rounded-full bg-[#3869D0]/20 blur-3xl" />
 
                     <div className="relative">
-                        <span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[10px] font-bold tracking-[0.2em] text-white/90">
-                            <Sparkles size={12} />
-                            QUIZ SETTINGS
-                        </span>
-
-                        <h1 className="montserrat mt-4 text-3xl font-extrabold italic leading-tight md:text-4xl">
+                        <h1 className="montserrat text-3xl font-extrabold leading-tight text-white sm:text-4xl">
                             Daily Quiz Settings
                         </h1>
 
                         <p className="mt-2 max-w-2xl text-sm leading-6 text-white/70">
-                            Control the daily quiz duration and
-                            availability for each quiz date.
+                            Control the daily quiz duration and availability for each quiz date.
                         </p>
                     </div>
                 </div>

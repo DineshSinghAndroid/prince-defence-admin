@@ -8,6 +8,8 @@ export const getContacts = async ({
     search = "",
     course = "",
     status = "",
+    startDate = "",
+    endDate = "",
 } = {}) => {
 
     const params = new URLSearchParams();
@@ -39,6 +41,14 @@ export const getContacts = async ({
         );
     }
 
+    if (startDate) {
+        params.append("startDate", startDate);
+    }
+
+    if (endDate) {
+        params.append("endDate", endDate);
+    }
+
 
     return api(
         `/contact?${params.toString()}`,
@@ -46,6 +56,42 @@ export const getContacts = async ({
             method: "GET",
         }
     );
+};
+
+
+// Fetch all contacts for export without pagination
+export const exportContacts = async ({
+    search = "",
+    course = "",
+    status = "",
+    startDate = "",
+    endDate = "",
+} = {}) => {
+    const params = new URLSearchParams();
+
+    if (search && search.trim()) {
+        params.append("search", search.trim());
+    }
+
+    if (course && course.trim()) {
+        params.append("course", course.trim());
+    }
+
+    if (status) {
+        params.append("status", status);
+    }
+
+    if (startDate) {
+        params.append("startDate", startDate);
+    }
+
+    if (endDate) {
+        params.append("endDate", endDate);
+    }
+
+    return api(`/contact/export?${params.toString()}`, {
+        method: "GET",
+    });
 };
 
 

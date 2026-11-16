@@ -66,7 +66,7 @@ const links = [
         href: "/admin/achievers",
         label: "Achievers",
         icon: Trophy,
-        allowedRoles: ["superAdmin"],
+        allowedRoles: ["superAdmin", "admin"],
     },
     {
         href: "/admin/admins",
