@@ -964,7 +964,7 @@ function AdminsContent() {
                         </div>
                     </div>
 
-                    <div className="hidden overflow-x-auto md:block">
+                    <div className="overflow-x-auto">
 
                         <table className="w-full min-w-[900px]">
 
@@ -1121,7 +1121,7 @@ function AdminsContent() {
 
                     {filteredAdmins.length ===
                         0 && (
-                        <div className="hidden md:block">
+                        <div>
                             <EmptyState
                                 search={
                                     search
@@ -1137,140 +1137,6 @@ function AdminsContent() {
                             />
                         </div>
                     )}
-
-                    <div
-                        className={`space-y-4 p-4 md:hidden ${
-                            refreshing
-                                ? "opacity-60"
-                                : ""
-                        }`}
-                    >
-                        {filteredAdmins.length >
-                        0 ? (
-                            filteredAdmins.map(
-                                (
-                                    admin
-                                ) => {
-                                    const id =
-                                        getId(
-                                            admin
-                                        );
-
-                                    return (
-                                        <div
-                                            key={
-                                                id
-                                            }
-                                            className="rounded-2xl border border-[#C8D5EA] bg-white/70 p-5 shadow-sm backdrop-blur-md"
-                                        >
-                                            <div className="flex items-start justify-between gap-4">
-
-                                                <div className="flex min-w-0 items-center gap-3">
-                                                    <Avatar
-                                                        name={
-                                                            admin?.name
-                                                        }
-                                                        large
-                                                    />
-
-                                                    <div className="min-w-0">
-                                                        <p className="truncate font-bold text-[var(--navy)]">
-                                                            {admin?.name ||
-                                                                "Unnamed Admin"}
-                                                        </p>
-
-                                                        <p className="truncate text-sm text-[var(--muted)]">
-                                                            {admin?.email ||
-                                                                "—"}
-                                                        </p>
-                                                    </div>
-                                                </div>
-
-                                                <RoleBadge
-                                                    role={
-                                                        admin?.role
-                                                    }
-                                                />
-                                            </div>
-
-                                            <div className="mt-4">
-                                                <StatusButton
-                                                    active={
-                                                        admin.isActive
-                                                    }
-                                                    loading={
-                                                        statusLoadingId ===
-                                                        id
-                                                    }
-                                                    onClick={() =>
-                                                        handleStatusChange(
-                                                            id,
-                                                            admin.isActive
-                                                        )
-                                                    }
-                                                />
-                                            </div>
-
-                                            <div className="mt-4 border-t border-[#DCE4EF] pt-4">
-                                                <p className="text-[11px] font-semibold uppercase tracking-wider text-[var(--muted)]">
-                                                    Created At
-                                                </p>
-
-                                                <p className="mt-1 text-sm font-semibold text-[#40556B]">
-                                                    {formatDate(
-                                                        admin?.createdAt
-                                                    )}
-                                                </p>
-
-                                                {admin?.createdAt && (
-                                                    <p className="mt-0.5 text-xs text-[var(--muted)]">
-                                                        {formatTime(
-                                                            admin.createdAt
-                                                        )}
-                                                    </p>
-                                                )}
-                                            </div>
-
-                                            <div className="mt-4 border-t border-[#DCE4EF] pt-4">
-                                                <Actions
-                                                    onEdit={() =>
-                                                        openEditModal(
-                                                            id
-                                                        )
-                                                    }
-                                                    onDelete={() =>
-                                                        requestDelete(
-                                                            admin
-                                                        )
-                                                    }
-                                                    deleting={
-                                                        deletingId ===
-                                                        id
-                                                    }
-                                                />
-                                            </div>
-                                        </div>
-                                    );
-                                }
-                            )
-                        ) : (
-                            <div className="rounded-2xl border border-[#C8D5EA] bg-white/70 backdrop-blur-md">
-                                <EmptyState
-                                    search={
-                                        search
-                                    }
-                                    onAdd={
-                                        openAddModal
-                                    }
-                                    onClear={() =>
-                                        setSearch(
-                                            ""
-                                        )
-                                    }
-                                />
-                            </div>
-                        )}
-                    </div>
                 </div>
             </div>
 

@@ -167,29 +167,58 @@ export default function QuizAnalyticsPage() {
                     </div>
                 </header>
 
-                <section className={`mt-6 grid grid-cols-2 gap-2.5 sm:gap-4 sm:grid-cols-2 xl:grid-cols-4 ${glass}`} aria-label="Quiz analytics filters">
-                    <label className="grid gap-2 text-xs font-semibold text-[#526579]">
-                        <span className="flex items-center gap-2"><CalendarDays size={15} />From date</span>
-                        <input type="date" value={fromDate} max={toDate} onChange={setFilter(setFromDate)} className="min-h-11 rounded-xl border border-[#C8D5EA] bg-white px-3 text-sm text-[var(--navy)]" />
-                    </label>
-                    <label className="grid gap-2 text-xs font-semibold text-[#526579]">
-                        <span className="flex items-center gap-2"><CalendarDays size={15} />To date</span>
-                        <input type="date" value={toDate} min={fromDate} max={getIndiaDateKey()} onChange={setFilter(setToDate)} className="min-h-11 rounded-xl border border-[#C8D5EA] bg-white px-3 text-sm text-[var(--navy)]" />
-                    </label>
-                    <label className="grid gap-2 text-xs font-semibold text-[#526579]">
-                        <span>Quiz category</span>
-                        <select value={category} onChange={setFilter(setCategory)} className="min-h-11 rounded-xl border border-[#C8D5EA] bg-white px-3 text-sm text-[var(--navy)]">
-                            <option value="">All categories</option>
-                            {categories.map((item) => <option key={item} value={item}>{item}</option>)}
-                        </select>
-                    </label>
-                    <label className="grid gap-2 text-xs font-semibold text-[#526579]">
-                        <span>Subject</span>
-                        <select value={subject} onChange={setFilter(setSubject)} className="min-h-11 rounded-xl border border-[#C8D5EA] bg-white px-3 text-sm text-[var(--navy)]">
-                            <option value="">All subjects</option>
-                            {analytics.subjects.map((item) => <option key={item} value={item}>{item}</option>)}
-                        </select>
-                    </label>
+                <section className={`mt-6 rounded-2xl p-4 sm:p-5 ${glass}`} aria-label="Quiz analytics filters">
+                    <div className="grid grid-cols-2 gap-3 sm:gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                        <label className="flex flex-col gap-1.5 min-w-0">
+                            <span className="flex items-center gap-1.5 text-xs font-bold text-[#526579]">
+                                <CalendarDays size={14} className="shrink-0 text-[#3869D0]" />
+                                <span className="truncate">From date</span>
+                            </span>
+                            <input
+                                type="date"
+                                value={fromDate}
+                                max={toDate}
+                                onChange={setFilter(setFromDate)}
+                                className="min-h-11 w-full min-w-0 rounded-xl border border-[#C8D5EA] bg-white px-2.5 sm:px-3 text-xs sm:text-sm font-semibold text-[var(--navy)] shadow-sm outline-none transition focus:border-[#3869D0] focus:ring-2 focus:ring-[#3869D0]/15"
+                            />
+                        </label>
+                        <label className="flex flex-col gap-1.5 min-w-0">
+                            <span className="flex items-center gap-1.5 text-xs font-bold text-[#526579]">
+                                <CalendarDays size={14} className="shrink-0 text-[#3869D0]" />
+                                <span className="truncate">To date</span>
+                            </span>
+                            <input
+                                type="date"
+                                value={toDate}
+                                min={fromDate}
+                                max={getIndiaDateKey()}
+                                onChange={setFilter(setToDate)}
+                                className="min-h-11 w-full min-w-0 rounded-xl border border-[#C8D5EA] bg-white px-2.5 sm:px-3 text-xs sm:text-sm font-semibold text-[var(--navy)] shadow-sm outline-none transition focus:border-[#3869D0] focus:ring-2 focus:ring-[#3869D0]/15"
+                            />
+                        </label>
+                        <label className="flex flex-col gap-1.5 min-w-0">
+                            <span className="text-xs font-bold text-[#526579] truncate">Quiz category</span>
+                            <select
+                                value={category}
+                                onChange={setFilter(setCategory)}
+                                className="min-h-11 w-full min-w-0 rounded-xl border border-[#C8D5EA] bg-white px-2.5 sm:px-3 text-xs sm:text-sm font-semibold text-[var(--navy)] shadow-sm outline-none transition focus:border-[#3869D0] focus:ring-2 focus:ring-[#3869D0]/15"
+                            >
+                                <option value="">All categories</option>
+                                {categories.map((item) => <option key={item} value={item}>{item}</option>)}
+                            </select>
+                        </label>
+                        <label className="flex flex-col gap-1.5 min-w-0">
+                            <span className="text-xs font-bold text-[#526579] truncate">Subject</span>
+                            <select
+                                value={subject}
+                                onChange={setFilter(setSubject)}
+                                className="min-h-11 w-full min-w-0 rounded-xl border border-[#C8D5EA] bg-white px-2.5 sm:px-3 text-xs sm:text-sm font-semibold text-[var(--navy)] shadow-sm outline-none transition focus:border-[#3869D0] focus:ring-2 focus:ring-[#3869D0]/15"
+                            >
+                                <option value="">All subjects</option>
+                                {analytics.subjects.map((item) => <option key={item} value={item}>{item}</option>)}
+                            </select>
+                        </label>
+                    </div>
                 </section>
 
                 <section className="mt-6 grid grid-cols-2 gap-2.5 sm:gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6" aria-label="Quiz summary">

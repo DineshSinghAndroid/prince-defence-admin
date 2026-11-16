@@ -128,15 +128,36 @@ export default function DashboardPage() {
 
                 {error && <p role="alert" className="mt-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>}
 
-                <section className={`mt-6 grid grid-cols-2 gap-2.5 rounded-2xl p-3.5 sm:gap-4 sm:p-4 sm:grid-cols-2 lg:grid-cols-3 ${glass}`} aria-label="Traffic date filter">
-                    <label className="grid gap-1.5 sm:gap-2 text-xs font-semibold text-[#526579]">
-                        <span className="flex items-center gap-1.5 sm:gap-2"><CalendarDays size={14} className="text-[#3869D0]" />From date</span>
-                        <input type="date" value={fromDate} max={toDate} onChange={(event) => { setLoading(true); setFromDate(event.target.value); }} className="min-h-10 w-full rounded-xl border border-[#C8D5EA] bg-white px-2.5 sm:px-3 text-xs sm:text-sm text-[var(--navy)]" />
-                    </label>
-                    <label className="grid gap-1.5 sm:gap-2 text-xs font-semibold text-[#526579]">
-                        <span className="flex items-center gap-1.5 sm:gap-2"><CalendarDays size={14} className="text-[#3869D0]" />To date</span>
-                        <input type="date" value={toDate} min={fromDate} max={getIndiaDateKey()} onChange={(event) => { setLoading(true); setToDate(event.target.value); }} className="min-h-10 w-full rounded-xl border border-[#C8D5EA] bg-white px-2.5 sm:px-3 text-xs sm:text-sm text-[var(--navy)]" />
-                    </label>
+                <section className={`mt-6 rounded-2xl p-4 sm:p-5 ${glass}`} aria-label="Traffic date filter">
+                    <div className="grid grid-cols-2 gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                        <label className="flex flex-col gap-1.5 min-w-0">
+                            <span className="flex items-center gap-1.5 text-xs font-bold text-[#526579]">
+                                <CalendarDays size={14} className="shrink-0 text-[#3869D0]" />
+                                <span className="truncate">From date</span>
+                            </span>
+                            <input
+                                type="date"
+                                value={fromDate}
+                                max={toDate}
+                                onChange={(event) => { setLoading(true); setFromDate(event.target.value); }}
+                                className="min-h-11 w-full min-w-0 rounded-xl border border-[#C8D5EA] bg-white px-2.5 sm:px-3 text-xs sm:text-sm font-semibold text-[var(--navy)] shadow-sm outline-none transition focus:border-[#3869D0] focus:ring-2 focus:ring-[#3869D0]/15"
+                            />
+                        </label>
+                        <label className="flex flex-col gap-1.5 min-w-0">
+                            <span className="flex items-center gap-1.5 text-xs font-bold text-[#526579]">
+                                <CalendarDays size={14} className="shrink-0 text-[#3869D0]" />
+                                <span className="truncate">To date</span>
+                            </span>
+                            <input
+                                type="date"
+                                value={toDate}
+                                min={fromDate}
+                                max={getIndiaDateKey()}
+                                onChange={(event) => { setLoading(true); setToDate(event.target.value); }}
+                                className="min-h-11 w-full min-w-0 rounded-xl border border-[#C8D5EA] bg-white px-2.5 sm:px-3 text-xs sm:text-sm font-semibold text-[var(--navy)] shadow-sm outline-none transition focus:border-[#3869D0] focus:ring-2 focus:ring-[#3869D0]/15"
+                            />
+                        </label>
+                    </div>
                 </section>
 
                 <section className="mt-6 grid grid-cols-2 gap-2.5 sm:gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-label="Dashboard totals">

@@ -791,8 +791,8 @@ export default function QuizQuestionsPage() {
                     className={`${glass} mb-6 p-4 md:p-5`}
                 >
                     <div className="grid grid-cols-2 gap-2.5 sm:gap-4 md:grid-cols-4">
-                        <div>
-                            <label className="mb-1.5 block text-sm font-semibold text-[#40556B]">
+                        <div className="min-w-0">
+                            <label className="mb-1.5 block text-xs sm:text-sm font-semibold text-[#40556B] truncate">
                                 Quiz Date
                             </label>
 
@@ -811,8 +811,8 @@ export default function QuizQuestionsPage() {
                             />
                         </div>
 
-                        <div>
-                            <label className="mb-1.5 block text-sm font-semibold text-[#40556B]">
+                        <div className="min-w-0">
+                            <label className="mb-1.5 block text-xs sm:text-sm font-semibold text-[#40556B] truncate">
                                 Category
                             </label>
 
@@ -854,8 +854,8 @@ export default function QuizQuestionsPage() {
                             </select>
                         </div>
 
-                        <div>
-                            <label className="mb-1.5 block text-sm font-semibold text-[#40556B]">
+                        <div className="min-w-0">
+                            <label className="mb-1.5 block text-xs sm:text-sm font-semibold text-[#40556B] truncate">
                                 Subject
                             </label>
                             <input
@@ -871,8 +871,9 @@ export default function QuizQuestionsPage() {
                             onSubmit={
                                 handleSearch
                             }
+                            className="min-w-0"
                         >
-                            <label className="mb-1.5 block text-sm font-semibold text-[#40556B]">
+                            <label className="mb-1.5 block text-xs sm:text-sm font-semibold text-[#40556B] truncate">
                                 Search
                             </label>
 
