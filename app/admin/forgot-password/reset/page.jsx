@@ -8,6 +8,8 @@ import toast from "react-hot-toast";
 import {
     Shield,
     Lock,
+    Eye,
+    EyeOff,
     ArrowRight,
     Loader2,
     CheckCircle2,
@@ -51,6 +53,8 @@ function ResetPasswordForm() {
     const { hydrated, resetToken } = usePasswordResetSession();
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+    const [showNewPassword, setShowNewPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [loading, setLoading] = useState(false);
 
     const validatePassword = () => {
@@ -226,10 +230,10 @@ function ResetPasswordForm() {
                             Must be at least 12 characters. Choose a unique password for maximum protection.
                         </p>
 
-                        {/* Form (NO EYE ICONS) */}
+                        {/* Form */}
                         <form onSubmit={handleSubmit} className="mt-6 space-y-4 sm:space-y-5">
 
-                            {/* New Password (No Eye) */}
+                            {/* New Password */}
                             <div>
                                 <label
                                     htmlFor="newPassword"
@@ -247,19 +251,29 @@ function ResetPasswordForm() {
                                     <input
                                         id="newPassword"
                                         name="newPassword"
-                                        type="password"
+                                        type={showNewPassword ? "text" : "password"}
                                         placeholder="Enter at least 12 characters"
                                         autoComplete="new-password"
                                         value={newPassword}
                                         onChange={(e) => setNewPassword(e.target.value)}
                                         minLength={12}
                                         disabled={loading}
-                                        className="w-full rounded-xl border border-slate-200 bg-slate-50/60 py-3 pl-11 pr-4 text-sm text-[var(--navy)] outline-none transition placeholder:text-slate-400 focus:border-[#3869D0] focus:bg-white focus:ring-4 focus:ring-[#3869D0]/10 disabled:cursor-not-allowed disabled:opacity-60"
+                                        className="w-full rounded-xl border border-slate-200 bg-slate-50/60 py-3 pl-11 pr-11 text-sm text-[var(--navy)] outline-none transition placeholder:text-slate-400 focus:border-[#3869D0] focus:bg-white focus:ring-4 focus:ring-[#3869D0]/10 disabled:cursor-not-allowed disabled:opacity-60"
                                     />
+
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowNewPassword((current) => !current)}
+                                        disabled={loading}
+                                        aria-label={showNewPassword ? "Hide password" : "Show password"}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600 disabled:cursor-not-allowed disabled:opacity-50"
+                                    >
+                                        {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                    </button>
                                 </div>
                             </div>
 
-                            {/* Confirm Password (No Eye) */}
+                            {/* Confirm Password */}
                             <div>
                                 <label
                                     htmlFor="confirmPassword"
@@ -277,14 +291,24 @@ function ResetPasswordForm() {
                                     <input
                                         id="confirmPassword"
                                         name="confirmPassword"
-                                        type="password"
+                                        type={showConfirmPassword ? "text" : "password"}
                                         placeholder="Re-enter your new password"
                                         autoComplete="new-password"
                                         value={confirmPassword}
                                         onChange={(e) => setConfirmPassword(e.target.value)}
                                         disabled={loading}
-                                        className="w-full rounded-xl border border-slate-200 bg-slate-50/60 py-3 pl-11 pr-4 text-sm text-[var(--navy)] outline-none transition placeholder:text-slate-400 focus:border-[#3869D0] focus:bg-white focus:ring-4 focus:ring-[#3869D0]/10 disabled:cursor-not-allowed disabled:opacity-60"
+                                        className="w-full rounded-xl border border-slate-200 bg-slate-50/60 py-3 pl-11 pr-11 text-sm text-[var(--navy)] outline-none transition placeholder:text-slate-400 focus:border-[#3869D0] focus:bg-white focus:ring-4 focus:ring-[#3869D0]/10 disabled:cursor-not-allowed disabled:opacity-60"
                                     />
+
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowConfirmPassword((current) => !current)}
+                                        disabled={loading}
+                                        aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600 disabled:cursor-not-allowed disabled:opacity-50"
+                                    >
+                                        {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                    </button>
                                 </div>
                             </div>
 
