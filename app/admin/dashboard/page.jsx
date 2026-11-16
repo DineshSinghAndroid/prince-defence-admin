@@ -140,7 +140,7 @@ export default function DashboardPage() {
                                 value={fromDate}
                                 max={toDate}
                                 onChange={(event) => { setLoading(true); setFromDate(event.target.value); }}
-                                className="min-h-11 w-full min-w-0 rounded-xl border border-[#C8D5EA] bg-white px-2.5 sm:px-3 text-xs sm:text-sm font-semibold text-[var(--navy)] shadow-sm outline-none transition focus:border-[#3869D0] focus:ring-2 focus:ring-[#3869D0]/15"
+                                className="h-11 w-full min-w-0 rounded-xl border border-[#C8D5EA] bg-white px-2.5 sm:px-3 text-xs sm:text-sm font-semibold text-[var(--navy)] shadow-sm outline-none transition focus:border-[#3869D0] focus:ring-2 focus:ring-[#3869D0]/15"
                             />
                         </label>
                         <label className="flex flex-col gap-1.5 min-w-0">
@@ -154,7 +154,7 @@ export default function DashboardPage() {
                                 min={fromDate}
                                 max={getIndiaDateKey()}
                                 onChange={(event) => { setLoading(true); setToDate(event.target.value); }}
-                                className="min-h-11 w-full min-w-0 rounded-xl border border-[#C8D5EA] bg-white px-2.5 sm:px-3 text-xs sm:text-sm font-semibold text-[var(--navy)] shadow-sm outline-none transition focus:border-[#3869D0] focus:ring-2 focus:ring-[#3869D0]/15"
+                                className="h-11 w-full min-w-0 rounded-xl border border-[#C8D5EA] bg-white px-2.5 sm:px-3 text-xs sm:text-sm font-semibold text-[var(--navy)] shadow-sm outline-none transition focus:border-[#3869D0] focus:ring-2 focus:ring-[#3869D0]/15"
                             />
                         </label>
                     </div>

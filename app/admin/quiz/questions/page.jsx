@@ -42,7 +42,7 @@ const glassModal =
     "rounded-3xl border border-[#C8D5EA]/70 bg-white/90 shadow-[0_20px_60px_rgba(16,42,67,0.20)] backdrop-blur-2xl";
 
 const inputClass =
-    "w-full rounded-xl border border-[#C8D5EA] bg-white/70 px-3.5 py-2.5 text-sm text-[var(--navy)] outline-none backdrop-blur-md transition placeholder:text-[var(--muted)] focus:border-[#3869D0]/50 focus:bg-white focus:ring-4 focus:ring-[#3869D0]/10";
+    "w-full min-w-0 h-11 rounded-xl border border-[#C8D5EA] bg-white px-3 text-xs sm:text-sm font-semibold text-[var(--navy)] outline-none transition placeholder:text-[var(--muted)] focus:border-[#3869D0] focus:ring-2 focus:ring-[#3869D0]/15";
 
 const PAGE_LIMIT = 20;
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
@@ -877,11 +877,11 @@ export default function QuizQuestionsPage() {
                                 Search
                             </label>
 
-                            <div className="flex gap-2">
-                                <div className="relative flex-1">
+                            <div className="flex gap-1.5 sm:gap-2">
+                                <div className="relative min-w-0 flex-1">
                                     <Search
-                                        size={16}
-                                        className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted)]"
+                                        size={15}
+                                        className="pointer-events-none absolute left-3 top-1/2 hidden -translate-y-1/2 text-[var(--muted)] sm:block"
                                     />
 
                                     <input
@@ -896,8 +896,8 @@ export default function QuizQuestionsPage() {
                                                 event.target.value
                                             )
                                         }
-                                        placeholder="Search question..."
-                                        className={`${inputClass} pl-9`}
+                                        placeholder="Search..."
+                                        className={`${inputClass} px-2.5 sm:pl-9`}
                                     />
 
                                     {searchInput && (
@@ -910,7 +910,7 @@ export default function QuizQuestionsPage() {
                                             aria-label="Clear search"
                                         >
                                             <X
-                                                size={15}
+                                                size={14}
                                             />
                                         </button>
                                     )}
@@ -918,9 +918,12 @@ export default function QuizQuestionsPage() {
 
                                 <button
                                     type="submit"
-                                    className="rounded-xl bg-[#3869D0] px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-[#3869D0]/20 transition hover:bg-[#2f5dbd]"
+                                    title="Search"
+                                    aria-label="Search"
+                                    className="flex h-11 shrink-0 items-center justify-center rounded-xl bg-[#3869D0] px-3 sm:px-4 text-xs sm:text-sm font-bold text-white shadow-md shadow-[#3869D0]/20 transition hover:bg-[#2f5dbd]"
                                 >
-                                    Search
+                                    <Search size={15} className="sm:hidden" />
+                                    <span className="hidden sm:inline">Search</span>
                                 </button>
                             </div>
                         </form>

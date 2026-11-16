@@ -188,7 +188,7 @@ const Sidebar = () => {
                     }`}
             >
                 <aside
-                    className={`fixed inset-y-0 left-0 z-50 flex h-screen min-h-screen w-72 shrink-0 flex-col overflow-hidden bg-[#102A43] text-white shadow-2xl transition-all duration-300 lg:sticky lg:top-0 ${open
+                    className={`fixed inset-y-0 left-0 z-50 flex h-[100dvh] max-h-[100dvh] w-72 shrink-0 flex-col overflow-hidden bg-[#102A43] text-white shadow-2xl transition-all duration-300 lg:sticky lg:top-0 ${open
                         ? "translate-x-0"
                         : "-translate-x-full"
                         } ${collapsed
@@ -206,7 +206,7 @@ const Sidebar = () => {
 
                     {/* Brand */}
 
-                    <div className="relative flex items-center justify-between px-6 pb-6 pt-7">
+                    <div className="relative flex shrink-0 items-center justify-between px-6 pb-5 pt-6">
                         <div className="flex items-center gap-3">
 
                             <div className="flex items-center justify-center rounded-full shadow-lg shadow-[#3869D0]/30">
@@ -252,13 +252,13 @@ const Sidebar = () => {
 
                     {/* Divider */}
 
-                    <div className="mx-6 h-px bg-gradient-to-r from-transparent via-[#F0F4FF]/20 to-transparent" />
+                    <div className="mx-6 h-px shrink-0 bg-gradient-to-r from-transparent via-[#F0F4FF]/20 to-transparent" />
 
-                    {/* Navigation */}
+                    {/* Navigation - Scrollable only in this middle section */}
 
-                    <nav className="relative flex-1 space-y-3 overflow-y-auto px-4 py-10 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                    <nav className="relative flex-1 min-h-0 space-y-2.5 overflow-y-auto overscroll-contain px-4 py-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
 
-                        <p className="mb-3 px-3 text-[10px] font-bold tracking-[0.25em] text-[#CBD5E1]/50">
+                        <p className="mb-2 px-3 text-[10px] font-bold tracking-[0.25em] text-[#CBD5E1]/50">
                             MENU
                         </p>
 
@@ -278,7 +278,7 @@ const Sidebar = () => {
                                             onClick={() =>
                                                 setOpen(false)
                                             }
-                                            className={`group relative flex items-center gap-3 rounded-xl px-4 py-4 text-base font-semibold transition-all duration-300 ${active
+                                            className={`group relative flex items-center gap-3 rounded-xl px-4 py-3.5 text-base font-semibold transition-all duration-300 ${active
                                                 ? "bg-gradient-to-r from-[#3869D0] to-[#244A9A] text-white shadow-lg shadow-[#3869D0]/25"
                                                 : "text-[#CBD5E1] hover:translate-x-1 hover:bg-[#F0F4FF]/10 hover:text-white"
                                                 }`}
@@ -303,9 +303,9 @@ const Sidebar = () => {
                             )}
                     </nav>
 
-                    {/* User Card + Logout */}
+                    {/* User Card + Logout - Fixed at bottom */}
 
-                    <div className="relative border-t border-[#F0F4FF]/10 p-4">
+                    <div className="relative shrink-0 mt-auto border-t border-[#F0F4FF]/10 bg-[#102A43] p-4 shadow-[0_-4px_20px_rgba(0,0,0,0.25)]">
 
                         <div className="flex items-center gap-3 rounded-xl border border-[#F0F4FF]/10 bg-[#F0F4FF]/5 p-3">
 
@@ -319,11 +319,11 @@ const Sidebar = () => {
 
                             <div className="min-w-0 flex-1">
 
-                                <p className="whitespace-nowrap text-sm font-bold text-white">
+                                <p className="truncate text-sm font-bold text-white">
                                     {user?.name || "Admin"}
                                 </p>
 
-                                <p className="break-all text-xs leading-5 text-[#CBD5E1]">
+                                <p className="truncate text-xs leading-5 text-[#CBD5E1]">
                                     {user?.email ||
                                         "Email not available"}
                                 </p>

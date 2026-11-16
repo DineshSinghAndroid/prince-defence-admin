@@ -167,8 +167,8 @@ export default function QuizAnalyticsPage() {
                     </div>
                 </header>
 
-                <section className={`mt-6 rounded-2xl p-4 sm:p-5 ${glass}`} aria-label="Quiz analytics filters">
-                    <div className="grid grid-cols-2 gap-3 sm:gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                <section className={`mt-6 rounded-2xl border border-[#C8D5EA]/70 bg-white/80 p-4 sm:p-5 shadow-[0_8px_32px_rgba(16,42,67,0.08)] backdrop-blur-xl`} aria-label="Quiz analytics filters">
+                    <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
                         <label className="flex flex-col gap-1.5 min-w-0">
                             <span className="flex items-center gap-1.5 text-xs font-bold text-[#526579]">
                                 <CalendarDays size={14} className="shrink-0 text-[#3869D0]" />
@@ -179,7 +179,7 @@ export default function QuizAnalyticsPage() {
                                 value={fromDate}
                                 max={toDate}
                                 onChange={setFilter(setFromDate)}
-                                className="min-h-11 w-full min-w-0 rounded-xl border border-[#C8D5EA] bg-white px-2.5 sm:px-3 text-xs sm:text-sm font-semibold text-[var(--navy)] shadow-sm outline-none transition focus:border-[#3869D0] focus:ring-2 focus:ring-[#3869D0]/15"
+                                className="h-11 w-full min-w-0 rounded-xl border border-[#C8D5EA] bg-white px-2.5 sm:px-3 text-xs sm:text-sm font-semibold text-[var(--navy)] shadow-sm outline-none transition focus:border-[#3869D0] focus:ring-2 focus:ring-[#3869D0]/15"
                             />
                         </label>
                         <label className="flex flex-col gap-1.5 min-w-0">
@@ -193,26 +193,32 @@ export default function QuizAnalyticsPage() {
                                 min={fromDate}
                                 max={getIndiaDateKey()}
                                 onChange={setFilter(setToDate)}
-                                className="min-h-11 w-full min-w-0 rounded-xl border border-[#C8D5EA] bg-white px-2.5 sm:px-3 text-xs sm:text-sm font-semibold text-[var(--navy)] shadow-sm outline-none transition focus:border-[#3869D0] focus:ring-2 focus:ring-[#3869D0]/15"
+                                className="h-11 w-full min-w-0 rounded-xl border border-[#C8D5EA] bg-white px-2.5 sm:px-3 text-xs sm:text-sm font-semibold text-[var(--navy)] shadow-sm outline-none transition focus:border-[#3869D0] focus:ring-2 focus:ring-[#3869D0]/15"
                             />
                         </label>
                         <label className="flex flex-col gap-1.5 min-w-0">
-                            <span className="text-xs font-bold text-[#526579] truncate">Quiz category</span>
+                            <span className="flex items-center gap-1.5 text-xs font-bold text-[#526579]">
+                                <BookOpenCheck size={14} className="shrink-0 text-[#3869D0]" />
+                                <span className="truncate">Quiz category</span>
+                            </span>
                             <select
                                 value={category}
                                 onChange={setFilter(setCategory)}
-                                className="min-h-11 w-full min-w-0 rounded-xl border border-[#C8D5EA] bg-white px-2.5 sm:px-3 text-xs sm:text-sm font-semibold text-[var(--navy)] shadow-sm outline-none transition focus:border-[#3869D0] focus:ring-2 focus:ring-[#3869D0]/15"
+                                className="h-11 w-full min-w-0 rounded-xl border border-[#C8D5EA] bg-white px-2.5 sm:px-3 text-xs sm:text-sm font-semibold text-[var(--navy)] shadow-sm outline-none transition focus:border-[#3869D0] focus:ring-2 focus:ring-[#3869D0]/15"
                             >
                                 <option value="">All categories</option>
                                 {categories.map((item) => <option key={item} value={item}>{item}</option>)}
                             </select>
                         </label>
                         <label className="flex flex-col gap-1.5 min-w-0">
-                            <span className="text-xs font-bold text-[#526579] truncate">Subject</span>
+                            <span className="flex items-center gap-1.5 text-xs font-bold text-[#526579]">
+                                <ClipboardList size={14} className="shrink-0 text-[#3869D0]" />
+                                <span className="truncate">Subject</span>
+                            </span>
                             <select
                                 value={subject}
                                 onChange={setFilter(setSubject)}
-                                className="min-h-11 w-full min-w-0 rounded-xl border border-[#C8D5EA] bg-white px-2.5 sm:px-3 text-xs sm:text-sm font-semibold text-[var(--navy)] shadow-sm outline-none transition focus:border-[#3869D0] focus:ring-2 focus:ring-[#3869D0]/15"
+                                className="h-11 w-full min-w-0 rounded-xl border border-[#C8D5EA] bg-white px-2.5 sm:px-3 text-xs sm:text-sm font-semibold text-[var(--navy)] shadow-sm outline-none transition focus:border-[#3869D0] focus:ring-2 focus:ring-[#3869D0]/15"
                             >
                                 <option value="">All subjects</option>
                                 {analytics.subjects.map((item) => <option key={item} value={item}>{item}</option>)}
