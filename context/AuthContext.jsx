@@ -66,13 +66,26 @@ export const AuthProvider = ({ children }) => {
 
 
     // INITIAL AUTH CHECK
-
     useEffect(() => {
+        // Safety timeout: Ensure loading never hangs permanently if backend or network is unresponsive
+        const safetyTimer = window.setTimeout(() => {
+            setLoading((current) => {
+                if (current) {
+                    console.warn("Session check timed out. Showing login screen.");
+                    return false;
+                }
+                return current;
+            });
+        }, 8000);
+
         const timer = window.setTimeout(() => {
             void checkAuth();
         }, 0);
 
-        return () => window.clearTimeout(timer);
+        return () => {
+            window.clearTimeout(timer);
+            window.clearTimeout(safetyTimer);
+        };
     }, []);
 
 
