@@ -390,54 +390,54 @@ export default function AchieversPage() {
                 </section>
 
                 {/* Statistics */}
-                <section className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                    <div className="rounded-2xl border border-[#C8D5EA]/70 bg-white/70 p-5 shadow-[0_8px_32px_rgba(16,42,67,0.10)] backdrop-blur-xl">
+                <section className="mb-6 grid grid-cols-2 gap-2.5 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    <div className="rounded-2xl border border-[#C8D5EA]/70 bg-white/70 p-3.5 sm:p-5 shadow-[0_8px_32px_rgba(16,42,67,0.10)] backdrop-blur-xl">
                         <div className="flex items-center justify-between">
-                            <p className="text-sm font-medium text-slate-500">
+                            <p className="text-xs sm:text-sm font-semibold text-slate-500">
                                 Total Categories
                             </p>
-                            <FolderOpen size={20} className="text-[#3869D0]" />
+                            <FolderOpen size={18} className="text-[#3869D0]" />
                         </div>
 
-                        <p className="mt-3 text-3xl font-extrabold text-[var(--navy)]">
+                        <p className="mt-2 sm:mt-3 text-2xl sm:text-3xl font-extrabold text-[var(--navy)]">
                             {categories.length}
                         </p>
 
-                        <p className="mt-1 text-xs text-slate-500">
+                        <p className="mt-0.5 sm:mt-1 text-[11px] sm:text-xs text-slate-500">
                             {activeCategories.length} active
                         </p>
                     </div>
 
-                    <div className="rounded-2xl border border-[#C8D5EA]/70 bg-white/70 p-5 shadow-[0_8px_32px_rgba(16,42,67,0.10)] backdrop-blur-xl">
+                    <div className="rounded-2xl border border-[#C8D5EA]/70 bg-white/70 p-3.5 sm:p-5 shadow-[0_8px_32px_rgba(16,42,67,0.10)] backdrop-blur-xl">
                         <div className="flex items-center justify-between">
-                            <p className="text-sm font-medium text-slate-500">
+                            <p className="text-xs sm:text-sm font-semibold text-slate-500">
                                 Current Results
                             </p>
-                            <Users size={20} className="text-[#3869D0]" />
+                            <Users size={18} className="text-[#3869D0]" />
                         </div>
 
-                        <p className="mt-3 text-3xl font-extrabold text-[var(--navy)]">
+                        <p className="mt-2 sm:mt-3 text-2xl sm:text-3xl font-extrabold text-[var(--navy)]">
                             {pagination?.total ?? achievers.length}
                         </p>
 
-                        <p className="mt-1 text-xs text-slate-500">
+                        <p className="mt-0.5 sm:mt-1 text-[11px] sm:text-xs text-slate-500">
                             Selected category and filters
                         </p>
                     </div>
 
-                    <div className="rounded-2xl border border-[#C8D5EA]/70 bg-white/70 p-5 shadow-[0_8px_32px_rgba(16,42,67,0.10)] backdrop-blur-xl sm:col-span-2 lg:col-span-1">
+                    <div className="col-span-2 rounded-2xl border border-[#C8D5EA]/70 bg-white/70 p-3.5 sm:p-5 shadow-[0_8px_32px_rgba(16,42,67,0.10)] backdrop-blur-xl sm:col-span-2 lg:col-span-1">
                         <div className="flex items-center justify-between">
-                            <p className="text-sm font-medium text-slate-500">
+                            <p className="text-xs sm:text-sm font-semibold text-slate-500">
                                 Published on Current Page
                             </p>
-                            <Trophy size={20} className="text-amber-500" />
+                            <Trophy size={18} className="text-amber-500" />
                         </div>
 
-                        <p className="mt-3 text-3xl font-extrabold text-[var(--navy)]">
+                        <p className="mt-2 sm:mt-3 text-2xl sm:text-3xl font-extrabold text-[var(--navy)]">
                             {publishedCount}
                         </p>
 
-                        <p className="mt-1 text-xs text-slate-500">
+                        <p className="mt-0.5 sm:mt-1 text-[11px] sm:text-xs text-slate-500">
                             Published achievers on this page
                         </p>
                     </div>

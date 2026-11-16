@@ -1360,14 +1360,14 @@ export default function ContactsPage() {
                     </div>
 
                     {/* Date Pickers & Presets */}
-                    <div className="mt-4 rounded-2xl border-2 border-[#D8E1EE] bg-white p-4 shadow-sm sm:p-5">
-                        <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+                    <div className="mt-4 rounded-2xl border-2 border-[#D8E1EE] bg-white p-3.5 shadow-sm sm:p-5">
+                        <div className="flex flex-col gap-3.5 xl:flex-row xl:items-center xl:justify-between">
 
-                            {/* Date inputs */}
-                            <div className="flex flex-wrap items-center gap-3 sm:gap-4">
-                                <div className="flex items-center gap-2">
-                                    <label className="flex items-center gap-1.5 text-xs font-extrabold text-[var(--navy)]">
-                                        <CalendarDays size={15} className="text-[#3869D0]" />
+                            {/* Date inputs (2 columns on mobile side by side) */}
+                            <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center sm:gap-4">
+                                <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-2">
+                                    <label className="flex items-center gap-1.5 text-[11px] font-extrabold text-[var(--navy)] sm:text-xs">
+                                        <CalendarDays size={14} className="text-[#3869D0]" />
                                         <span>From:</span>
                                     </label>
                                     <input
@@ -1377,13 +1377,13 @@ export default function ContactsPage() {
                                             setStartDate(e.target.value);
                                             setPage(1);
                                         }}
-                                        className="h-10 rounded-xl border-2 border-[#C8D5EA] bg-[#F8FAFC] px-3.5 text-xs font-bold text-[var(--navy)] outline-none transition focus:border-[#3869D0] focus:bg-white focus:ring-4 focus:ring-[#3869D0]/10"
+                                        className="h-10 w-full rounded-xl border-2 border-[#C8D5EA] bg-[#F8FAFC] px-2.5 text-xs font-bold text-[var(--navy)] outline-none transition focus:border-[#3869D0] focus:bg-white focus:ring-4 focus:ring-[#3869D0]/10 sm:w-auto sm:px-3.5"
                                     />
                                 </div>
 
-                                <div className="flex items-center gap-2">
-                                    <label className="flex items-center gap-1.5 text-xs font-extrabold text-[var(--navy)]">
-                                        <CalendarDays size={15} className="text-[#3869D0]" />
+                                <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-2">
+                                    <label className="flex items-center gap-1.5 text-[11px] font-extrabold text-[var(--navy)] sm:text-xs">
+                                        <CalendarDays size={14} className="text-[#3869D0]" />
                                         <span>To:</span>
                                     </label>
                                     <input
@@ -1394,14 +1394,14 @@ export default function ContactsPage() {
                                             setEndDate(e.target.value);
                                             setPage(1);
                                         }}
-                                        className="h-10 rounded-xl border-2 border-[#C8D5EA] bg-[#F8FAFC] px-3.5 text-xs font-bold text-[var(--navy)] outline-none transition focus:border-[#3869D0] focus:bg-white focus:ring-4 focus:ring-[#3869D0]/10"
+                                        className="h-10 w-full rounded-xl border-2 border-[#C8D5EA] bg-[#F8FAFC] px-2.5 text-xs font-bold text-[var(--navy)] outline-none transition focus:border-[#3869D0] focus:bg-white focus:ring-4 focus:ring-[#3869D0]/10 sm:w-auto sm:px-3.5"
                                     />
                                 </div>
                             </div>
 
-                            {/* Quick Presets */}
-                            <div className="flex flex-wrap items-center gap-2">
-                                <span className="mr-1 text-xs font-extrabold uppercase tracking-wider text-[var(--navy)]">
+                            {/* Quick Presets (Symmetrical wrap on mobile) */}
+                            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                                <span className="w-full text-[10px] font-extrabold uppercase tracking-wider text-[var(--navy)] sm:w-auto sm:text-xs">
                                     Presets:
                                 </span>
                                 {[
@@ -1455,7 +1455,7 @@ export default function ContactsPage() {
                                         key={preset.label}
                                         type="button"
                                         onClick={preset.onClick}
-                                        className={`rounded-xl px-3.5 py-2 text-xs font-bold transition-all ${
+                                        className={`flex-1 sm:flex-none text-center whitespace-nowrap rounded-xl px-2.5 py-1.5 sm:px-3.5 sm:py-2 text-xs font-bold transition-all ${
                                             preset.active
                                                 ? "bg-[#3869D0] text-white shadow-md shadow-[#3869D0]/30 ring-2 ring-[#3869D0]/30 scale-[1.02]"
                                                 : "border-2 border-[#C8D5EA] bg-white text-[var(--navy)] hover:border-[#3869D0] hover:bg-[#F2F6FF]"
@@ -1469,35 +1469,37 @@ export default function ContactsPage() {
                         </div>
 
                         {/* Visible Active Date Filter Callout */}
-                        <div className="mt-3.5 flex flex-wrap items-center justify-between gap-2 border-t border-[#E2E8F0] pt-3 text-xs">
-                            <div className="flex flex-wrap items-center gap-2">
-                                <span className="font-extrabold uppercase tracking-wider text-[var(--navy)]">
+                        <div className="mt-3 flex flex-col gap-2 border-t border-[#E2E8F0] pt-2.5 sm:flex-row sm:items-center sm:justify-between text-xs">
+                            <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-2">
+                                <span className="text-[10px] font-extrabold uppercase tracking-wider text-[var(--navy)] sm:text-xs">
                                     Active Date Filter:
                                 </span>
-                                <span className="inline-flex items-center gap-1.5 rounded-xl border-2 border-[#3869D0]/30 bg-[#3869D0]/10 px-3 py-1 font-bold text-[#1f4ba8]">
-                                    <CalendarDays size={14} className="text-[#3869D0]" />
-                                    {isCurrentMonthActive
-                                        ? `This Month (${startDate} to ${endDate})`
-                                        : isLastMonthActive
-                                        ? `Last Month (${startDate} to ${endDate})`
-                                        : isTodayActive
-                                        ? `Today (${startDate})`
-                                        : isLast30DaysActive
-                                        ? `Last 30 Days (${startDate} to ${endDate})`
-                                        : startDate && endDate
-                                        ? `Custom Dates (${startDate} to ${endDate})`
-                                        : startDate
-                                        ? `From ${startDate}`
-                                        : endDate
-                                        ? `Up to ${endDate}`
-                                        : "All Time (Complete History)"}
+                                <span className="inline-flex w-fit items-center gap-1.5 rounded-xl border-2 border-[#3869D0]/30 bg-[#3869D0]/10 px-2.5 py-1 text-[11px] font-bold text-[#1f4ba8] sm:px-3 sm:text-xs">
+                                    <CalendarDays size={13} className="shrink-0 text-[#3869D0]" />
+                                    <span>
+                                        {isCurrentMonthActive
+                                            ? `This Month (${startDate} to ${endDate})`
+                                            : isLastMonthActive
+                                            ? `Last Month (${startDate} to ${endDate})`
+                                            : isTodayActive
+                                            ? `Today (${startDate})`
+                                            : isLast30DaysActive
+                                            ? `Last 30 Days (${startDate} to ${endDate})`
+                                            : startDate && endDate
+                                            ? `Custom Dates (${startDate} to ${endDate})`
+                                            : startDate
+                                            ? `From ${startDate}`
+                                            : endDate
+                                            ? `Up to ${endDate}`
+                                            : "All Time (Complete History)"}
+                                    </span>
                                 </span>
                             </div>
 
                             {(!isCurrentMonthActive || search || course || status) && (
                                 <button
                                     onClick={clearFilters}
-                                    className="font-bold text-red-600 hover:text-red-700 hover:underline"
+                                    className="w-fit text-left text-xs font-bold text-red-600 hover:text-red-700 hover:underline"
                                 >
                                     Reset to Current Month
                                 </button>

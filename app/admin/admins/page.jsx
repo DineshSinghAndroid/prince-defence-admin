@@ -865,7 +865,7 @@ function AdminsContent() {
                     </div>
                 )}
 
-                <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+                <div className="mb-6 grid grid-cols-2 gap-2.5 sm:gap-4 sm:grid-cols-3">
 
                     <StatCard
                         icon={
@@ -892,6 +892,7 @@ function AdminsContent() {
                     />
 
                     <StatCard
+                        className="col-span-2 sm:col-span-1"
                         icon={
                             <UserX size={20} />
                         }
@@ -1589,6 +1590,7 @@ function StatCard({
     label,
     value,
     tone,
+    className = "",
 }) {
     const tones = {
         blue: {
@@ -1613,26 +1615,26 @@ function StatCard({
 
     return (
         <div
-            className={`${glass} relative overflow-hidden rounded-2xl p-5`}
+            className={`${glass} relative overflow-hidden rounded-2xl p-3.5 sm:p-5 ${className}`}
         >
             <div
                 className={`pointer-events-none absolute -right-8 -top-8 h-24 w-24 rounded-full bg-gradient-to-br ${selected.glow} opacity-15 blur-2xl`}
             />
 
-            <div className="relative flex items-center justify-between">
+            <div className="relative flex items-center justify-between gap-2">
 
                 <div>
-                    <p className="text-xs font-semibold uppercase tracking-wider text-[var(--muted)]">
+                    <p className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-[var(--muted)]">
                         {label}
                     </p>
 
-                    <p className="mt-2 text-3xl font-bold text-[var(--navy)]">
+                    <p className="mt-1 sm:mt-2 text-2xl sm:text-3xl font-bold text-[var(--navy)]">
                         {value}
                     </p>
                 </div>
 
                 <div
-                    className={`flex h-12 w-12 items-center justify-center rounded-xl ${selected.icon}`}
+                    className={`flex h-10 w-10 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-xl ${selected.icon}`}
                 >
                     {icon}
                 </div>

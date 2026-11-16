@@ -363,36 +363,36 @@ export default function QuizSettingsPage() {
 
                     {/* Preview */}
 
-                    <div className="mt-6 grid gap-4 sm:grid-cols-3">
-                        <div className="rounded-2xl border border-[#C8D5EA]/70 bg-white/60 p-4">
+                    <div className="mt-6 grid grid-cols-2 gap-2.5 sm:gap-4 sm:grid-cols-3">
+                        <div className="rounded-2xl border border-[#C8D5EA]/70 bg-white/60 p-3 sm:p-4">
                             <p className="text-xs font-semibold text-[var(--muted)]">
                                 Selected Date
                             </p>
 
-                            <p className="mt-1.5 text-lg font-bold text-[var(--navy)]">
+                            <p className="mt-1.5 text-base sm:text-lg font-bold text-[var(--navy)]">
                                 {dateKey ||
                                     "Not selected"}
                             </p>
                         </div>
 
-                        <div className="rounded-2xl border border-[#C8D5EA]/70 bg-white/60 p-4">
+                        <div className="rounded-2xl border border-[#C8D5EA]/70 bg-white/60 p-3 sm:p-4">
                             <p className="text-xs font-semibold text-[var(--muted)]">
                                 Duration
                             </p>
 
-                            <p className="mt-1.5 text-lg font-bold text-[var(--navy)]">
+                            <p className="mt-1.5 text-base sm:text-lg font-bold text-[var(--navy)]">
                                 {durationMinutes}{" "}
                                 min
                             </p>
                         </div>
 
-                        <div className="rounded-2xl border border-[#C8D5EA]/70 bg-white/60 p-4">
+                        <div className="col-span-2 rounded-2xl border border-[#C8D5EA]/70 bg-white/60 p-3 sm:p-4 sm:col-span-1">
                             <p className="text-xs font-semibold text-[var(--muted)]">
                                 Status
                             </p>
 
                             <p
-                                className={`mt-1.5 text-lg font-bold ${
+                                className={`mt-1.5 text-base sm:text-lg font-bold ${
                                     isActive
                                         ? "text-green-600"
                                         : "text-slate-500"

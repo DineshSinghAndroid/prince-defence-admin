@@ -790,7 +790,7 @@ export default function QuizQuestionsPage() {
                 <section
                     className={`${glass} mb-6 p-4 md:p-5`}
                 >
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+                    <div className="grid grid-cols-2 gap-2.5 sm:gap-4 md:grid-cols-4">
                         <div>
                             <label className="mb-1.5 block text-sm font-semibold text-[#40556B]">
                                 Quiz Date

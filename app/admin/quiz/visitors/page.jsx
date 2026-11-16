@@ -164,7 +164,7 @@ export default function VisitorAnalyticsPage() {
           </div>
         </header>
 
-        <section className={`mt-6 grid gap-4 p-4 sm:grid-cols-2 ${glass}`} aria-label="Visitor filters">
+        <section className={`mt-6 grid grid-cols-2 gap-2.5 sm:gap-4 sm:grid-cols-2 ${glass}`} aria-label="Visitor filters">
           <label className="grid gap-2 text-xs font-semibold text-[#526579]">
             <span className="flex items-center gap-2"><CalendarDays size={15} /> From date</span>
             <input type="date" value={fromDate} max={toDate} onChange={changeRange(setFromDate)} className="min-h-11 rounded-xl border border-[#C8D5EA] bg-white px-3 text-sm text-[var(--navy)]" />
@@ -237,16 +237,16 @@ export default function VisitorAnalyticsPage() {
           </div>
         </section>
 
-        <section className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-3" aria-label="Visitor metrics">
+        <section className="mt-6 grid grid-cols-2 gap-2.5 sm:gap-4 sm:grid-cols-2 xl:grid-cols-3" aria-label="Visitor metrics">
           {[
             { label: "Unique visitors", value: data.summary.visitors, icon: Users, color: "from-[#2d7a63] to-[#1b5748]" },
             { label: routePath ? `Page views · ${routePath}` : "Total page views", value: data.summary.pageViews, icon: Eye, color: "from-[#3869D0] to-[#244A9A]" },
-            { label: "Quiz attempts", value: data.summary.quizAttempts, icon: BarChart3, color: "from-[#b89242] to-[#8A6820]" },
-          ].map(({ label, value, icon: Icon, color }) => (
-            <article key={label} className={`p-5 sm:p-6 ${glass}`}>
-              <span className={`flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br ${color} text-white`}><Icon size={20} /></span>
-              <p className="mt-4 text-sm font-medium text-[#526579]">{label}</p>
-              <p className="mt-1 text-3xl font-extrabold text-[var(--navy)]">{loading ? "…" : Number(value || 0).toLocaleString("en-IN")}</p>
+            { label: "Quiz attempts", value: data.summary.quizAttempts, icon: BarChart3, color: "from-[#b89242] to-[#8A6820]", span: "col-span-2 sm:col-span-2 xl:col-span-1" },
+          ].map(({ label, value, icon: Icon, color, span }) => (
+            <article key={label} className={`rounded-2xl p-3.5 sm:p-5 sm:p-6 ${glass} ${span || ""}`}>
+              <span className={`flex h-9 w-9 sm:h-11 sm:w-11 items-center justify-center rounded-xl bg-gradient-to-br ${color} text-white`}><Icon className="h-4.5 w-4.5 sm:h-5 sm:w-5" /></span>
+              <p className="mt-3 sm:mt-4 text-xs sm:text-sm font-medium text-[#526579]">{label}</p>
+              <p className="mt-1 text-2xl sm:text-3xl font-extrabold text-[var(--navy)]">{loading ? "…" : Number(value || 0).toLocaleString("en-IN")}</p>
             </article>
           ))}
         </section>

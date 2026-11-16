@@ -128,27 +128,27 @@ export default function DashboardPage() {
 
                 {error && <p role="alert" className="mt-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>}
 
-                <section className={`mt-6 grid gap-4 rounded-2xl p-4 sm:grid-cols-2 lg:grid-cols-3 ${glass}`} aria-label="Traffic date filter">
-                    <label className="grid gap-2 text-xs font-semibold text-[#526579]">
-                        <span className="flex items-center gap-2"><CalendarDays size={15} />From date</span>
-                        <input type="date" value={fromDate} max={toDate} onChange={(event) => { setLoading(true); setFromDate(event.target.value); }} className="min-h-11 rounded-xl border border-[#C8D5EA] bg-white px-3 text-sm text-[var(--navy)]" />
+                <section className={`mt-6 grid grid-cols-2 gap-2.5 rounded-2xl p-3.5 sm:gap-4 sm:p-4 sm:grid-cols-2 lg:grid-cols-3 ${glass}`} aria-label="Traffic date filter">
+                    <label className="grid gap-1.5 sm:gap-2 text-xs font-semibold text-[#526579]">
+                        <span className="flex items-center gap-1.5 sm:gap-2"><CalendarDays size={14} className="text-[#3869D0]" />From date</span>
+                        <input type="date" value={fromDate} max={toDate} onChange={(event) => { setLoading(true); setFromDate(event.target.value); }} className="min-h-10 w-full rounded-xl border border-[#C8D5EA] bg-white px-2.5 sm:px-3 text-xs sm:text-sm text-[var(--navy)]" />
                     </label>
-                    <label className="grid gap-2 text-xs font-semibold text-[#526579]">
-                        <span className="flex items-center gap-2"><CalendarDays size={15} />To date</span>
-                        <input type="date" value={toDate} min={fromDate} max={getIndiaDateKey()} onChange={(event) => { setLoading(true); setToDate(event.target.value); }} className="min-h-11 rounded-xl border border-[#C8D5EA] bg-white px-3 text-sm text-[var(--navy)]" />
+                    <label className="grid gap-1.5 sm:gap-2 text-xs font-semibold text-[#526579]">
+                        <span className="flex items-center gap-1.5 sm:gap-2"><CalendarDays size={14} className="text-[#3869D0]" />To date</span>
+                        <input type="date" value={toDate} min={fromDate} max={getIndiaDateKey()} onChange={(event) => { setLoading(true); setToDate(event.target.value); }} className="min-h-10 w-full rounded-xl border border-[#C8D5EA] bg-white px-2.5 sm:px-3 text-xs sm:text-sm text-[var(--navy)]" />
                     </label>
                 </section>
 
-                <section className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-label="Dashboard totals">
+                <section className="mt-6 grid grid-cols-2 gap-2.5 sm:gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-label="Dashboard totals">
                     {cards.map(({ label, value, href, icon: Icon, gradient }) => (
-                        <Link key={label} href={href} className={`group relative overflow-hidden rounded-2xl p-5 transition hover:-translate-y-1 hover:bg-white/90 sm:p-6 ${glass}`}>
+                        <Link key={label} href={href} className={`group relative overflow-hidden rounded-2xl p-3.5 sm:p-5 lg:p-6 transition hover:-translate-y-1 hover:bg-white/90 ${glass}`}>
                             <div className="relative flex items-center justify-between">
-                                <span className={`flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br ${gradient} text-white shadow-lg`}><Icon size={20} /></span>
-                                <ArrowUpRight size={17} className="text-[#526579] transition group-hover:text-[var(--gold)]" />
+                                <span className={`flex h-9 w-9 sm:h-11 sm:w-11 items-center justify-center rounded-xl bg-gradient-to-br ${gradient} text-white shadow-md`}><Icon className="h-4.5 w-4.5 sm:h-5 sm:w-5" /></span>
+                                <ArrowUpRight size={16} className="text-[#526579] transition group-hover:text-[var(--gold)]" />
                             </div>
-                            <p className="mt-5 text-sm font-medium text-[#526579]">{label}</p>
-                            <p className="mt-1 text-3xl font-extrabold text-[var(--navy)] sm:text-4xl">
-                                {loading ? <Loader2 size={28} className="animate-spin text-[#3869D0]" /> : Number(value || 0).toLocaleString("en-IN")}
+                            <p className="mt-3 sm:mt-5 text-xs sm:text-sm font-semibold text-[#526579] line-clamp-1">{label}</p>
+                            <p className="mt-0.5 sm:mt-1 text-2xl font-extrabold text-[var(--navy)] sm:text-3xl lg:text-4xl">
+                                {loading ? <Loader2 size={24} className="animate-spin text-[#3869D0]" /> : Number(value || 0).toLocaleString("en-IN")}
                             </p>
                         </Link>
                     ))}
