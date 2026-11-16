@@ -211,7 +211,7 @@ const Sidebar = () => {
                             </div>
 
                             <div>
-                                <h2 className="montserrat text-lg font-extrabold italic leading-tight text-white">
+                                <h2 className="montserrat text-lg font-extrabold leading-tight text-white">
                                     Prince Defence
                                 </h2>
 
