@@ -23,6 +23,8 @@ import {
     UserX,
     Loader2,
     WifiOff,
+    LayoutGrid,
+    List,
 } from "lucide-react";
 
 import ProtectedRoute from "@/component/common/ProtectedRoute";
@@ -216,6 +218,9 @@ function AdminsContent() {
 
     const [statusLoadingId, setStatusLoadingId] =
         useState(null);
+
+    const [viewMode, setViewMode] =
+        useState("cards");
 
     const [form, setForm] = useState({
         name: "",
@@ -936,97 +941,126 @@ function AdminsContent() {
                     }`}
                 >
 
-                    <div className="border-b border-[#D5DFEC] px-5 py-5 sm:px-6">
+                    <div className="border-b border-[#D5DFEC] px-5 py-4 sm:px-6">
 
-                        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 
                             <div>
                                 <h2 className="text-lg font-bold text-[var(--navy)]">
                                     All Administrators
                                 </h2>
 
-                                <p className="mt-1 text-xs text-[var(--muted)]">
-                                    Manage admin accounts and
-                                    their current access status.
+                                <p className="mt-0.5 text-xs text-[var(--muted)]">
+                                    Manage admin accounts, profiles, and current access status.
                                 </p>
                             </div>
 
-                            {refreshing && (
-                                <div className="flex items-center gap-2 text-xs font-medium text-[var(--muted)]">
-                                    <Loader2
-                                        size={15}
-                                        className="animate-spin"
-                                    />
+                            <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
+                                {refreshing && (
+                                    <div className="flex items-center gap-2 text-xs font-medium text-[var(--muted)]">
+                                        <Loader2
+                                            size={15}
+                                            className="animate-spin"
+                                        />
+                                        Refreshing...
+                                    </div>
+                                )}
 
-                                    Refreshing admins...
+                                <div className="inline-flex rounded-xl border border-[#C8D5EA] bg-white/80 p-0.5 shadow-xs">
+                                    <button
+                                        type="button"
+                                        onClick={() => setViewMode("cards")}
+                                        className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition ${
+                                            viewMode === "cards"
+                                                ? "bg-[#3869D0] text-white shadow-xs"
+                                                : "text-[#526579] hover:text-[var(--navy)]"
+                                        }`}
+                                    >
+                                        <LayoutGrid size={13} />
+                                        Profile Cards
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setViewMode("table")}
+                                        className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition ${
+                                            viewMode === "table"
+                                                ? "bg-[#3869D0] text-white shadow-xs"
+                                                : "text-[#526579] hover:text-[var(--navy)]"
+                                        }`}
+                                    >
+                                        <List size={13} />
+                                        Table
+                                    </button>
                                 </div>
-                            )}
+                            </div>
                         </div>
                     </div>
 
-                    <div className="overflow-x-auto">
-
-                        <table className="w-full min-w-[900px]">
-
-                            <thead>
-                                <tr className="border-b border-[#D5DFEC] bg-[#F2F6FF]/80">
-                                    {[
-                                        "Name",
-                                        "Email",
-                                        "Role",
-                                        "Status",
-                                        "Created At",
-                                        "Actions",
-                                    ].map(
-                                        (
-                                            heading
-                                        ) => (
+                    {filteredAdmins.length === 0 ? (
+                        <div>
+                            <EmptyState
+                                search={search}
+                                onAdd={openAddModal}
+                                onClear={() => setSearch("")}
+                            />
+                        </div>
+                    ) : viewMode === "cards" ? (
+                        <div className="grid grid-cols-1 gap-3.5 p-4 sm:grid-cols-2 sm:gap-4 sm:p-5 lg:grid-cols-3">
+                            {filteredAdmins.map((admin) => {
+                                const id = getId(admin);
+                                return (
+                                    <AdminProfileCard
+                                        key={id}
+                                        admin={admin}
+                                        id={id}
+                                        statusLoadingId={statusLoadingId}
+                                        handleStatusChange={handleStatusChange}
+                                        openEditModal={openEditModal}
+                                        requestDelete={requestDelete}
+                                        deletingId={deletingId}
+                                        formatDate={formatDate}
+                                        formatTime={formatTime}
+                                    />
+                                );
+                            })}
+                        </div>
+                    ) : (
+                        <div className="overflow-x-auto">
+                            <table className="w-full min-w-[900px]">
+                                <thead>
+                                    <tr className="border-b border-[#D5DFEC] bg-[#F2F6FF]/80">
+                                        {[
+                                            "Name",
+                                            "Email",
+                                            "Role",
+                                            "Status",
+                                            "Created At",
+                                            "Actions",
+                                        ].map((heading) => (
                                             <th
-                                                key={
-                                                    heading
-                                                }
+                                                key={heading}
                                                 className="px-6 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-[var(--muted)]"
                                             >
-                                                {
-                                                    heading
-                                                }
+                                                {heading}
                                             </th>
-                                        )
-                                    )}
-                                </tr>
-                            </thead>
-
-                            <tbody>
-                                {filteredAdmins.map(
-                                    (
-                                        admin
-                                    ) => {
-                                        const id =
-                                            getId(
-                                                admin
-                                            );
-
+                                        ))}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {filteredAdmins.map((admin) => {
+                                        const id = getId(admin);
                                         return (
                                             <tr
-                                                key={
-                                                    id
-                                                }
+                                                key={id}
                                                 className="border-b border-[#E1E7F0] transition hover:bg-[#F2F6FF]/70"
                                             >
                                                 <td className="px-6 py-5">
                                                     <div className="flex items-center gap-3">
-                                                        <Avatar
-                                                            name={
-                                                                admin?.name
-                                                            }
-                                                        />
-
+                                                        <Avatar name={admin?.name} />
                                                         <div className="min-w-0">
                                                             <p className="font-bold text-[var(--navy)]">
-                                                                {admin?.name ||
-                                                                    "Unnamed Admin"}
+                                                                {admin?.name || "Unnamed Admin"}
                                                             </p>
-
                                                             <p className="mt-0.5 text-xs text-[var(--muted)]">
                                                                 Administrator
                                                             </p>
@@ -1037,104 +1071,49 @@ function AdminsContent() {
                                                 <td className="px-6 py-5">
                                                     <div className="flex items-center gap-2">
                                                         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#3869D0]/10 text-[#3869D0]">
-                                                            <Mail
-                                                                size={
-                                                                    15
-                                                                }
-                                                            />
+                                                            <Mail size={15} />
                                                         </div>
-
                                                         <p className="text-sm font-medium text-[#40556B]">
-                                                            {admin?.email ||
-                                                                "—"}
+                                                            {admin?.email || "—"}
                                                         </p>
                                                     </div>
                                                 </td>
 
                                                 <td className="px-6 py-5">
-                                                    <RoleBadge
-                                                        role={
-                                                            admin?.role
-                                                        }
-                                                    />
+                                                    <RoleBadge role={admin?.role} />
                                                 </td>
 
                                                 <td className="px-6 py-5">
                                                     <StatusButton
-                                                        active={
-                                                            admin.isActive
-                                                        }
-                                                        loading={
-                                                            statusLoadingId ===
-                                                            id
-                                                        }
-                                                        onClick={() =>
-                                                            handleStatusChange(
-                                                                id,
-                                                                admin.isActive
-                                                            )
-                                                        }
+                                                        active={admin.isActive}
+                                                        loading={statusLoadingId === id}
+                                                        onClick={() => handleStatusChange(id, admin.isActive)}
                                                     />
                                                 </td>
 
                                                 <td className="px-6 py-5">
                                                     <div className="text-sm font-semibold text-[#40556B]">
-                                                        {formatDate(
-                                                            admin?.createdAt
-                                                        )}
+                                                        {formatDate(admin?.createdAt)}
                                                     </div>
-
                                                     {admin?.createdAt && (
                                                         <div className="mt-0.5 text-xs text-[var(--muted)]">
-                                                            {formatTime(
-                                                                admin.createdAt
-                                                            )}
+                                                            {formatTime(admin.createdAt)}
                                                         </div>
                                                     )}
                                                 </td>
 
                                                 <td className="px-6 py-5">
                                                     <Actions
-                                                        onEdit={() =>
-                                                            openEditModal(
-                                                                id
-                                                            )
-                                                        }
-                                                        onDelete={() =>
-                                                            requestDelete(
-                                                                admin
-                                                            )
-                                                        }
-                                                        deleting={
-                                                            deletingId ===
-                                                            id
-                                                        }
+                                                        onEdit={() => openEditModal(id)}
+                                                        onDelete={() => requestDelete(admin)}
+                                                        deleting={deletingId === id}
                                                     />
                                                 </td>
                                             </tr>
                                         );
-                                    }
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
-
-                    {filteredAdmins.length ===
-                        0 && (
-                        <div>
-                            <EmptyState
-                                search={
-                                    search
-                                }
-                                onAdd={
-                                    openAddModal
-                                }
-                                onClear={() =>
-                                    setSearch(
-                                        ""
-                                    )
-                                }
-                            />
+                                    })}
+                                </tbody>
+                            </table>
                         </div>
                     )}
                 </div>
@@ -1447,6 +1426,103 @@ function AdminsContent() {
                     handleDelete
                 }
             />
+        </div>
+    );
+}
+
+function AdminProfileCard({
+    admin,
+    id,
+    statusLoadingId,
+    handleStatusChange,
+    openEditModal,
+    requestDelete,
+    deletingId,
+    formatDate,
+    formatTime,
+}) {
+    const initial = admin?.name?.trim()?.charAt(0)?.toUpperCase() || "A";
+
+    return (
+        <div
+            className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-[#C8D5EA]/80 bg-white/85 p-4 sm:p-5 shadow-xs backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-[#3869D0]/50 hover:bg-white hover:shadow-lg hover:shadow-[#3869D0]/10"
+        >
+            {/* Ambient Corner Accent */}
+            <div className="pointer-events-none absolute -right-8 -top-8 h-24 w-24 rounded-full bg-gradient-to-br from-[#3869D0] to-[#B8C9F5] opacity-10 blur-xl transition group-hover:opacity-20" />
+
+            <div>
+                {/* Header: Initial Monogram + Name + Role + Actions */}
+                <div className="relative flex items-start justify-between gap-2.5">
+                    <div className="flex items-center gap-3 min-w-0 flex-1">
+                        {/* Profile Initial Badge (No photo) */}
+                        <div className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#102A43] via-[#1b3d63] to-[#3869D0] text-lg font-black text-white shadow-md shadow-[#3869D0]/20 ring-2 ring-white">
+                            {initial}
+
+                            {/* Active status pulse dot */}
+                            <span
+                                className={`absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full border-2 border-white ${
+                                    admin.isActive ? "bg-emerald-500" : "bg-red-500"
+                                }`}
+                                title={admin.isActive ? "Active" : "Inactive"}
+                            />
+                        </div>
+
+                        <div className="min-w-0 flex-1">
+                            <h3 className="truncate text-base font-extrabold text-[var(--navy)]">
+                                {admin?.name || "Unnamed Admin"}
+                            </h3>
+                            <div className="mt-1 flex items-center gap-1.5 flex-wrap">
+                                <RoleBadge role={admin?.role} />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Quick Edit/Delete Actions */}
+                    <Actions
+                        onEdit={() => openEditModal(id)}
+                        onDelete={() => requestDelete(admin)}
+                        deleting={deletingId === id}
+                    />
+                </div>
+
+                {/* Email Chip */}
+                <div className="relative mt-3.5 flex items-center gap-2 rounded-xl border border-[#D5DFEC]/80 bg-[#F2F6FF]/80 px-3 py-2 text-xs text-[#40556B]">
+                    <Mail size={14} className="shrink-0 text-[#3869D0]" />
+                    <span className="truncate font-medium" title={admin?.email}>
+                        {admin?.email || "No email available"}
+                    </span>
+                </div>
+            </div>
+
+            {/* Bottom Row: Status Toggle + Join Date */}
+            <div className="relative mt-4 flex items-center justify-between gap-2 border-t border-[#E8EFF8] pt-3">
+                <div>
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-[var(--muted)]">
+                        Status
+                    </p>
+                    <div className="mt-1">
+                        <StatusButton
+                            active={admin.isActive}
+                            loading={statusLoadingId === id}
+                            onClick={() => handleStatusChange(id, admin.isActive)}
+                        />
+                    </div>
+                </div>
+
+                <div className="text-right">
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-[var(--muted)]">
+                        Joined
+                    </p>
+                    <p className="mt-1 text-xs font-semibold text-[#40556B]">
+                        {formatDate(admin?.createdAt)}
+                    </p>
+                    {admin?.createdAt && (
+                        <p className="text-[10px] text-[var(--muted)]">
+                            {formatTime(admin.createdAt)}
+                        </p>
+                    )}
+                </div>
+            </div>
         </div>
     );
 }

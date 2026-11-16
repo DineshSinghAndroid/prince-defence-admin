@@ -17,7 +17,6 @@ import {
     Users,
     Eye,
     Trophy,
-    User,
     ChevronLeft,
     ChevronRight,
 } from "lucide-react";
@@ -74,11 +73,6 @@ const links = [
         label: "Admins",
         icon: ShieldCheck,
         allowedRoles: ["superAdmin"],
-    },
-    {
-        href: "/admin/profile",
-        label: "Profile",
-        icon: User,
     },
 ];
 
@@ -315,29 +309,21 @@ const Sidebar = () => {
 
                         <div className="flex items-center gap-3 rounded-xl border border-[#F0F4FF]/10 bg-[#F0F4FF]/5 p-3">
 
-                            {/* Clickable Profile Card */}
-                            <Link
-                                href="/admin/profile"
-                                onClick={() => setOpen(false)}
-                                className="group flex min-w-0 flex-1 items-center gap-3 transition"
-                                title="View your profile"
-                            >
-                                {/* Avatar */}
-                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#3869D0] to-[#94CCF9] text-sm font-extrabold text-white shadow-md transition group-hover:scale-105 group-hover:ring-2 group-hover:ring-[#B89242]">
-                                    {getAvatarLetter(user?.name)}
-                                </div>
+                            {/* Avatar */}
+                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#3869D0] to-[#94CCF9] text-sm font-extrabold text-white shadow-md">
+                                {getAvatarLetter(user?.name)}
+                            </div>
 
-                                {/* User Details */}
-                                <div className="min-w-0 flex-1">
-                                    <p className="truncate text-sm font-bold text-white transition group-hover:text-[#B89242]">
-                                        {user?.name || "Admin"}
-                                    </p>
+                            {/* User Details */}
+                            <div className="min-w-0 flex-1">
+                                <p className="truncate text-sm font-bold text-white">
+                                    {user?.name || "Admin"}
+                                </p>
 
-                                    <p className="truncate text-xs leading-5 text-[#CBD5E1]">
-                                        {user?.email || "Email not available"}
-                                    </p>
-                                </div>
-                            </Link>
+                                <p className="truncate text-xs leading-5 text-[#CBD5E1]">
+                                    {user?.email || "Email not available"}
+                                </p>
+                            </div>
 
                             {/* Logout */}
 
