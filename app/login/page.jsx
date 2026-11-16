@@ -127,10 +127,10 @@ export default function LoginPage() {
     }
 
     return (
-        <main className="flex min-h-screen items-center justify-center bg-[#F4F7FB] p-3.5 sm:p-6 lg:p-10">
+        <main className="flex min-h-screen items-start sm:items-center justify-center bg-[#F4F7FB] px-3 pt-2.5 pb-6 sm:p-6 lg:p-10">
 
             {/* Split Card Container */}
-            <div className="relative grid w-full max-w-md lg:max-w-5xl grid-cols-1 overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-[0_20px_60px_rgba(16,42,67,0.08)] lg:grid-cols-2">
+            <div className="relative grid w-full max-w-md lg:max-w-5xl grid-cols-1 overflow-hidden rounded-2xl sm:rounded-3xl border border-slate-200/80 bg-white shadow-[0_20px_60px_rgba(16,42,67,0.08)] lg:grid-cols-2">
 
                 {/* Left Column: Lottie Animation & Brand (Visible on Desktop only) */}
                 <div className="relative hidden flex-col justify-between overflow-hidden bg-gradient-to-br from-[#EAF2FD] via-[#F1F6FE] to-[#DFECFD] p-8 xl:p-10 lg:flex">
@@ -210,14 +210,14 @@ export default function LoginPage() {
                 </div>
 
                 {/* Right Column: Form Area (Mobile-Enhanced & Desktop-Refined) */}
-                <div className="flex flex-col justify-center bg-white p-5 sm:p-8 lg:p-12 xl:p-14">
+                <div className="flex flex-col justify-center bg-white p-4 sm:p-8 lg:p-12 xl:p-14">
 
                     {/* MOBILE-ONLY HEADER: Enhanced Card with Brand & Lottie Animation */}
-                    <div className="mb-6 overflow-hidden rounded-2xl border border-blue-100/80 bg-gradient-to-b from-[#EAF2FD] via-[#F2F7FE] to-[#F8FAFD] p-5 text-center shadow-xs lg:hidden">
+                    <div className="mb-3.5 overflow-hidden rounded-2xl border border-blue-100/80 bg-gradient-to-b from-[#EAF2FD] via-[#F2F7FE] to-[#F8FAFD] px-3.5 py-3 text-center shadow-xs sm:mb-6 sm:p-5 lg:hidden">
 
                         {/* Logo Badge */}
-                        <div className="inline-flex items-center gap-2 rounded-full border border-white/90 bg-white/95 px-3 py-1 shadow-xs">
-                            <div className="relative h-5 w-5 shrink-0 overflow-hidden rounded-full">
+                        <div className="inline-flex items-center gap-2 rounded-full border border-white/90 bg-white/95 px-2.5 py-0.5 shadow-xs sm:px-3 sm:py-1">
+                            <div className="relative h-4.5 w-4.5 shrink-0 overflow-hidden rounded-full sm:h-5 sm:w-5">
                                 <Image
                                     src="/logos/mainLogo.png"
                                     alt="Prince Defence Academy"
@@ -226,13 +226,13 @@ export default function LoginPage() {
                                     className="object-contain"
                                 />
                             </div>
-                            <span className="montserrat text-[11px] font-black tracking-wide text-[var(--navy)]">
+                            <span className="montserrat text-[10px] font-black tracking-wide text-[var(--navy)] sm:text-[11px]">
                                 PRINCE DEFENCE ACADEMY
                             </span>
                         </div>
 
                         {/* Animated Lottie Character on Mobile */}
-                        <div className="mx-auto my-2.5 h-32 w-32 sm:h-36 sm:w-36">
+                        <div className="mx-auto my-1.5 h-20 w-20 sm:my-2.5 sm:h-32 sm:w-32">
                             <DotLottieReact
                                 src="https://lottie.host/c2752204-0cec-41df-a3ff-40e47ec9fc89/er8HN6i2ly.lottie"
                                 loop
@@ -241,17 +241,17 @@ export default function LoginPage() {
                             />
                         </div>
 
-                        <h2 className="montserrat text-xl font-black text-[var(--navy)]">
+                        <h2 className="montserrat text-lg font-black text-[var(--navy)] sm:text-xl">
                             Admin Login
                         </h2>
-                        <p className="mt-1 text-xs text-slate-500">
+                        <p className="mt-0.5 text-[11px] text-slate-500 sm:mt-1 sm:text-xs">
                             Sign in to manage your academy portal
                         </p>
                     </div>
 
                     {/* DESKTOP-ONLY HEADER */}
-                    <div className="hidden lg:block mb-8">
-                        <h2 className="montserrat text-2xl xl:text-3xl font-extrabold text-[var(--navy)]">
+                    <div className="mb-8 hidden lg:block">
+                        <h2 className="montserrat text-2xl font-extrabold text-[var(--navy)] xl:text-3xl">
                             Admin Login
                         </h2>
                         <p className="mt-2 text-sm text-slate-500">
