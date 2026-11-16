@@ -208,7 +208,7 @@ export default function ForgotPasswordPage() {
                             <Shield size={13} className="text-[#3869D0]" />
                             Authorized Portal
                         </span>
-                        <span>Prince Defence Academy</span>
+                        
                     </div>
 
                 </div>

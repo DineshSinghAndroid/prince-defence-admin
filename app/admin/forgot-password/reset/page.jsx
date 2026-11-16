@@ -187,20 +187,7 @@ function ResetPasswordForm() {
 
                     {/* Desktop Top Brand Header */}
                     <div className="mb-6 hidden items-center justify-between lg:flex">
-                        <div className="flex items-center gap-3">
-                            <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full border border-slate-200/80 bg-white p-0.5 shadow-xs">
-                                <Image
-                                    src="/logos/mainLogo.png"
-                                    alt="Prince Defence Academy"
-                                    fill
-                                    sizes="36px"
-                                    className="object-contain"
-                                />
-                            </div>
-                            <span className="montserrat text-xs font-black tracking-wide text-[var(--navy)]">
-                                PRINCE DEFENCE ACADEMY
-                            </span>
-                        </div>
+                        
 
                         <button
                             type="button"
@@ -373,7 +360,6 @@ function ResetPasswordForm() {
                             <Shield size={13} className="text-[#3869D0]" />
                             End-to-End Encrypted
                         </span>
-                        <span>Prince Defence Academy</span>
                     </div>
 
                 </div>

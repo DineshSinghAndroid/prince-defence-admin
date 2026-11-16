@@ -258,20 +258,7 @@ function VerifyOtpForm() {
 
                     {/* Desktop Top Brand Header */}
                     <div className="mb-6 hidden items-center justify-between lg:flex">
-                        <div className="flex items-center gap-3">
-                            <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full border border-slate-200/80 bg-white p-0.5 shadow-xs">
-                                <Image
-                                    src="/logos/mainLogo.png"
-                                    alt="Prince Defence Academy"
-                                    fill
-                                    sizes="36px"
-                                    className="object-contain"
-                                />
-                            </div>
-                            <span className="montserrat text-xs font-black tracking-wide text-[var(--navy)]">
-                                PRINCE DEFENCE ACADEMY
-                            </span>
-                        </div>
+                        
 
                         <button
                             type="button"
@@ -414,9 +401,9 @@ function VerifyOtpForm() {
                     <div className="mt-8 flex items-center justify-between border-t border-slate-100 pt-4 text-[11px] text-slate-400">
                         <span className="inline-flex items-center gap-1.5">
                             <Shield size={13} className="text-[#3869D0]" />
-                            Protected 2FA Verification
+                            Protected Verification
                         </span>
-                        <span>Prince Defence Academy</span>
+                        
                     </div>
 
                 </div>
