@@ -127,10 +127,10 @@ export default function LoginPage() {
     }
 
     return (
-        <main className="flex min-h-screen items-start sm:items-center justify-center bg-[#F4F7FB] px-3 pt-2.5 pb-6 sm:p-6 lg:p-10">
+        <main className="flex h-[100dvh] max-h-[100dvh] items-center justify-center overflow-hidden bg-[#F4F7FB] p-3 sm:h-auto sm:min-h-screen sm:overflow-auto sm:p-6 lg:p-10">
 
             {/* Split Card Container */}
-            <div className="relative grid w-full max-w-md lg:max-w-5xl grid-cols-1 overflow-hidden rounded-2xl sm:rounded-3xl border border-slate-200/80 bg-white shadow-[0_20px_60px_rgba(16,42,67,0.08)] lg:grid-cols-2">
+            <div className="relative grid w-full max-w-sm sm:max-w-md lg:max-w-5xl grid-cols-1 overflow-hidden rounded-2xl sm:rounded-3xl border border-slate-200/80 bg-white shadow-[0_20px_60px_rgba(16,42,67,0.08)] lg:grid-cols-2">
 
                 {/* Left Column: Lottie Animation & Brand (Visible on Desktop only) */}
                 <div className="relative hidden flex-col justify-between overflow-hidden bg-gradient-to-br from-[#EAF2FD] via-[#F1F6FE] to-[#DFECFD] p-8 xl:p-10 lg:flex">
@@ -213,7 +213,7 @@ export default function LoginPage() {
                 <div className="flex flex-col justify-center bg-white p-4 sm:p-8 lg:p-12 xl:p-14">
 
                     {/* MOBILE-ONLY HEADER: Enhanced Card with Brand & Lottie Animation */}
-                    <div className="mb-3.5 overflow-hidden rounded-2xl border border-blue-100/80 bg-gradient-to-b from-[#EAF2FD] via-[#F2F7FE] to-[#F8FAFD] px-3.5 py-3 text-center shadow-xs sm:mb-6 sm:p-5 lg:hidden">
+                    <div className="mb-3 overflow-hidden rounded-2xl border border-blue-100/80 bg-gradient-to-b from-[#EAF2FD] via-[#F2F7FE] to-[#F8FAFD] px-3.5 py-2.5 text-center shadow-xs sm:mb-6 sm:p-5 lg:hidden">
 
                         {/* Logo Badge */}
                         <div className="inline-flex items-center gap-2 rounded-full border border-white/90 bg-white/95 px-2.5 py-0.5 shadow-xs sm:px-3 sm:py-1">
@@ -231,8 +231,8 @@ export default function LoginPage() {
                             </span>
                         </div>
 
-                        {/* Animated Lottie Character on Mobile */}
-                        <div className="mx-auto my-1.5 h-20 w-20 sm:my-2.5 sm:h-32 sm:w-32">
+                        {/* Animated Lottie Character on Mobile - Enlarged */}
+                        <div className="mx-auto my-1 h-28 w-28 sm:my-2.5 sm:h-36 sm:w-36">
                             <DotLottieReact
                                 src="https://lottie.host/c2752204-0cec-41df-a3ff-40e47ec9fc89/er8HN6i2ly.lottie"
                                 loop
@@ -241,7 +241,7 @@ export default function LoginPage() {
                             />
                         </div>
 
-                        <h2 className="montserrat text-lg font-black text-[var(--navy)] sm:text-xl">
+                        <h2 className="montserrat text-base font-black text-[var(--navy)] sm:text-xl">
                             Admin Login
                         </h2>
                         <p className="mt-0.5 text-[11px] text-slate-500 sm:mt-1 sm:text-xs">
@@ -260,7 +260,7 @@ export default function LoginPage() {
                     </div>
 
                     {/* Form */}
-                    <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
+                    <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-5">
 
                         {/* Email */}
                         <div>
@@ -370,7 +370,7 @@ export default function LoginPage() {
                     </form>
 
                     {/* Bottom note */}
-                    <div className="mt-6 text-center text-xs text-slate-400 sm:mt-8">
+                    <div className="mt-3.5 text-center text-[11px] text-slate-400 sm:mt-8 sm:text-xs">
                         Prince Defence Academy • Palwas Road, Sikar
                     </div>
 
