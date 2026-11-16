@@ -10,7 +10,6 @@ import {
     Mail,
     ArrowRight,
     Loader2,
-    KeyRound,
     ArrowLeft,
 } from "lucide-react";
 
@@ -62,7 +61,7 @@ export default function ForgotPasswordPage() {
         <main className="min-h-screen bg-[#F4F7FB] lg:flex lg:items-center lg:justify-center lg:p-6 xl:p-10">
 
             {/* Split Card Container (Desktop: Split Card | Mobile: Top Image + Bottom Sheet) */}
-            <div className="relative mx-auto flex min-h-screen w-full flex-col bg-white lg:min-h-0 lg:max-w-5xl lg:grid lg:grid-cols-12 lg:overflow-hidden lg:rounded-3xl lg:border lg:border-slate-200/80 lg:shadow-[0_20px_60px_rgba(16,42,67,0.08)]">
+            <div className="relative mx-auto flex min-h-screen w-full flex-col bg-white lg:min-h-0 lg:max-w-5xl xl:max-w-6xl lg:grid lg:grid-cols-2 lg:overflow-hidden lg:rounded-3xl lg:border lg:border-slate-200/80 lg:shadow-[0_20px_60px_rgba(16,42,67,0.08)]">
 
                 {/* MOBILE-ONLY TOP IMAGE HERO (Screenshot Match) */}
                 <div className="relative h-60 w-full shrink-0 overflow-hidden bg-[#0d1d36] sm:h-72 lg:hidden">
@@ -101,27 +100,14 @@ export default function ForgotPasswordPage() {
                 </div>
 
                 {/* FORM COLUMN (Left on Desktop, Bottom Sheet on Mobile) */}
-                <div className="relative -mt-4 flex flex-1 flex-col justify-between rounded-t-3xl bg-white p-6 shadow-xl sm:p-8 lg:col-span-7 lg:mt-0 lg:rounded-none lg:p-12 lg:shadow-none xl:p-14">
+                <div className="relative -mt-4 flex flex-1 flex-col justify-between rounded-t-3xl bg-white p-6 shadow-xl sm:p-8 lg:mt-0 lg:rounded-none lg:p-10 xl:p-14 lg:shadow-none">
 
                     {/* Mobile pull indicator */}
                     <div className="mx-auto mb-4 h-1.5 w-12 rounded-full bg-slate-200 lg:hidden" />
 
                     {/* Desktop Top Brand Header */}
                     <div className="mb-6 hidden items-center justify-between lg:flex">
-                        <div className="flex items-center gap-3">
-                            <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full border border-slate-200/80 bg-white p-0.5 shadow-xs">
-                                <Image
-                                    src="/logos/mainLogo.png"
-                                    alt="Prince Defence Academy"
-                                    fill
-                                    sizes="36px"
-                                    className="object-contain"
-                                />
-                            </div>
-                            <span className="montserrat text-xs font-black tracking-wide text-[var(--navy)]">
-                                PRINCE DEFENCE ACADEMY
-                            </span>
-                        </div>
+                        
 
                         <button
                             type="button"
@@ -136,11 +122,6 @@ export default function ForgotPasswordPage() {
 
                     {/* Main Content Area */}
                     <div className="my-auto">
-
-                        {/* Icon badge */}
-                        <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-blue-100 bg-[#EAF2FD] text-[#3869D0] shadow-xs">
-                            <KeyRound size={22} />
-                        </div>
 
                         {/* Title & Subtitle (NO EYEBROW) */}
                         <h1 className="montserrat text-2xl font-black tracking-tight text-[var(--navy)] sm:text-3xl">
@@ -232,39 +213,29 @@ export default function ForgotPasswordPage() {
 
                 </div>
 
-                {/* DESKTOP-ONLY RIGHT COLUMN: 3D CYBERSECURITY VISUAL (Untitled UI Match) */}
-                <div className="relative hidden p-3 lg:col-span-5 lg:block">
-                    <div className="relative h-full w-full overflow-hidden rounded-2xl bg-gradient-to-br from-[#0a1b39] via-[#0d2752] to-[#12366f] shadow-inner">
+                {/* DESKTOP-ONLY RIGHT COLUMN: 3D HERO VISUAL (Untitled UI Match - Flush without padding) */}
+                <div className="relative hidden overflow-hidden bg-slate-950 lg:block">
+                    <div className="relative h-full w-full min-h-[600px]">
                         <Image
                             src="/images/auth-forgot-email.jpg"
-                            alt="3D Security Email"
+                            alt="Security Email Gateway"
                             fill
                             priority
                             className="object-cover object-center"
-                            sizes="50vw"
+                            sizes="(min-width: 1024px) 50vw, 100vw"
                         />
 
                         {/* Atmospheric gradient overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#071326] via-[#071326]/30 to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent" />
 
-                        {/* Bottom Floating Testimonial/Badge */}
-                        <div className="absolute bottom-6 left-6 right-6 z-10 rounded-2xl border border-white/15 bg-white/10 p-5 shadow-2xl backdrop-blur-md">
-                            <p className="text-xs font-bold leading-relaxed text-white">
-                                &ldquo;Safeguarding academy operations with multi-layered encryption and instant 2FA authentication.&rdquo;
+                        {/* Bottom Clean Typography Overlay (No background card, no academy badge) */}
+                        <div className="absolute bottom-8 left-8 right-8 z-10 xl:bottom-12 xl:left-12 xl:right-12">
+                            <blockquote className="text-base font-bold leading-snug text-white sm:text-lg xl:text-xl">
+                                &ldquo;Safeguarding administrative credentials with instant identity verification and end-to-end security protocols.&rdquo;
+                            </blockquote>
+                            <p className="mt-2.5 text-xs font-medium text-slate-300">
+                                Encrypted Account Recovery Gateway
                             </p>
-                            <div className="mt-3 flex items-center justify-between border-t border-white/10 pt-3">
-                                <div>
-                                    <p className="text-xs font-black text-white">
-                                        Prince Defence Academy
-                                    </p>
-                                    <p className="text-[10px] text-blue-200">
-                                        Palwas Road, Sikar (Raj.)
-                                    </p>
-                                </div>
-                                <span className="rounded-full bg-blue-500/20 px-2.5 py-1 text-[10px] font-bold text-blue-200">
-                                    Secure Gateway
-                                </span>
-                            </div>
                         </div>
                     </div>
                 </div>

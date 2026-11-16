@@ -15,7 +15,6 @@ import {
     CheckCircle2,
     ArrowLeft,
     XCircle,
-    Key,
 } from "lucide-react";
 
 import {
@@ -142,7 +141,7 @@ function ResetPasswordForm() {
         <main className="min-h-screen bg-[#F4F7FB] lg:flex lg:items-center lg:justify-center lg:p-6 xl:p-10">
 
             {/* Split Card Container (Desktop: Split Card | Mobile: Top Image + Bottom Sheet) */}
-            <div className="relative mx-auto flex min-h-screen w-full flex-col bg-white lg:min-h-0 lg:max-w-5xl lg:grid lg:grid-cols-12 lg:overflow-hidden lg:rounded-3xl lg:border lg:border-slate-200/80 lg:shadow-[0_20px_60px_rgba(16,42,67,0.08)]">
+            <div className="relative mx-auto flex min-h-screen w-full flex-col bg-white lg:min-h-0 lg:max-w-5xl xl:max-w-6xl lg:grid lg:grid-cols-2 lg:overflow-hidden lg:rounded-3xl lg:border lg:border-slate-200/80 lg:shadow-[0_20px_60px_rgba(16,42,67,0.08)]">
 
                 {/* MOBILE-ONLY TOP IMAGE HERO (Screenshot Match) */}
                 <div className="relative h-60 w-full shrink-0 overflow-hidden bg-[#0d1d36] sm:h-72 lg:hidden">
@@ -181,7 +180,7 @@ function ResetPasswordForm() {
                 </div>
 
                 {/* FORM COLUMN (Left on Desktop, Bottom Sheet on Mobile) */}
-                <div className="relative -mt-4 flex flex-1 flex-col justify-between rounded-t-3xl bg-white p-6 shadow-xl sm:p-8 lg:col-span-7 lg:mt-0 lg:rounded-none lg:p-12 lg:shadow-none xl:p-14">
+                <div className="relative -mt-4 flex flex-1 flex-col justify-between rounded-t-3xl bg-white p-6 shadow-xl sm:p-8 lg:mt-0 lg:rounded-none lg:p-10 xl:p-14 lg:shadow-none">
 
                     {/* Mobile pull indicator */}
                     <div className="mx-auto mb-4 h-1.5 w-12 rounded-full bg-slate-200 lg:hidden" />
@@ -216,11 +215,6 @@ function ResetPasswordForm() {
 
                     {/* Main Content Area */}
                     <div className="my-auto">
-
-                        {/* Icon badge */}
-                        <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-blue-100 bg-[#EAF2FD] text-[#3869D0] shadow-xs">
-                            <Key size={22} />
-                        </div>
 
                         {/* Title & Subtitle (NO EYEBROW) */}
                         <h1 className="montserrat text-2xl font-black tracking-tight text-[var(--navy)] sm:text-3xl">
@@ -384,39 +378,29 @@ function ResetPasswordForm() {
 
                 </div>
 
-                {/* DESKTOP-ONLY RIGHT COLUMN: 3D CYBER LOCK VISUAL (Untitled UI Match) */}
-                <div className="relative hidden p-3 lg:col-span-5 lg:block">
-                    <div className="relative h-full w-full overflow-hidden rounded-2xl bg-gradient-to-br from-[#0a1b39] via-[#0d2752] to-[#12366f] shadow-inner">
+                {/* DESKTOP-ONLY RIGHT COLUMN: 3D HERO VISUAL (Untitled UI Match - Flush without padding) */}
+                <div className="relative hidden overflow-hidden bg-slate-950 lg:block">
+                    <div className="relative h-full w-full min-h-[600px]">
                         <Image
                             src="/images/auth-reset-lock.jpg"
-                            alt="3D Cyber Lock Security"
+                            alt="Cryptographic Password Protection"
                             fill
                             priority
                             className="object-cover object-center"
-                            sizes="50vw"
+                            sizes="(min-width: 1024px) 50vw, 100vw"
                         />
 
                         {/* Atmospheric gradient overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#071326] via-[#071326]/30 to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent" />
 
-                        {/* Bottom Floating Testimonial/Badge */}
-                        <div className="absolute bottom-6 left-6 right-6 z-10 rounded-2xl border border-white/15 bg-white/10 p-5 shadow-2xl backdrop-blur-md">
-                            <p className="text-xs font-bold leading-relaxed text-white">
-                                &ldquo;Passwords are salted and cryptographically hashed with industry-standard bcrypt algorithms.&rdquo;
+                        {/* Bottom Clean Typography Overlay (No background card, no academy badge) */}
+                        <div className="absolute bottom-8 left-8 right-8 z-10 xl:bottom-12 xl:left-12 xl:right-12">
+                            <blockquote className="text-base font-bold leading-snug text-white sm:text-lg xl:text-xl">
+                                &ldquo;Passwords are salted and cryptographically hashed with enterprise-grade algorithms for maximum defense.&rdquo;
+                            </blockquote>
+                            <p className="mt-2.5 text-xs font-medium text-slate-300">
+                                End-to-End Cryptographic Security
                             </p>
-                            <div className="mt-3 flex items-center justify-between border-t border-white/10 pt-3">
-                                <div>
-                                    <p className="text-xs font-black text-white">
-                                        Cryptographic Security
-                                    </p>
-                                    <p className="text-[10px] text-blue-200">
-                                        SHA-256 / Bcrypt Hash
-                                    </p>
-                                </div>
-                                <span className="rounded-full bg-blue-500/20 px-2.5 py-1 text-[10px] font-bold text-blue-200">
-                                    Protected
-                                </span>
-                            </div>
                         </div>
                     </div>
                 </div>
