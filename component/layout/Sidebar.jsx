@@ -136,9 +136,16 @@ const Sidebar = () => {
         <>
             {/* Mobile Top Bar */}
             <div className="fixed inset-x-0 top-0 z-40 flex items-center justify-between bg-[#102A43] px-5 py-3 text-white shadow-lg lg:hidden">
-                <span className="montserrat text-base font-extrabold italic">
-                    Prince Defence
-                </span>
+                <div className="flex items-center gap-2.5">
+                    <img
+                        src="/logos/mainLogo.png"
+                        alt="Prince Defence Academy"
+                        className="h-8 w-8 object-contain"
+                    />
+                    <span className="montserrat text-sm font-extrabold">
+                        Prince Defence Academy
+                    </span>
+                </div>
 
                 <button
                     onClick={() => setOpen(true)}
@@ -211,8 +218,8 @@ const Sidebar = () => {
                             </div>
 
                             <div>
-                                <h2 className="montserrat text-lg font-extrabold leading-tight text-white">
-                                    Prince Defence
+                                <h2 className="montserrat text-xs lg:text-base font-extrabold leading-tight text-white">
+                                    Prince Defence Academy
                                 </h2>
 
                                 <p className="text-[10px] font-bold tracking-[0.25em] text-[#B89242]">
