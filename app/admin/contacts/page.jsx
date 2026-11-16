@@ -196,11 +196,43 @@ export default function ContactsPage() {
     const [status, setStatus] =
         useState("");
 
-    const [course, setCourse] =
-        useState("");
+    const [selectedCourses, setSelectedCourses] =
+        useState([]);
+    const course = selectedCourses.join(",");
+    const setCourse = (val) => {
+        setSelectedCourses(
+            val
+                ? String(val)
+                      .split(",")
+                      .map((c) => c.trim())
+                      .filter(Boolean)
+                : []
+        );
+    };
     const [isCourseOpen, setIsCourseOpen] =
         useState(false);
     const courseDropdownRef = useRef(null);
+
+    const toggleCourseSelection = (courseName) => {
+        setSelectedCourses((prev) => {
+            if (prev.includes(courseName)) {
+                return prev.filter((c) => c !== courseName);
+            } else {
+                return [...prev, courseName];
+            }
+        });
+        setPage(1);
+    };
+
+    const selectAllCourses = () => {
+        setSelectedCourses([...commonCourses]);
+        setPage(1);
+    };
+
+    const clearAllCourses = () => {
+        setSelectedCourses([]);
+        setPage(1);
+    };
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -1105,7 +1137,7 @@ export default function ContactsPage() {
 
                 {/* Filters */}
 
-                <div className={`${glass} mb-6 p-5 sm:p-6`}>
+                <div className={`${glass} relative mb-6 p-5 sm:p-6 ${isCourseOpen ? "z-40" : "z-10"}`}>
 
                     <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
 
@@ -1137,7 +1169,7 @@ export default function ContactsPage() {
                     </div>
 
                     {/* Search & Course Inputs */}
-                    <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-[1fr_320px]">
+                    <div className={`grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-[1fr_320px] ${isCourseOpen ? "relative z-50" : "relative z-10"}`}>
 
                         <div className="relative">
                             <Search
@@ -1171,139 +1203,155 @@ export default function ContactsPage() {
 
                         <div
                             ref={courseDropdownRef}
-                            className={`relative ${isCourseOpen ? "z-50" : "z-10"}`}
+                            className={`relative ${isCourseOpen ? "z-[60]" : "z-10"}`}
                         >
-                            <BookOpen
-                                size={17}
-                                className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[var(--muted)]"
-                            />
-
-                            <input
-                                type="text"
-                                value={course}
-                                onFocus={() => setIsCourseOpen(true)}
-                                onChange={(e) => {
-                                    setCourse(
-                                        e.target.value
-                                    );
-                                    setPage(1);
-                                    setIsCourseOpen(true);
-                                }}
-                                placeholder="Filter by course (NDA, Army, etc.)"
-                                className="h-11 w-full rounded-xl border border-[#C8D5EA] bg-white/70 pl-11 pr-16 text-sm text-[var(--navy)] outline-none backdrop-blur-md transition placeholder:text-[var(--muted)] focus:border-[#3869D0]/50 focus:bg-white focus:ring-4 focus:ring-[#3869D0]/10"
-                            />
-
-                            <div className="absolute right-2 top-1/2 flex -translate-y-1/2 items-center gap-0.5">
-                                {course && (
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            setCourse("");
-                                            setPage(1);
-                                        }}
-                                        className="rounded-lg p-1 text-[var(--muted)] transition hover:bg-[#F2F6FF] hover:text-[var(--navy)]"
-                                        title="Clear course"
-                                    >
-                                        <X size={15} />
-                                    </button>
-                                )}
-                                <button
-                                    type="button"
-                                    onClick={() =>
-                                        setIsCourseOpen((prev) => !prev)
-                                    }
-                                    className="rounded-lg p-1.5 text-[var(--muted)] transition hover:bg-[#F2F6FF] hover:text-[var(--navy)]"
-                                    title="Show course options"
-                                >
-                                    <ChevronDown
-                                        size={15}
-                                        className={`transition-transform duration-200 ${
-                                            isCourseOpen
-                                                ? "rotate-180 text-[#3869D0]"
-                                                : ""
-                                        }`}
+                            <div
+                                onClick={() => setIsCourseOpen((prev) => !prev)}
+                                className="flex min-h-[44px] cursor-pointer items-center justify-between gap-2 rounded-xl border border-[#C8D5EA] bg-white/80 px-3.5 py-1.5 backdrop-blur-md transition hover:border-[#3869D0]/60 focus-within:border-[#3869D0] focus-within:ring-4 focus-within:ring-[#3869D0]/10"
+                            >
+                                <div className="flex flex-1 flex-wrap items-center gap-1.5 overflow-hidden">
+                                    <BookOpen
+                                        size={17}
+                                        className="shrink-0 text-[var(--muted)]"
                                     />
-                                </button>
+                                    {selectedCourses.length === 0 ? (
+                                        <span className="text-sm text-[var(--muted)] select-none">
+                                            Filter by course (Select Multiple)
+                                        </span>
+                                    ) : (
+                                        selectedCourses.map((c) => (
+                                            <span
+                                                key={c}
+                                                className="inline-flex items-center gap-1 rounded-lg bg-[#3869D0]/10 px-2 py-0.5 text-xs font-bold text-[#3869D0]"
+                                            >
+                                                {c}
+                                                <button
+                                                    type="button"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        toggleCourseSelection(c);
+                                                    }}
+                                                    className="rounded-full p-0.5 hover:bg-[#3869D0]/20"
+                                                >
+                                                    <X size={12} />
+                                                </button>
+                                            </span>
+                                        ))
+                                    )}
+                                </div>
+
+                                <div className="flex shrink-0 items-center gap-1">
+                                    {selectedCourses.length > 0 && (
+                                        <button
+                                            type="button"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                clearAllCourses();
+                                            }}
+                                            className="rounded-lg p-1 text-[var(--muted)] transition hover:bg-[#F2F6FF] hover:text-[var(--navy)]"
+                                            title="Clear all courses"
+                                        >
+                                            <X size={15} />
+                                        </button>
+                                    )}
+                                    <div className="p-1 text-[var(--muted)]">
+                                        <ChevronDown
+                                            size={15}
+                                            className={`transition-transform duration-200 ${
+                                                isCourseOpen
+                                                    ? "rotate-180 text-[#3869D0]"
+                                                    : ""
+                                            }`}
+                                        />
+                                    </div>
+                                </div>
                             </div>
 
-                            {/* Custom Dropdown Menu matching Academy Theme */}
+                            {/* Custom Multi-Select Dropdown Menu matching Academy Theme */}
                             {isCourseOpen && (
-                                <div className="absolute left-0 right-0 top-full z-[100] mt-1.5 overflow-hidden rounded-xl border border-[#C8D5EA] bg-white p-1.5 shadow-[0_18px_45px_rgba(16,42,67,0.22)]">
-                                    <div className="flex items-center justify-between border-b border-[#F0F4FA] px-3 py-1.5">
-                                        <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--muted)]">
-                                            Select Course
+                                <div className="absolute left-0 right-0 top-full z-[100] mt-1.5 overflow-hidden rounded-2xl border-2 border-[#C8D5EA] bg-white p-2 shadow-[0_24px_60px_rgba(16,42,67,0.28)]">
+                                    <div className="flex items-center justify-between border-b border-[#F0F4FA] px-2.5 pb-2 pt-1">
+                                        <span className="text-[10px] font-extrabold uppercase tracking-wider text-[var(--muted)]">
+                                            Courses ({selectedCourses.length}/{commonCourses.length})
                                         </span>
-                                        {course && (
+                                        <div className="flex items-center gap-2">
                                             <button
                                                 type="button"
-                                                onClick={() => {
-                                                    setCourse("");
-                                                    setPage(1);
-                                                    setIsCourseOpen(false);
-                                                }}
-                                                className="text-[11px] font-semibold text-[#3869D0] hover:underline"
+                                                onClick={selectAllCourses}
+                                                className="text-[11px] font-bold text-[#3869D0] hover:underline"
                                             >
-                                                Clear Filter
+                                                Select All
                                             </button>
-                                        )}
+                                            <span className="text-slate-300">•</span>
+                                            <button
+                                                type="button"
+                                                onClick={clearAllCourses}
+                                                className="text-[11px] font-semibold text-slate-500 hover:text-red-600 hover:underline"
+                                            >
+                                                Clear
+                                            </button>
+                                        </div>
                                     </div>
 
-                                    <div className="max-h-72 overflow-y-auto py-1">
-                                        {commonCourses.filter((c) =>
-                                            c
-                                                .toLowerCase()
-                                                .includes(
-                                                    course.trim().toLowerCase()
-                                                )
-                                        ).length > 0 ? (
-                                            commonCourses
-                                                .filter((c) =>
-                                                    c
-                                                        .toLowerCase()
-                                                        .includes(
-                                                            course
-                                                                .trim()
-                                                                .toLowerCase()
-                                                        )
-                                                )
-                                                .map((c) => {
-                                                    const isSelected =
-                                                        course
-                                                            .trim()
-                                                            .toLowerCase() ===
-                                                        c.toLowerCase();
-                                                    return (
-                                                        <button
-                                                            type="button"
-                                                            key={c}
-                                                            onClick={() => {
-                                                                setCourse(c);
-                                                                setPage(1);
-                                                                setIsCourseOpen(
-                                                                    false
-                                                                );
-                                                            }}
-                                                            className={`flex w-full items-center justify-between rounded-lg px-3.5 py-2.5 text-left text-sm transition ${
+                                    <div className="py-1">
+                                        {commonCourses.map((c) => {
+                                            const isSelected =
+                                                selectedCourses.includes(c);
+                                            return (
+                                                <button
+                                                    type="button"
+                                                    key={c}
+                                                    onClick={() =>
+                                                        toggleCourseSelection(c)
+                                                    }
+                                                    className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-left text-sm transition ${
+                                                        isSelected
+                                                            ? "bg-[#3869D0]/10 font-bold text-[#3869D0]"
+                                                            : "font-semibold text-[var(--navy)] hover:bg-[#F2F6FF] hover:text-[#3869D0]"
+                                                    }`}
+                                                >
+                                                    <div className="flex items-center gap-2.5">
+                                                        <div
+                                                            className={`flex h-4 w-4 items-center justify-center rounded border transition-colors ${
                                                                 isSelected
-                                                                    ? "bg-[#3869D0]/10 font-bold text-[#3869D0]"
-                                                                    : "font-semibold text-[var(--navy)] hover:bg-[#F2F6FF] hover:text-[#3869D0]"
+                                                                    ? "border-[#3869D0] bg-[#3869D0] text-white"
+                                                                    : "border-[#C8D5EA] bg-white"
                                                             }`}
                                                         >
-                                                            <span>{c}</span>
                                                             {isSelected && (
                                                                 <Check
-                                                                    size={16}
-                                                                    className="text-[#3869D0]"
+                                                                    size={12}
+                                                                    strokeWidth={3}
                                                                 />
                                                             )}
-                                                        </button>
-                                                    );
-                                                })
-                                        ) : (
-                                            <div className="px-3 py-3 text-center text-xs text-[var(--muted)]">
-                                                No preset match for &quot;{course}&quot;. Searching as custom text.
-                                            </div>
-                                        )}
+                                                        </div>
+                                                        <span>{c}</span>
+                                                    </div>
+                                                    <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+                                                        {isSelected
+                                                            ? "Selected"
+                                                            : ""}
+                                                    </span>
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+
+                                    <div className="mt-1 flex items-center justify-between border-t border-[#F0F4FA] px-2 pt-2">
+                                        <span className="text-xs text-[var(--muted)]">
+                                            {selectedCourses.length === 0
+                                                ? "Showing all courses"
+                                                : `${selectedCourses.length} selected`}
+                                        </span>
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                setIsCourseOpen(false)
+                                            }
+                                            className="rounded-lg bg-[var(--navy)] px-3 py-1.5 text-xs font-bold text-white transition hover:bg-[#3869D0]"
+                                        >
+                                            Done
+                                        </button>
                                     </div>
                                 </div>
                             )}
@@ -1513,7 +1561,7 @@ export default function ContactsPage() {
                 {/* Contacts */}
 
                 <div
-                    className={`${glass} overflow-hidden`}
+                    className={`${glass} relative z-0 overflow-hidden`}
                 >
 
                     <div className="border-b border-[#D8E1EE] px-5 py-5 sm:px-6">
