@@ -4,17 +4,16 @@ import { useContext, useEffect, useState } from "react";
 import Image from "next/image";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { login } from "@/services/authService";
 import { AuthContext } from "@/context/AuthContext";
 
 import {
     User,
     Lock,
-    Eye,
-    EyeOff,
     ArrowRight,
     Loader2,
+    Shield,
+    ShieldCheck,
 } from "lucide-react";
 
 export default function LoginPage() {
@@ -26,7 +25,6 @@ export default function LoginPage() {
         loading: authLoading,
     } = useContext(AuthContext);
 
-    const [showPassword, setShowPassword] = useState(false);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
@@ -36,31 +34,6 @@ export default function LoginPage() {
             router.replace("/admin/dashboard");
         }
     }, [authLoading, user, router]);
-
-    // Lock page scrolling on mobile to keep login perfectly centered and non-scrollable
-    useEffect(() => {
-        const origBodyOverflow = document.body.style.overflow;
-        const origHtmlOverflow = document.documentElement.style.overflow;
-
-        const applyLock = () => {
-            if (window.innerWidth < 640) {
-                document.body.style.overflow = "hidden";
-                document.documentElement.style.overflow = "hidden";
-            } else {
-                document.body.style.overflow = origBodyOverflow;
-                document.documentElement.style.overflow = origHtmlOverflow;
-            }
-        };
-
-        applyLock();
-        window.addEventListener("resize", applyLock);
-
-        return () => {
-            document.body.style.overflow = origBodyOverflow;
-            document.documentElement.style.overflow = origHtmlOverflow;
-            window.removeEventListener("resize", applyLock);
-        };
-    }, []);
 
     const getErrorMessage = (error) => {
         if (
@@ -152,251 +125,243 @@ export default function LoginPage() {
     }
 
     return (
-        <main className="fixed inset-0 z-10 flex items-center justify-center overflow-hidden overscroll-none bg-[#F4F7FB] p-2.5 sm:static sm:z-auto sm:min-h-screen sm:overflow-auto sm:p-6 lg:p-10">
+        <main className="min-h-screen bg-[#F4F7FB] lg:flex lg:items-center lg:justify-center lg:p-6 xl:p-10">
 
-            {/* Split Card Container */}
-            <div className="relative grid w-full max-w-sm sm:max-w-md lg:max-w-5xl grid-cols-1 overflow-hidden rounded-2xl sm:rounded-3xl border border-slate-200/80 bg-white shadow-[0_20px_60px_rgba(16,42,67,0.08)] lg:grid-cols-2">
+            {/* Split Card Container (Desktop: Split Card | Mobile: Top Image + Bottom Sheet) */}
+            <div className="relative mx-auto flex min-h-screen w-full flex-col bg-white lg:min-h-0 lg:max-w-5xl lg:grid lg:grid-cols-12 lg:overflow-hidden lg:rounded-3xl lg:border lg:border-slate-200/80 lg:shadow-[0_20px_60px_rgba(16,42,67,0.08)]">
 
-                {/* Left Column: Lottie Animation & Brand (Visible on Desktop only) */}
-                <div className="relative hidden flex-col justify-between overflow-hidden bg-gradient-to-br from-[#EAF2FD] via-[#F1F6FE] to-[#DFECFD] p-8 xl:p-10 lg:flex">
+                {/* MOBILE-ONLY TOP IMAGE HERO (Screenshot Match) */}
+                <div className="relative h-60 w-full shrink-0 overflow-hidden bg-[#0d1d36] sm:h-72 lg:hidden">
+                    <Image
+                        src="/images/auth-login-portal.jpg"
+                        alt="Admin Command Portal"
+                        fill
+                        priority
+                        className="object-cover object-center"
+                        sizes="(max-width: 1024px) 100vw, 50vw"
+                    />
 
-                    {/* Subtle Organic Background Waves */}
-                    <div className="pointer-events-none absolute inset-0 opacity-40">
-                        <svg
-                            className="h-full w-full"
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 800 800"
-                            preserveAspectRatio="none"
-                        >
-                            <path
-                                d="M0,200 C150,150 350,250 500,200 C650,150 750,220 800,200 L800,800 L0,800 Z"
-                                fill="#D2E3FC"
-                                opacity="0.35"
-                            />
-                            <path
-                                d="M0,400 C200,320 300,480 500,420 C700,360 700,450 800,400 L800,800 L0,800 Z"
-                                fill="#C2DAFB"
-                                opacity="0.3"
-                            />
-                            <path
-                                d="M0,600 C180,550 350,650 550,590 C720,540 760,620 800,600 L800,800 L0,800 Z"
-                                fill="#B1D0FA"
-                                opacity="0.25"
-                            />
-                        </svg>
-                    </div>
+                    {/* Gradient overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0d1d36] via-[#0d1d36]/40 to-black/30" />
 
-                    {/* Top: Brand Logo */}
-                    <div className="relative z-10 flex items-center gap-3">
-                        <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-full border border-slate-200/80 bg-white p-0.5 shadow-sm">
+                    {/* Mobile Top Brand Logo */}
+                    <div className="absolute left-4 top-4 z-10 flex items-center gap-2 rounded-full bg-black/40 px-3 py-1 text-white backdrop-blur-md">
+                        <div className="relative h-5 w-5 shrink-0 overflow-hidden rounded-full">
                             <Image
                                 src="/logos/mainLogo.png"
                                 alt="Prince Defence Academy"
                                 fill
-                                sizes="44px"
-                                className="object-contain p-0.5"
+                                sizes="20px"
+                                className="object-contain"
                             />
                         </div>
-                        <div>
-                            <h2 className="montserrat text-sm font-extrabold tracking-tight text-[var(--navy)]">
-                                Prince Defence Academy
-                            </h2>
-                        </div>
+                        <span className="montserrat text-[11px] font-black tracking-wide text-white">
+                            PRINCE DEFENCE ACADEMY
+                        </span>
                     </div>
 
-                    {/* Title */}
-                    <div className="relative z-10 mt-6 max-w-sm">
-                        <h1 className="montserrat text-2xl xl:text-3xl font-extrabold leading-snug text-[var(--navy)]">
-                            Manage Academy Portal <span className="text-[#3869D0]">&amp; Operations</span>
-                        </h1>
-                        <p className="mt-2 text-xs xl:text-sm text-slate-600 leading-relaxed">
-                            Access student records, quiz database, admissions and site controls in one unified platform.
-                        </p>
-                    </div>
-
-                    {/* Center: Lottie Login Animation */}
-                    <div className="relative z-10 my-auto flex items-center justify-center py-4">
-                        <div className="relative aspect-square w-full max-w-[320px] xl:max-w-[360px]">
-                            <DotLottieReact
-                                src="https://lottie.host/c2752204-0cec-41df-a3ff-40e47ec9fc89/er8HN6i2ly.lottie"
-                                loop
-                                autoplay
-                                className="h-full w-full object-contain"
-                            />
-                        </div>
-                    </div>
-
-                    {/* Bottom simple line */}
-                    <div className="relative z-10">
-                        <p className="text-[11px] font-semibold text-slate-500">
-                            Authorized personnel only • Secure Gateway
+                    {/* Mobile Hero Headline */}
+                    <div className="absolute bottom-6 left-5 right-5 z-10">
+                        <h2 className="montserrat text-xl font-black text-white">
+                            Admin Command Portal
+                        </h2>
+                        <p className="mt-1 text-xs text-blue-100/80">
+                            Sign in to manage academy operations &amp; records.
                         </p>
                     </div>
                 </div>
 
-                {/* Right Column: Form Area (Mobile-Enhanced & Desktop-Refined) */}
-                <div className="flex flex-col justify-center bg-white p-3.5 sm:p-8 lg:p-12 xl:p-14">
+                {/* FORM COLUMN (Left on Desktop, Bottom Sheet on Mobile) */}
+                <div className="relative -mt-4 flex flex-1 flex-col justify-between rounded-t-3xl bg-white p-6 shadow-xl sm:p-8 lg:col-span-7 lg:mt-0 lg:rounded-none lg:p-12 lg:shadow-none xl:p-14">
 
-                    {/* MOBILE-ONLY HEADER: Enhanced Card with Brand & Lottie Animation */}
-                    <div className="mb-2.5 overflow-hidden rounded-2xl border border-blue-100/80 bg-gradient-to-b from-[#EAF2FD] via-[#F2F7FE] to-[#F8FAFD] px-3 py-2 text-center shadow-xs sm:mb-6 sm:p-5 lg:hidden">
+                    {/* Mobile pull indicator */}
+                    <div className="mx-auto mb-4 h-1.5 w-12 rounded-full bg-slate-200 lg:hidden" />
 
-                        {/* Logo Badge */}
-                        <div className="inline-flex items-center gap-1.5 rounded-full border border-white/90 bg-white/95 px-2.5 py-0.5 shadow-xs sm:px-3 sm:py-1">
-                            <div className="relative h-4 w-4 shrink-0 overflow-hidden rounded-full sm:h-5 sm:w-5">
+                    {/* Desktop Top Brand Header */}
+                    <div className="mb-6 hidden items-center justify-between lg:flex">
+                        <div className="flex items-center gap-3">
+                            <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full border border-slate-200/80 bg-white p-0.5 shadow-xs">
                                 <Image
                                     src="/logos/mainLogo.png"
                                     alt="Prince Defence Academy"
                                     fill
-                                    sizes="20px"
+                                    sizes="36px"
                                     className="object-contain"
                                 />
                             </div>
-                            <span className="montserrat text-[10px] font-black tracking-wide text-[var(--navy)] sm:text-[11px]">
+                            <span className="montserrat text-xs font-black tracking-wide text-[var(--navy)]">
                                 PRINCE DEFENCE ACADEMY
                             </span>
                         </div>
 
-                        {/* Animated Lottie Character on Mobile - Significantly Enlarged */}
-                        <div className="mx-auto my-1 h-40 w-40 sm:my-2.5 sm:h-44 sm:w-44">
-                            <DotLottieReact
-                                src="https://lottie.host/c2752204-0cec-41df-a3ff-40e47ec9fc89/er8HN6i2ly.lottie"
-                                loop
-                                autoplay
-                                className="h-full w-full object-contain"
-                            />
-                        </div>
-
-                        <h2 className="montserrat text-base font-black text-[var(--navy)] sm:text-xl">
-                            Admin Login
-                        </h2>
-                        <p className="mt-0.5 text-[10.5px] text-slate-500 sm:mt-1 sm:text-xs">
-                            Sign in to manage your academy portal
-                        </p>
+                        <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-3 py-1 text-[11px] font-bold text-[#3869D0]">
+                            <ShieldCheck size={13} />
+                            Secure Admin Portal
+                        </span>
                     </div>
 
-                    {/* DESKTOP-ONLY HEADER */}
-                    <div className="mb-8 hidden lg:block">
-                        <h2 className="montserrat text-2xl font-extrabold text-[var(--navy)] xl:text-3xl">
-                            Admin Login
-                        </h2>
-                        <p className="mt-2 text-sm text-slate-500">
-                            Enter your credentials to access the admin dashboard
-                        </p>
-                    </div>
+                    {/* Main Form Area */}
+                    <div className="my-auto">
 
-                    {/* Form */}
-                    <form onSubmit={handleSubmit} className="space-y-2.5 sm:space-y-5">
-
-                        {/* Email */}
-                        <div>
-                            <label
-                                htmlFor="email"
-                                className="mb-1 block text-xs font-bold text-[var(--navy)]"
-                            >
-                                Email Address
-                            </label>
-
-                            <div className="relative">
-                                <User
-                                    size={18}
-                                    className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
-                                />
-
-                                <input
-                                    id="email"
-                                    name="email"
-                                    type="email"
-                                    placeholder="Enter your email"
-                                    autoComplete="email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    required
-                                    disabled={loading}
-                                    className="w-full rounded-xl border border-slate-200 bg-slate-50/60 py-2.5 pl-11 pr-4 text-xs sm:py-3 sm:text-sm text-[var(--navy)] outline-none transition focus:border-[#3869D0] focus:bg-white focus:ring-4 focus:ring-[#3869D0]/10 disabled:cursor-not-allowed disabled:opacity-60"
-                                />
-                            </div>
+                        {/* Icon badge */}
+                        <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-blue-100 bg-[#EAF2FD] text-[#3869D0] shadow-xs">
+                            <Shield size={22} />
                         </div>
 
-                        {/* Password */}
-                        <div>
-                            <div className="mb-1 flex items-center justify-between">
+                        {/* Title & Subtitle (NO EYEBROW) */}
+                        <h1 className="montserrat text-2xl font-black tracking-tight text-[var(--navy)] sm:text-3xl">
+                            Admin Login
+                        </h1>
+                        <p className="mt-2 text-xs leading-relaxed text-slate-500 sm:text-sm">
+                            Enter your administrative credentials to access your dashboard.
+                        </p>
+
+                        {/* Form */}
+                        <form onSubmit={handleSubmit} className="mt-6 space-y-4 sm:space-y-5">
+
+                            {/* Email */}
+                            <div>
                                 <label
-                                    htmlFor="password"
-                                    className="block text-xs font-bold text-[var(--navy)]"
+                                    htmlFor="email"
+                                    className="mb-1.5 block text-xs font-bold text-[var(--navy)]"
                                 >
-                                    Password
+                                    Email Address
                                 </label>
-                            </div>
 
-                            <div className="relative">
-                                <Lock
-                                    size={18}
-                                    className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
-                                />
-
-                                <input
-                                    id="password"
-                                    name="password"
-                                    type={showPassword ? "text" : "password"}
-                                    placeholder="Enter your password"
-                                    autoComplete="current-password"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    required
-                                    disabled={loading}
-                                    className="w-full rounded-xl border border-slate-200 bg-slate-50/60 py-2.5 pl-11 pr-11 text-xs sm:py-3 sm:text-sm text-[var(--navy)] outline-none transition focus:border-[#3869D0] focus:bg-white focus:ring-4 focus:ring-[#3869D0]/10 disabled:cursor-not-allowed disabled:opacity-60"
-                                />
-
-                                <button
-                                    type="button"
-                                    onClick={() => setShowPassword((current) => !current)}
-                                    disabled={loading}
-                                    aria-label={showPassword ? "Hide password" : "Show password"}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600 disabled:cursor-not-allowed disabled:opacity-50"
-                                >
-                                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                                </button>
-                            </div>
-                        </div>
-
-                        <button
-                            type="button"
-                            onClick={() => router.push("/admin/forgot-password")}
-                            disabled={loading}
-                            className="text-[11px] font-semibold text-[#3869D0] transition hover:text-[#2852aa] hover:underline disabled:cursor-not-allowed disabled:opacity-50 sm:text-xs"
-                        >
-                            Forgot Password?
-                        </button>
-
-                        {/* Login Button */}
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className="group mt-1 flex w-full items-center justify-center gap-2 rounded-xl bg-[#3869D0] py-2.5 text-xs font-bold text-white shadow-lg shadow-[#3869D0]/20 transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#2e5bbd] hover:shadow-xl hover:shadow-[#3869D0]/30 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0 sm:mt-2 sm:py-3.5 sm:text-sm"
-                        >
-                            {loading ? (
-                                <>
-                                    <Loader2 size={17} className="animate-spin" />
-                                    Signing in...
-                                </>
-                            ) : (
-                                <>
-                                    Login
-                                    <ArrowRight
-                                        size={17}
-                                        className="transition-transform duration-200 group-hover:translate-x-1"
+                                <div className="relative">
+                                    <User
+                                        size={18}
+                                        className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
                                     />
-                                </>
-                            )}
-                        </button>
 
-                    </form>
+                                    <input
+                                        id="email"
+                                        name="email"
+                                        type="email"
+                                        placeholder="Enter your email"
+                                        autoComplete="email"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        required
+                                        disabled={loading}
+                                        className="w-full rounded-xl border border-slate-200 bg-slate-50/60 py-3 pl-11 pr-4 text-sm text-[var(--navy)] outline-none transition placeholder:text-slate-400 focus:border-[#3869D0] focus:bg-white focus:ring-4 focus:ring-[#3869D0]/10 disabled:cursor-not-allowed disabled:opacity-60"
+                                    />
+                                </div>
+                            </div>
 
-                    {/* Bottom note */}
-                    <div className="mt-2 text-center text-[10.5px] text-slate-400 sm:mt-8 sm:text-xs">
-                        Prince Defence Academy • Palwas Road, Sikar
+                            {/* Password (NO EYE ICON) */}
+                            <div>
+                                <div className="mb-1.5 flex items-center justify-between">
+                                    <label
+                                        htmlFor="password"
+                                        className="block text-xs font-bold text-[var(--navy)]"
+                                    >
+                                        Password
+                                    </label>
+
+                                    <button
+                                        type="button"
+                                        onClick={() => router.push("/admin/forgot-password")}
+                                        disabled={loading}
+                                        className="text-xs font-semibold text-[#3869D0] transition hover:text-[#2852aa] hover:underline disabled:cursor-not-allowed disabled:opacity-50"
+                                    >
+                                        Forgot Password?
+                                    </button>
+                                </div>
+
+                                <div className="relative">
+                                    <Lock
+                                        size={18}
+                                        className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
+                                    />
+
+                                    <input
+                                        id="password"
+                                        name="password"
+                                        type="password"
+                                        placeholder="Enter your password"
+                                        autoComplete="current-password"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        required
+                                        disabled={loading}
+                                        className="w-full rounded-xl border border-slate-200 bg-slate-50/60 py-3 pl-11 pr-4 text-sm text-[var(--navy)] outline-none transition placeholder:text-slate-400 focus:border-[#3869D0] focus:bg-white focus:ring-4 focus:ring-[#3869D0]/10 disabled:cursor-not-allowed disabled:opacity-60"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Login Button */}
+                            <button
+                                type="submit"
+                                disabled={loading}
+                                className="group flex w-full items-center justify-center gap-2 rounded-xl bg-[#3869D0] py-3.5 text-sm font-bold text-white shadow-lg shadow-[#3869D0]/20 transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#2e5bbd] hover:shadow-xl hover:shadow-[#3869D0]/30 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
+                            >
+                                {loading ? (
+                                    <>
+                                        <Loader2 size={17} className="animate-spin" />
+                                        Signing in...
+                                    </>
+                                ) : (
+                                    <>
+                                        Login to Dashboard
+                                        <ArrowRight
+                                            size={17}
+                                            className="transition-transform duration-200 group-hover:translate-x-1"
+                                        />
+                                    </>
+                                )}
+                            </button>
+
+                        </form>
+
                     </div>
 
+                    {/* Footer Note */}
+                    <div className="mt-8 flex items-center justify-between border-t border-slate-100 pt-4 text-[11px] text-slate-400">
+                        <span className="inline-flex items-center gap-1.5">
+                            <Shield size={13} className="text-[#3869D0]" />
+                            Authorized Personnel Only
+                        </span>
+                        <span>Palwas Road, Sikar</span>
+                    </div>
+
+                </div>
+
+                {/* DESKTOP-ONLY RIGHT COLUMN: 3D CYBERSECURITY VISUAL (Untitled UI Match) */}
+                <div className="relative hidden p-3 lg:col-span-5 lg:block">
+                    <div className="relative h-full w-full overflow-hidden rounded-2xl bg-gradient-to-br from-[#0a1b39] via-[#0d2752] to-[#12366f] shadow-inner">
+                        <Image
+                            src="/images/auth-login-portal.jpg"
+                            alt="3D Admin Portal Security"
+                            fill
+                            priority
+                            className="object-cover object-center"
+                            sizes="50vw"
+                        />
+
+                        {/* Atmospheric gradient overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#071326] via-[#071326]/30 to-transparent" />
+
+                        {/* Bottom Floating Security Testimonial/Badge */}
+                        <div className="absolute bottom-6 left-6 right-6 z-10 rounded-2xl border border-white/15 bg-white/10 p-5 shadow-2xl backdrop-blur-md">
+                            <p className="text-xs font-bold leading-relaxed text-white">
+                                &ldquo;Managing student admissions, quiz database, achievers, and operations with enterprise-grade security.&rdquo;
+                            </p>
+                            <div className="mt-3 flex items-center justify-between border-t border-white/10 pt-3">
+                                <div>
+                                    <p className="text-xs font-black text-white">
+                                        Prince Defence Academy
+                                    </p>
+                                    <p className="text-[10px] text-blue-200">
+                                        Central Command Gateway
+                                    </p>
+                                </div>
+                                <span className="rounded-full bg-blue-500/20 px-2.5 py-1 text-[10px] font-bold text-blue-200">
+                                    Encrypted
+                                </span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
             </div>
