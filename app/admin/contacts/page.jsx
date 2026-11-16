@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 
 import {
@@ -12,6 +12,7 @@ import {
     RefreshCw,
     ChevronLeft,
     ChevronRight,
+    ChevronDown,
     Loader2,
     X,
     Inbox,
@@ -197,6 +198,25 @@ export default function ContactsPage() {
 
     const [course, setCourse] =
         useState("");
+    const [isCourseOpen, setIsCourseOpen] =
+        useState(false);
+    const courseDropdownRef = useRef(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (
+                courseDropdownRef.current &&
+                !courseDropdownRef.current.contains(event.target)
+            ) {
+                setIsCourseOpen(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
 
     const formatLocalDate = (d) => {
         const year = d.getFullYear();
@@ -1149,42 +1169,149 @@ export default function ContactsPage() {
                             )}
                         </div>
 
-                        <div className="relative">
+                        <div ref={courseDropdownRef} className="relative">
                             <BookOpen
                                 size={17}
-                                className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--muted)]"
+                                className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[var(--muted)]"
                             />
 
                             <input
                                 type="text"
-                                list="course-suggestions"
                                 value={course}
+                                onFocus={() => setIsCourseOpen(true)}
                                 onChange={(e) => {
                                     setCourse(
                                         e.target.value
                                     );
                                     setPage(1);
+                                    setIsCourseOpen(true);
                                 }}
                                 placeholder="Filter by course (NDA, Army, etc.)"
-                                className="h-11 w-full rounded-xl border border-[#C8D5EA] bg-white/70 pl-11 pr-9 text-sm text-[var(--navy)] outline-none backdrop-blur-md transition placeholder:text-[var(--muted)] focus:border-[#3869D0]/50 focus:bg-white focus:ring-4 focus:ring-[#3869D0]/10"
+                                className="h-11 w-full rounded-xl border border-[#C8D5EA] bg-white/70 pl-11 pr-16 text-sm text-[var(--navy)] outline-none backdrop-blur-md transition placeholder:text-[var(--muted)] focus:border-[#3869D0]/50 focus:bg-white focus:ring-4 focus:ring-[#3869D0]/10"
                             />
 
-                            <datalist id="course-suggestions">
-                                {commonCourses.map((c) => (
-                                    <option key={c} value={c} />
-                                ))}
-                            </datalist>
-
-                            {course && (
+                            <div className="absolute right-2 top-1/2 flex -translate-y-1/2 items-center gap-0.5">
+                                {course && (
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setCourse("");
+                                            setPage(1);
+                                        }}
+                                        className="rounded-lg p-1 text-[var(--muted)] transition hover:bg-[#F2F6FF] hover:text-[var(--navy)]"
+                                        title="Clear course"
+                                    >
+                                        <X size={15} />
+                                    </button>
+                                )}
                                 <button
-                                    onClick={() => {
-                                        setCourse("");
-                                        setPage(1);
-                                    }}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1 text-[var(--muted)] transition hover:bg-[#F2F6FF] hover:text-[var(--navy)]"
+                                    type="button"
+                                    onClick={() =>
+                                        setIsCourseOpen((prev) => !prev)
+                                    }
+                                    className="rounded-lg p-1.5 text-[var(--muted)] transition hover:bg-[#F2F6FF] hover:text-[var(--navy)]"
+                                    title="Show course options"
                                 >
-                                    <X size={15} />
+                                    <ChevronDown
+                                        size={15}
+                                        className={`transition-transform duration-200 ${
+                                            isCourseOpen
+                                                ? "rotate-180 text-[#3869D0]"
+                                                : ""
+                                        }`}
+                                    />
                                 </button>
+                            </div>
+
+                            {/* Custom Dropdown Menu matching Academy Theme */}
+                            {isCourseOpen && (
+                                <div className="absolute left-0 right-0 top-full z-50 mt-1.5 overflow-hidden rounded-xl border border-[#C8D5EA] bg-white p-1.5 shadow-[0_14px_36px_rgba(16,42,67,0.16)]">
+                                    <div className="flex items-center justify-between border-b border-[#F0F4FA] px-3 py-1.5">
+                                        <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--muted)]">
+                                            Select Course
+                                        </span>
+                                        {course && (
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    setCourse("");
+                                                    setPage(1);
+                                                    setIsCourseOpen(false);
+                                                }}
+                                                className="text-[11px] font-semibold text-[#3869D0] hover:underline"
+                                            >
+                                                Clear Filter
+                                            </button>
+                                        )}
+                                    </div>
+
+                                    <div className="max-h-60 overflow-y-auto py-1">
+                                        {commonCourses.filter((c) =>
+                                            c
+                                                .toLowerCase()
+                                                .includes(
+                                                    course.trim().toLowerCase()
+                                                )
+                                        ).length > 0 ? (
+                                            commonCourses
+                                                .filter((c) =>
+                                                    c
+                                                        .toLowerCase()
+                                                        .includes(
+                                                            course
+                                                                .trim()
+                                                                .toLowerCase()
+                                                        )
+                                                )
+                                                .map((c) => {
+                                                    const isSelected =
+                                                        course
+                                                            .trim()
+                                                            .toLowerCase() ===
+                                                        c.toLowerCase();
+                                                    return (
+                                                        <button
+                                                            type="button"
+                                                            key={c}
+                                                            onClick={() => {
+                                                                setCourse(c);
+                                                                setPage(1);
+                                                                setIsCourseOpen(
+                                                                    false
+                                                                );
+                                                            }}
+                                                            className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition ${
+                                                                isSelected
+                                                                    ? "bg-[#3869D0]/10 font-bold text-[#3869D0]"
+                                                                    : "font-medium text-[var(--navy)] hover:bg-[#F2F6FF] hover:text-[#3869D0]"
+                                                            }`}
+                                                        >
+                                                            <span className="flex items-center gap-2.5">
+                                                                <span
+                                                                    className={`h-2 w-2 rounded-full transition-colors ${
+                                                                        isSelected
+                                                                            ? "bg-[#3869D0]"
+                                                                            : "bg-[#D8E1EE]"
+                                                                    }`}
+                                                                />
+                                                                <span>{c}</span>
+                                                            </span>
+                                                            {isSelected && (
+                                                                <Check
+                                                                    size={15}
+                                                                    className="text-[#3869D0]"
+                                                                />
+                                                            )}
+                                                        </button>
+                                                    );
+                                                })
+                                        ) : (
+                                            <div className="px-3 py-3 text-center text-xs text-[var(--muted)]">
+                                                No preset match for &quot;{course}&quot;. Searching as custom text.
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
                             )}
                         </div>
 
