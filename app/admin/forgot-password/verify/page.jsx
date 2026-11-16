@@ -10,7 +10,7 @@ import {
     Mail,
     ArrowRight,
     Loader2,
-    KeyRound,
+    ShieldCheck,
     ArrowLeft,
     RefreshCw,
 } from "lucide-react";
@@ -54,7 +54,6 @@ function VerifyOtpForm() {
     const [resendLoading, setResendLoading] = useState(false);
     const [resendTimer, setResendTimer] = useState(60);
 
-    // Keep combined otp string in sync
     const otp = otpDigits.join("");
 
     // Resend countdown
@@ -68,20 +67,17 @@ function VerifyOtpForm() {
         return () => clearInterval(timer);
     }, [resendTimer]);
 
-    // Handle single digit entry in specific box
     const handleDigitChange = (index, value) => {
         const digit = value.replace(/\D/g, "").slice(-1);
         const newDigits = [...otpDigits];
         newDigits[index] = digit;
         setOtpDigits(newDigits);
 
-        // Auto-focus next box
         if (digit && index < 5) {
             inputRefs.current[index + 1]?.focus();
         }
     };
 
-    // Handle backspace and arrow navigation
     const handleKeyDown = (index, e) => {
         if (e.key === "Backspace") {
             if (!otpDigits[index] && index > 0) {
@@ -101,7 +97,6 @@ function VerifyOtpForm() {
         }
     };
 
-    // Handle pasting complete 6-digit OTP
     const handlePaste = (e) => {
         e.preventDefault();
         const pastedData = e.clipboardData
@@ -215,164 +210,258 @@ function VerifyOtpForm() {
     }
 
     return (
-        <main className="flex min-h-screen items-center justify-center bg-[#F4F7FB] p-3 sm:p-6 lg:p-10">
+        <main className="min-h-screen bg-[#F4F7FB] lg:flex lg:items-center lg:justify-center lg:p-6 xl:p-10">
 
-            {/* Card Container */}
-            <div className="relative w-full max-w-md overflow-hidden rounded-2xl sm:rounded-3xl border border-slate-200/80 bg-white p-6 shadow-[0_20px_60px_rgba(16,42,67,0.08)] sm:p-10">
+            {/* Split Card Container (Desktop: Split Card | Mobile: Top Image + Bottom Sheet) */}
+            <div className="relative mx-auto flex min-h-screen w-full flex-col bg-white lg:min-h-0 lg:max-w-5xl lg:grid lg:grid-cols-12 lg:overflow-hidden lg:rounded-3xl lg:border lg:border-slate-200/80 lg:shadow-[0_20px_60px_rgba(16,42,67,0.08)]">
 
-                {/* Back Link */}
-                <button
-                    type="button"
-                    onClick={() => router.push("/admin/forgot-password")}
-                    disabled={loading}
-                    className="group mb-6 inline-flex items-center gap-2 text-xs font-bold text-slate-500 transition hover:text-[#3869D0] disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                    <ArrowLeft size={16} className="transition-transform group-hover:-translate-x-0.5" />
-                    Back
-                </button>
+                {/* MOBILE-ONLY TOP IMAGE HERO (Screenshot Match) */}
+                <div className="relative h-60 w-full shrink-0 overflow-hidden bg-[#0d1d36] sm:h-72 lg:hidden">
+                    <Image
+                        src="/images/auth-verify-otp.jpg"
+                        alt="OTP 2FA Security"
+                        fill
+                        priority
+                        className="object-cover object-center"
+                        sizes="(max-width: 1024px) 100vw, 50vw"
+                    />
 
-                {/* Header */}
-                <div className="mb-5 text-center">
+                    {/* Gradient overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0d1d36] via-[#0d1d36]/40 to-black/30" />
 
-                    {/* Academy Badge */}
-                    <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-slate-200/80 bg-slate-50/80 px-3 py-1 shadow-xs">
-                        <div className="relative h-4.5 w-4.5 shrink-0 overflow-hidden rounded-full">
-                            <Image
-                                src="/logos/mainLogo.png"
-                                alt="Prince Defence Academy"
-                                fill
-                                sizes="20px"
-                                className="object-contain"
-                            />
-                        </div>
-                        <span className="montserrat text-[10px] font-black tracking-wide text-[var(--navy)] sm:text-[11px]">
-                            PRINCE DEFENCE ACADEMY
-                        </span>
-                    </div>
-
-                    {/* Key Icon Badge */}
-                    <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl border border-blue-100 bg-gradient-to-br from-[#EAF2FD] via-[#F0F5FE] to-[#DFECFD] text-[#3869D0] shadow-sm">
-                        <KeyRound size={26} />
-                    </div>
-
-                    <h1 className="montserrat text-2xl font-black text-[var(--navy)] sm:text-3xl">
-                        Verify OTP
-                    </h1>
-
-                    <p className="mt-2 text-xs text-slate-500 sm:text-sm">
-                        Enter the 6-digit verification code sent to your registered email address.
-                    </p>
-                </div>
-
-                {/* Email Chip */}
-                <div className="mb-6 flex items-center justify-center gap-2 rounded-xl border border-slate-200/80 bg-slate-50/80 px-3.5 py-2.5 text-xs font-semibold text-[var(--navy)]">
-                    <Mail size={15} className="shrink-0 text-[#3869D0]" />
-                    <span className="truncate max-w-[260px] sm:max-w-[300px]">
-                        {email}
-                    </span>
-                </div>
-
-                {/* Form */}
-                <form onSubmit={handleSubmit} className="space-y-5">
-
-                    {/* 6-Box OTP Input */}
-                    <div>
-                        <label className="mb-2.5 block text-center text-xs font-bold text-[var(--navy)]">
-                            Verification Code
-                        </label>
-
-                        {/* Digit Boxes */}
-                        <div
-                            className="flex items-center justify-between gap-2 sm:gap-2.5"
-                            onPaste={handlePaste}
-                        >
-                            {otpDigits.map((digit, index) => (
-                                <input
-                                    key={index}
-                                    ref={(el) => (inputRefs.current[index] = el)}
-                                    type="text"
-                                    inputMode="numeric"
-                                    pattern="[0-9]*"
-                                    maxLength={1}
-                                    autoComplete="one-time-code"
-                                    value={digit}
-                                    onChange={(e) =>
-                                        handleDigitChange(index, e.target.value)
-                                    }
-                                    onKeyDown={(e) =>
-                                        handleKeyDown(index, e)
-                                    }
-                                    disabled={loading}
-                                    className={`h-12 w-12 sm:h-14 sm:w-14 rounded-xl border text-center text-xl sm:text-2xl font-black outline-none transition-all ${
-                                        digit
-                                            ? "border-[#3869D0] bg-blue-50/60 text-[#3869D0] shadow-xs ring-2 ring-[#3869D0]/20"
-                                            : "border-slate-200 bg-slate-50/70 text-[var(--navy)] focus:border-[#3869D0] focus:bg-white focus:ring-4 focus:ring-[#3869D0]/10"
-                                    } disabled:cursor-not-allowed disabled:opacity-60`}
-                                />
-                            ))}
-                        </div>
-
-                        <p className="mt-2.5 text-center text-[11px] text-slate-400">
-                            OTP is valid for 5 minutes.
-                        </p>
-                    </div>
-
-                    {/* Verify Button */}
-                    <button
-                        type="submit"
-                        disabled={loading || otp.length !== 6}
-                        className="group flex w-full items-center justify-center gap-2 rounded-xl bg-[#3869D0] py-3.5 text-sm font-bold text-white shadow-lg shadow-[#3869D0]/20 transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#2e5bbd] hover:shadow-xl hover:shadow-[#3869D0]/30 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
-                    >
-                        {loading ? (
-                            <>
-                                <Loader2 size={17} className="animate-spin" />
-                                Verifying...
-                            </>
-                        ) : (
-                            <>
-                                Verify OTP
-                                <ArrowRight
-                                    size={17}
-                                    className="transition-transform duration-200 group-hover:translate-x-1"
-                                />
-                            </>
-                        )}
-                    </button>
-
-                </form>
-
-                {/* Resend Section */}
-                <div className="mt-6 text-center">
-                    <p className="mb-1.5 text-xs text-slate-400">
-                        Didn&apos;t receive the code?
-                    </p>
-
+                    {/* Mobile Back Button */}
                     <button
                         type="button"
-                        onClick={handleResend}
-                        disabled={resendLoading || resendTimer > 0}
-                        className="inline-flex items-center gap-1.5 text-xs font-bold text-[#3869D0] transition hover:text-[#2852aa] hover:underline disabled:cursor-not-allowed disabled:opacity-50 disabled:no-underline"
+                        onClick={() => router.push("/admin/forgot-password")}
+                        disabled={loading}
+                        aria-label="Back"
+                        className="absolute left-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-md transition active:scale-95 disabled:opacity-50"
                     >
-                        {resendLoading ? (
-                            <>
-                                <Loader2 size={13} className="animate-spin" />
-                                Sending...
-                            </>
-                        ) : (
-                            <>
-                                <RefreshCw size={13} />
-                                {resendTimer > 0
-                                    ? `Resend in ${resendTimer}s`
-                                    : "Resend OTP"}
-                            </>
-                        )}
+                        <ArrowLeft size={18} />
                     </button>
+
+                    {/* Mobile Hero Headline */}
+                    <div className="absolute bottom-6 left-5 right-5 z-10">
+                        <h2 className="montserrat text-xl font-black text-white">
+                            Verify 2FA Code
+                        </h2>
+                        <p className="mt-1 text-xs text-blue-100/80">
+                            Enter the 6-digit verification code sent to your email.
+                        </p>
+                    </div>
                 </div>
 
-                {/* Security Note */}
-                <div className="mt-6 flex items-center justify-center gap-1.5 text-center text-[11px] text-slate-400">
-                    <Shield size={13} className="text-slate-400" />
-                    <span>Never share your verification code • Prince Defence Academy</span>
+                {/* FORM COLUMN (Left on Desktop, Bottom Sheet on Mobile) */}
+                <div className="relative -mt-4 flex flex-1 flex-col justify-between rounded-t-3xl bg-white p-6 shadow-xl sm:p-8 lg:col-span-7 lg:mt-0 lg:rounded-none lg:p-12 lg:shadow-none xl:p-14">
+
+                    {/* Mobile pull indicator */}
+                    <div className="mx-auto mb-4 h-1.5 w-12 rounded-full bg-slate-200 lg:hidden" />
+
+                    {/* Desktop Top Brand Header */}
+                    <div className="mb-6 hidden items-center justify-between lg:flex">
+                        <div className="flex items-center gap-3">
+                            <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full border border-slate-200/80 bg-white p-0.5 shadow-xs">
+                                <Image
+                                    src="/logos/mainLogo.png"
+                                    alt="Prince Defence Academy"
+                                    fill
+                                    sizes="36px"
+                                    className="object-contain"
+                                />
+                            </div>
+                            <span className="montserrat text-xs font-black tracking-wide text-[var(--navy)]">
+                                PRINCE DEFENCE ACADEMY
+                            </span>
+                        </div>
+
+                        <button
+                            type="button"
+                            onClick={() => router.push("/admin/forgot-password")}
+                            disabled={loading}
+                            className="group flex items-center gap-1.5 text-xs font-semibold text-slate-500 transition hover:text-[#3869D0] disabled:opacity-50"
+                        >
+                            <ArrowLeft size={14} className="transition-transform group-hover:-translate-x-0.5" />
+                            Back
+                        </button>
+                    </div>
+
+                    {/* Main Content Area */}
+                    <div className="my-auto">
+
+                        {/* Icon badge */}
+                        <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-blue-100 bg-[#EAF2FD] text-[#3869D0] shadow-xs">
+                            <ShieldCheck size={24} />
+                        </div>
+
+                        {/* Title & Subtitle (NO EYEBROW) */}
+                        <h1 className="montserrat text-2xl font-black tracking-tight text-[var(--navy)] sm:text-3xl">
+                            Verify OTP code
+                        </h1>
+                        <p className="mt-2 text-xs leading-relaxed text-slate-500 sm:text-sm">
+                            We sent a 6-digit verification code to your registered admin email.
+                        </p>
+
+                        {/* Target Email Chip */}
+                        <div className="mt-4 inline-flex max-w-full items-center gap-2 rounded-xl border border-slate-200/80 bg-slate-50/80 px-3.5 py-2 text-xs font-semibold text-[var(--navy)]">
+                            <Mail size={14} className="shrink-0 text-[#3869D0]" />
+                            <span className="truncate">{email}</span>
+                        </div>
+
+                        {/* Form */}
+                        <form onSubmit={handleSubmit} className="mt-6 space-y-5">
+
+                            {/* 6-Box OTP Input (Match Reference) */}
+                            <div>
+                                <label className="mb-3 block text-xs font-bold text-[var(--navy)]">
+                                    6-Digit Verification Code
+                                </label>
+
+                                <div
+                                    className="flex items-center justify-between gap-2 sm:gap-3"
+                                    onPaste={handlePaste}
+                                >
+                                    {otpDigits.map((digit, index) => (
+                                        <input
+                                            key={index}
+                                            ref={(el) => (inputRefs.current[index] = el)}
+                                            type="text"
+                                            inputMode="numeric"
+                                            pattern="[0-9]*"
+                                            maxLength={1}
+                                            autoComplete="one-time-code"
+                                            value={digit}
+                                            onChange={(e) =>
+                                                handleDigitChange(index, e.target.value)
+                                            }
+                                            onKeyDown={(e) =>
+                                                handleKeyDown(index, e)
+                                            }
+                                            disabled={loading}
+                                            className={`h-12 w-12 sm:h-14 sm:w-14 rounded-xl border text-center text-xl sm:text-2xl font-black outline-none transition-all ${
+                                                digit
+                                                    ? "border-[#3869D0] bg-blue-50/60 text-[#3869D0] shadow-xs ring-2 ring-[#3869D0]/20"
+                                                    : "border-slate-200 bg-slate-50/70 text-[var(--navy)] focus:border-[#3869D0] focus:bg-white focus:ring-4 focus:ring-[#3869D0]/10"
+                                            } disabled:cursor-not-allowed disabled:opacity-60`}
+                                        />
+                                    ))}
+                                </div>
+
+                                <p className="mt-2 text-xs text-slate-400">
+                                    OTP is valid for 5 minutes.
+                                </p>
+                            </div>
+
+                            <button
+                                type="submit"
+                                disabled={loading || otp.length !== 6}
+                                className="group flex w-full items-center justify-center gap-2 rounded-xl bg-[#3869D0] py-3.5 text-sm font-bold text-white shadow-lg shadow-[#3869D0]/20 transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#2e5bbd] hover:shadow-xl hover:shadow-[#3869D0]/30 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
+                            >
+                                {loading ? (
+                                    <>
+                                        <Loader2 size={17} className="animate-spin" />
+                                        Verifying...
+                                    </>
+                                ) : (
+                                    <>
+                                        Verify &amp; Continue
+                                        <ArrowRight
+                                            size={17}
+                                            className="transition-transform duration-200 group-hover:translate-x-1"
+                                        />
+                                    </>
+                                )}
+                            </button>
+
+                        </form>
+
+                        {/* Resend Section */}
+                        <div className="mt-5 text-center">
+                            <span className="text-xs text-slate-500">
+                                Didn&apos;t receive the email?{" "}
+                            </span>
+                            <button
+                                type="button"
+                                onClick={handleResend}
+                                disabled={resendLoading || resendTimer > 0}
+                                className="inline-flex items-center gap-1 text-xs font-bold text-[#3869D0] hover:underline disabled:cursor-not-allowed disabled:opacity-50 disabled:no-underline"
+                            >
+                                {resendLoading ? (
+                                    <>
+                                        <Loader2 size={12} className="animate-spin" />
+                                        Resending...
+                                    </>
+                                ) : (
+                                    <>
+                                        <RefreshCw size={12} />
+                                        {resendTimer > 0
+                                            ? `Resend in ${resendTimer}s`
+                                            : "Click to resend"}
+                                    </>
+                                )}
+                            </button>
+                        </div>
+
+                        {/* Mobile Back Link */}
+                        <div className="mt-5 text-center lg:hidden">
+                            <button
+                                type="button"
+                                onClick={() => router.push("/login")}
+                                disabled={loading}
+                                className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-[#3869D0] disabled:opacity-50"
+                            >
+                                <ArrowLeft size={14} />
+                                Back to login
+                            </button>
+                        </div>
+
+                    </div>
+
+                    {/* Footer note */}
+                    <div className="mt-8 flex items-center justify-between border-t border-slate-100 pt-4 text-[11px] text-slate-400">
+                        <span className="inline-flex items-center gap-1.5">
+                            <Shield size={13} className="text-[#3869D0]" />
+                            Protected 2FA Verification
+                        </span>
+                        <span>Prince Defence Academy</span>
+                    </div>
+
+                </div>
+
+                {/* DESKTOP-ONLY RIGHT COLUMN: 3D OTP VISUAL (Untitled UI Match) */}
+                <div className="relative hidden p-3 lg:col-span-5 lg:block">
+                    <div className="relative h-full w-full overflow-hidden rounded-2xl bg-gradient-to-br from-[#0a1b39] via-[#0d2752] to-[#12366f] shadow-inner">
+                        <Image
+                            src="/images/auth-verify-otp.jpg"
+                            alt="3D OTP Security"
+                            fill
+                            priority
+                            className="object-cover object-center"
+                            sizes="50vw"
+                        />
+
+                        {/* Atmospheric gradient overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#071326] via-[#071326]/30 to-transparent" />
+
+                        {/* Bottom Floating Testimonial/Badge */}
+                        <div className="absolute bottom-6 left-6 right-6 z-10 rounded-2xl border border-white/15 bg-white/10 p-5 shadow-2xl backdrop-blur-md">
+                            <p className="text-xs font-bold leading-relaxed text-white">
+                                &ldquo;Two-factor authentication ensures only verified administrators can modify academy records.&rdquo;
+                            </p>
+                            <div className="mt-3 flex items-center justify-between border-t border-white/10 pt-3">
+                                <div>
+                                    <p className="text-xs font-black text-white">
+                                        Multi-Factor Security
+                                    </p>
+                                    <p className="text-[10px] text-blue-200">
+                                        Active Guard Protocol
+                                    </p>
+                                </div>
+                                <span className="rounded-full bg-emerald-500/20 px-2.5 py-1 text-[10px] font-bold text-emerald-300">
+                                    Encrypted
+                                </span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
             </div>
