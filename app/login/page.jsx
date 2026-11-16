@@ -37,6 +37,31 @@ export default function LoginPage() {
         }
     }, [authLoading, user, router]);
 
+    // Lock page scrolling on mobile to keep login perfectly centered and non-scrollable
+    useEffect(() => {
+        const origBodyOverflow = document.body.style.overflow;
+        const origHtmlOverflow = document.documentElement.style.overflow;
+
+        const applyLock = () => {
+            if (window.innerWidth < 640) {
+                document.body.style.overflow = "hidden";
+                document.documentElement.style.overflow = "hidden";
+            } else {
+                document.body.style.overflow = origBodyOverflow;
+                document.documentElement.style.overflow = origHtmlOverflow;
+            }
+        };
+
+        applyLock();
+        window.addEventListener("resize", applyLock);
+
+        return () => {
+            document.body.style.overflow = origBodyOverflow;
+            document.documentElement.style.overflow = origHtmlOverflow;
+            window.removeEventListener("resize", applyLock);
+        };
+    }, []);
+
     const getErrorMessage = (error) => {
         if (
             typeof navigator !== "undefined" &&
@@ -127,7 +152,7 @@ export default function LoginPage() {
     }
 
     return (
-        <main className="flex h-[100dvh] max-h-[100dvh] items-center justify-center overflow-hidden bg-[#F4F7FB] p-3 sm:h-auto sm:min-h-screen sm:overflow-auto sm:p-6 lg:p-10">
+        <main className="fixed inset-0 z-10 flex items-center justify-center overflow-hidden overscroll-none bg-[#F4F7FB] p-2.5 sm:static sm:z-auto sm:min-h-screen sm:overflow-auto sm:p-6 lg:p-10">
 
             {/* Split Card Container */}
             <div className="relative grid w-full max-w-sm sm:max-w-md lg:max-w-5xl grid-cols-1 overflow-hidden rounded-2xl sm:rounded-3xl border border-slate-200/80 bg-white shadow-[0_20px_60px_rgba(16,42,67,0.08)] lg:grid-cols-2">
@@ -210,14 +235,14 @@ export default function LoginPage() {
                 </div>
 
                 {/* Right Column: Form Area (Mobile-Enhanced & Desktop-Refined) */}
-                <div className="flex flex-col justify-center bg-white p-4 sm:p-8 lg:p-12 xl:p-14">
+                <div className="flex flex-col justify-center bg-white p-3.5 sm:p-8 lg:p-12 xl:p-14">
 
                     {/* MOBILE-ONLY HEADER: Enhanced Card with Brand & Lottie Animation */}
-                    <div className="mb-3 overflow-hidden rounded-2xl border border-blue-100/80 bg-gradient-to-b from-[#EAF2FD] via-[#F2F7FE] to-[#F8FAFD] px-3.5 py-2.5 text-center shadow-xs sm:mb-6 sm:p-5 lg:hidden">
+                    <div className="mb-2.5 overflow-hidden rounded-2xl border border-blue-100/80 bg-gradient-to-b from-[#EAF2FD] via-[#F2F7FE] to-[#F8FAFD] px-3 py-2 text-center shadow-xs sm:mb-6 sm:p-5 lg:hidden">
 
                         {/* Logo Badge */}
-                        <div className="inline-flex items-center gap-2 rounded-full border border-white/90 bg-white/95 px-2.5 py-0.5 shadow-xs sm:px-3 sm:py-1">
-                            <div className="relative h-4.5 w-4.5 shrink-0 overflow-hidden rounded-full sm:h-5 sm:w-5">
+                        <div className="inline-flex items-center gap-1.5 rounded-full border border-white/90 bg-white/95 px-2.5 py-0.5 shadow-xs sm:px-3 sm:py-1">
+                            <div className="relative h-4 w-4 shrink-0 overflow-hidden rounded-full sm:h-5 sm:w-5">
                                 <Image
                                     src="/logos/mainLogo.png"
                                     alt="Prince Defence Academy"
@@ -231,8 +256,8 @@ export default function LoginPage() {
                             </span>
                         </div>
 
-                        {/* Animated Lottie Character on Mobile - Enlarged */}
-                        <div className="mx-auto my-1 h-28 w-28 sm:my-2.5 sm:h-36 sm:w-36">
+                        {/* Animated Lottie Character on Mobile - Significantly Enlarged */}
+                        <div className="mx-auto my-1 h-40 w-40 sm:my-2.5 sm:h-44 sm:w-44">
                             <DotLottieReact
                                 src="https://lottie.host/c2752204-0cec-41df-a3ff-40e47ec9fc89/er8HN6i2ly.lottie"
                                 loop
@@ -244,7 +269,7 @@ export default function LoginPage() {
                         <h2 className="montserrat text-base font-black text-[var(--navy)] sm:text-xl">
                             Admin Login
                         </h2>
-                        <p className="mt-0.5 text-[11px] text-slate-500 sm:mt-1 sm:text-xs">
+                        <p className="mt-0.5 text-[10.5px] text-slate-500 sm:mt-1 sm:text-xs">
                             Sign in to manage your academy portal
                         </p>
                     </div>
@@ -260,13 +285,13 @@ export default function LoginPage() {
                     </div>
 
                     {/* Form */}
-                    <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-5">
+                    <form onSubmit={handleSubmit} className="space-y-2.5 sm:space-y-5">
 
                         {/* Email */}
                         <div>
                             <label
                                 htmlFor="email"
-                                className="mb-1.5 block text-xs font-bold text-[var(--navy)]"
+                                className="mb-1 block text-xs font-bold text-[var(--navy)]"
                             >
                                 Email Address
                             </label>
@@ -287,22 +312,20 @@ export default function LoginPage() {
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
                                     disabled={loading}
-                                    className="w-full rounded-xl border border-slate-200 bg-slate-50/60 py-3 pl-11 pr-4 text-sm text-[var(--navy)] outline-none transition focus:border-[#3869D0] focus:bg-white focus:ring-4 focus:ring-[#3869D0]/10 disabled:cursor-not-allowed disabled:opacity-60"
+                                    className="w-full rounded-xl border border-slate-200 bg-slate-50/60 py-2.5 pl-11 pr-4 text-xs sm:py-3 sm:text-sm text-[var(--navy)] outline-none transition focus:border-[#3869D0] focus:bg-white focus:ring-4 focus:ring-[#3869D0]/10 disabled:cursor-not-allowed disabled:opacity-60"
                                 />
                             </div>
                         </div>
 
                         {/* Password */}
                         <div>
-                            <div className="mb-1.5 flex items-center justify-between">
+                            <div className="mb-1 flex items-center justify-between">
                                 <label
                                     htmlFor="password"
                                     className="block text-xs font-bold text-[var(--navy)]"
                                 >
                                     Password
                                 </label>
-
-
                             </div>
 
                             <div className="relative">
@@ -321,7 +344,7 @@ export default function LoginPage() {
                                     onChange={(e) => setPassword(e.target.value)}
                                     required
                                     disabled={loading}
-                                    className="w-full rounded-xl border border-slate-200 bg-slate-50/60 py-3 pl-11 pr-11 text-sm text-[var(--navy)] outline-none transition focus:border-[#3869D0] focus:bg-white focus:ring-4 focus:ring-[#3869D0]/10 disabled:cursor-not-allowed disabled:opacity-60"
+                                    className="w-full rounded-xl border border-slate-200 bg-slate-50/60 py-2.5 pl-11 pr-11 text-xs sm:py-3 sm:text-sm text-[var(--navy)] outline-none transition focus:border-[#3869D0] focus:bg-white focus:ring-4 focus:ring-[#3869D0]/10 disabled:cursor-not-allowed disabled:opacity-60"
                                 />
 
                                 <button
@@ -340,7 +363,7 @@ export default function LoginPage() {
                             type="button"
                             onClick={() => router.push("/admin/forgot-password")}
                             disabled={loading}
-                            className="text-xs font-semibold text-[#3869D0] transition hover:text-[#2852aa] hover:underline disabled:cursor-not-allowed disabled:opacity-50"
+                            className="text-[11px] font-semibold text-[#3869D0] transition hover:text-[#2852aa] hover:underline disabled:cursor-not-allowed disabled:opacity-50 sm:text-xs"
                         >
                             Forgot Password?
                         </button>
@@ -349,7 +372,7 @@ export default function LoginPage() {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="group mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-[#3869D0] py-3.5 text-sm font-bold text-white shadow-lg shadow-[#3869D0]/20 transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#2e5bbd] hover:shadow-xl hover:shadow-[#3869D0]/30 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
+                            className="group mt-1 flex w-full items-center justify-center gap-2 rounded-xl bg-[#3869D0] py-2.5 text-xs font-bold text-white shadow-lg shadow-[#3869D0]/20 transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#2e5bbd] hover:shadow-xl hover:shadow-[#3869D0]/30 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0 sm:mt-2 sm:py-3.5 sm:text-sm"
                         >
                             {loading ? (
                                 <>
@@ -370,7 +393,7 @@ export default function LoginPage() {
                     </form>
 
                     {/* Bottom note */}
-                    <div className="mt-3.5 text-center text-[11px] text-slate-400 sm:mt-8 sm:text-xs">
+                    <div className="mt-2 text-center text-[10.5px] text-slate-400 sm:mt-8 sm:text-xs">
                         Prince Defence Academy • Palwas Road, Sikar
                     </div>
 
