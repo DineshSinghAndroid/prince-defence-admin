@@ -1739,9 +1739,7 @@ export default function ContactsPage() {
                                                         <p className="font-bold text-sm text-[var(--navy)]">
                                                             {contact?.name || "—"}
                                                         </p>
-                                                        <p className="mt-0.5 text-xs text-slate-400">
-                                                            Website Enquiry
-                                                        </p>
+                                                        
                                                     </div>
                                                 </td>
 
