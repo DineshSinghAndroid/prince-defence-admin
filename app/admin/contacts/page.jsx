@@ -948,25 +948,23 @@ export default function ContactsPage() {
 
                         </div>
 
-                        <div className="flex flex-wrap items-center gap-3">
+                        <div className="grid grid-cols-2 gap-2.5 sm:flex sm:items-center sm:gap-3 w-full sm:w-auto">
                             <button
                                 onClick={handleExportExcel}
                                 disabled={exporting || loading}
-                                className="group relative inline-flex h-12 shrink-0 items-center justify-center gap-2.5 overflow-hidden rounded-2xl bg-gradient-to-r from-[#1f4ba8] via-[#244A9A] to-[#3869D0] px-5 text-sm font-bold text-white shadow-[0_8px_25px_rgba(36,74,154,0.35)] ring-1 ring-white/25 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_32px_rgba(36,74,154,0.50)] hover:ring-white/40 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60"
+                                className="group relative inline-flex h-11 sm:h-12 items-center justify-center gap-2 overflow-hidden rounded-xl sm:rounded-2xl bg-gradient-to-r from-[#1f4ba8] via-[#244A9A] to-[#3869D0] px-3.5 sm:px-5 text-xs sm:text-sm font-semibold text-white shadow-[0_8px_25px_rgba(36,74,154,0.35)] ring-1 ring-white/25 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_32px_rgba(36,74,154,0.50)] hover:ring-white/40 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60"
                                 title="Download enquiries matching active filter"
                             >
                                 <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 ease-in-out group-hover:translate-x-full" />
                                 {exporting ? (
-                                    <Loader2 size={18} className="animate-spin text-white" />
+                                    <Loader2 size={15} className="animate-spin text-white shrink-0" />
                                 ) : (
-                                    <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-white/20 shadow-inner">
-                                        <FileSpreadsheet size={16} className="text-white" />
-                                    </span>
+                                    <FileSpreadsheet size={15} className="shrink-0 text-white" />
                                 )}
-                                <span className="font-bold tracking-wide">
-                                    {exporting ? "Preparing Excel..." : "Download Excel"}
+                                <span className="whitespace-nowrap">
+                                    {exporting ? "Preparing..." : "Export Excel"}
                                 </span>
-                                <span className="hidden rounded-full bg-black/25 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white/90 sm:inline-block">
+                                <span className="hidden rounded-full bg-black/25 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white/90 md:inline-block">
                                     {status ? status : isCurrentMonthActive ? "This Month" : "Filtered"}
                                 </span>
                             </button>
@@ -974,13 +972,13 @@ export default function ContactsPage() {
                             <button
                                 onClick={fetchContacts}
                                 disabled={loading}
-                                className="inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-5 text-sm font-semibold text-white shadow-sm backdrop-blur-md transition hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-60"
+                                className="inline-flex h-11 sm:h-12 items-center justify-center gap-2 rounded-xl sm:rounded-2xl border border-white/20 bg-white/10 px-3.5 sm:px-5 text-xs sm:text-sm font-semibold text-white shadow-sm backdrop-blur-md transition hover:bg-white/20 active:scale-95 disabled:cursor-not-allowed disabled:opacity-60"
                             >
                                 <RefreshCw
-                                    size={17}
-                                    className={loading ? "animate-spin" : ""}
+                                    size={15}
+                                    className={`shrink-0 ${loading ? "animate-spin" : ""}`}
                                 />
-                                Refresh
+                                <span className="whitespace-nowrap font-semibold">Refresh</span>
                             </button>
                         </div>
 
@@ -1582,50 +1580,54 @@ export default function ContactsPage() {
 
                             </div>
 
-                            <div className="flex flex-wrap items-center gap-3">
-                                {/* View Mode Toggle (Cards vs Table) */}
-                                <div className="inline-flex rounded-xl border border-[#C8D5EA] bg-white/80 p-0.5 shadow-2xs">
+                            <div className="flex flex-wrap items-center justify-between sm:justify-start gap-2.5 sm:gap-3">
+                                {/* Action Bar: Toggle + Export in single unbreakable row on mobile */}
+                                <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
+                                    {/* View Mode Toggle (Cards vs Table) */}
+                                    <div className="inline-flex shrink-0 rounded-xl border border-[#C8D5EA] bg-white/80 p-0.5 shadow-2xs">
+                                        <button
+                                            type="button"
+                                            onClick={() => setViewMode("cards")}
+                                            className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 sm:px-3 text-xs font-bold transition ${
+                                                viewMode === "cards"
+                                                    ? "bg-[#3869D0] text-white shadow-xs"
+                                                    : "text-[#526579] hover:text-[var(--navy)]"
+                                            }`}
+                                            title="Cards View"
+                                        >
+                                            <LayoutGrid size={13} />
+                                            <span>Cards</span>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => setViewMode("table")}
+                                            className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 sm:px-3 text-xs font-bold transition ${
+                                                viewMode === "table"
+                                                    ? "bg-[#3869D0] text-white shadow-xs"
+                                                    : "text-[#526579] hover:text-[var(--navy)]"
+                                            }`}
+                                            title="Table View"
+                                        >
+                                            <List size={13} />
+                                            <span>Table</span>
+                                        </button>
+                                    </div>
+
+                                    {/* Export Excel Button */}
                                     <button
-                                        type="button"
-                                        onClick={() => setViewMode("cards")}
-                                        className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition ${
-                                            viewMode === "cards"
-                                                ? "bg-[#3869D0] text-white shadow-xs"
-                                                : "text-[#526579] hover:text-[var(--navy)]"
-                                        }`}
-                                        title="Cards View"
+                                        onClick={handleExportExcel}
+                                        disabled={exporting || loading || totalContacts === 0}
+                                        className="group relative inline-flex shrink-0 h-9 items-center justify-center gap-2 overflow-hidden rounded-xl bg-gradient-to-r from-[#244A9A] to-[#3869D0] px-3 sm:px-3.5 text-xs font-bold text-white shadow-sm transition hover:from-[#1e3e82] hover:to-[#2f5dbd] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+                                        title="Export currently filtered enquiries to Excel"
                                     >
-                                        <LayoutGrid size={13} />
-                                        <span>Cards</span>
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={() => setViewMode("table")}
-                                        className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition ${
-                                            viewMode === "table"
-                                                ? "bg-[#3869D0] text-white shadow-xs"
-                                                : "text-[#526579] hover:text-[var(--navy)]"
-                                        }`}
-                                        title="Table View"
-                                    >
-                                        <List size={13} />
-                                        <span>Table</span>
+                                        {exporting ? (
+                                            <Loader2 size={14} className="animate-spin text-white" />
+                                        ) : (
+                                            <FileSpreadsheet size={14} className="text-white" />
+                                        )}
+                                        <span className="whitespace-nowrap">{exporting ? "Exporting..." : "Export Excel"}</span>
                                     </button>
                                 </div>
-
-                                <button
-                                    onClick={handleExportExcel}
-                                    disabled={exporting || loading || totalContacts === 0}
-                                    className="group relative inline-flex h-9 items-center justify-center gap-2 overflow-hidden rounded-xl bg-gradient-to-r from-[#244A9A] to-[#3869D0] px-3.5 text-xs font-bold text-white shadow-sm transition hover:from-[#1e3e82] hover:to-[#2f5dbd] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
-                                    title="Export currently filtered enquiries to Excel"
-                                >
-                                    {exporting ? (
-                                        <Loader2 size={14} className="animate-spin text-white" />
-                                    ) : (
-                                        <FileSpreadsheet size={14} className="text-white" />
-                                    )}
-                                    <span>{exporting ? "Exporting..." : "Export Excel"}</span>
-                                </button>
 
                                 {loading && (
                                     <div className="flex items-center gap-2 text-xs font-medium text-[var(--muted)]">
@@ -1633,7 +1635,7 @@ export default function ContactsPage() {
                                             size={15}
                                             className="animate-spin"
                                         />
-                                        Loading enquiries...
+                                        <span className="hidden sm:inline">Loading enquiries...</span>
                                     </div>
                                 )}
                             </div>
@@ -1698,8 +1700,8 @@ export default function ContactsPage() {
                             <table className="w-full border-collapse">
                                 <thead>
                                     <tr className="border-b border-[#D8E1EE] bg-[#F2F6FF]/70">
-                                        <th className="px-5 py-4 text-left text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--muted)]">
-                                            Contact
+                                        <th className="whitespace-nowrap px-5 py-4 text-left text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--muted)]">
+                                            Contact Name
                                         </th>
                                         <th className="px-5 py-4 text-left text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--muted)]">
                                             Number
@@ -1733,14 +1735,11 @@ export default function ContactsPage() {
                                                 key={contact._id}
                                                 className="border-b border-[#D8E1EE]/70 transition duration-150 hover:bg-[#EEF4FF]/70"
                                             >
-                                                {/* Contact Name (No first letter avatar logo) */}
-                                                <td className="px-5 py-4 align-top">
-                                                    <div className="min-w-0">
-                                                        <p className="font-bold text-sm text-[var(--navy)]">
-                                                            {contact?.name || "—"}
-                                                        </p>
-                                                        
-                                                    </div>
+                                                {/* Contact Name (Flexible: sized naturally to the longest name text) */}
+                                                <td className="whitespace-nowrap px-5 py-4 align-top">
+                                                    <p className="font-bold text-sm text-[var(--navy)]">
+                                                        {contact?.name || "—"}
+                                                    </p>
                                                 </td>
 
                                                 {/* Contact Number */}

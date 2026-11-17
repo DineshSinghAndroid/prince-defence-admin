@@ -747,10 +747,35 @@ function AdminsContent() {
                             </p>
                         </div>
 
-                        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                        <div className="flex flex-col gap-2.5 sm:gap-3 sm:flex-row sm:items-center w-full sm:w-auto">
 
-                            <div className="relative">
+                            {/* Mobile Top Row / Desktop Right: Add Admin & Refresh in 1 line */}
+                            <div className="grid grid-cols-2 gap-2.5 sm:flex sm:items-center sm:gap-3 sm:order-2 w-full sm:w-auto">
+                                <button
+                                    type="button"
+                                    onClick={openAddModal}
+                                    className="flex h-11 sm:h-12 items-center justify-center gap-1.5 sm:gap-2 rounded-xl bg-[var(--gold)] px-3 sm:px-5 text-xs sm:text-sm font-bold text-[var(--navy)] shadow-lg shadow-[var(--gold)]/20 transition hover:bg-[#c5a253] hover:shadow-xl active:scale-95"
+                                >
+                                    <Plus size={17} />
+                                    <span className="whitespace-nowrap">Add Admin</span>
+                                </button>
 
+                                <button
+                                    type="button"
+                                    onClick={() => loadAdmins(true)}
+                                    disabled={refreshing}
+                                    className="flex h-11 sm:h-12 items-center justify-center gap-1.5 sm:gap-2 rounded-xl border border-white/20 bg-white/10 px-3 sm:px-4 text-xs sm:text-sm font-bold text-white backdrop-blur-md transition hover:bg-white/15 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+                                >
+                                    <RefreshCw
+                                        size={16}
+                                        className={refreshing ? "animate-spin" : ""}
+                                    />
+                                    <span className="whitespace-nowrap">Refresh</span>
+                                </button>
+                            </div>
+
+                            {/* Mobile Bottom / Desktop Left: Search Bar */}
+                            <div className="relative w-full sm:w-72 sm:order-1">
                                 <Search
                                     size={18}
                                     className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--muted)]"
@@ -759,26 +784,15 @@ function AdminsContent() {
                                 <input
                                     type="text"
                                     value={search}
-                                    onChange={(
-                                        event
-                                    ) =>
-                                        setSearch(
-                                            event.target
-                                                .value
-                                        )
-                                    }
+                                    onChange={(event) => setSearch(event.target.value)}
                                     placeholder="Search by name, email or role"
-                                    className="w-full rounded-xl border border-[#C8D5EA] bg-white/80 py-3 pl-10 pr-10 text-sm text-[var(--navy)] outline-none backdrop-blur-md transition placeholder:text-[var(--muted)] focus:bg-white focus:ring-4 focus:ring-[#3869D0]/10 sm:w-72"
+                                    className="w-full rounded-xl border border-[#C8D5EA] bg-white/80 py-2.5 sm:py-3 pl-10 pr-10 text-xs sm:text-sm text-[var(--navy)] outline-none backdrop-blur-md transition placeholder:text-[var(--muted)] focus:bg-white focus:ring-4 focus:ring-[#3869D0]/10"
                                 />
 
                                 {search && (
                                     <button
                                         type="button"
-                                        onClick={() =>
-                                            setSearch(
-                                                ""
-                                            )
-                                        }
+                                        onClick={() => setSearch("")}
                                         aria-label="Clear search"
                                         className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-1 text-[var(--muted)] transition hover:bg-[#F2F6FF] hover:text-[var(--navy)]"
                                     >
@@ -787,41 +801,6 @@ function AdminsContent() {
                                 )}
                             </div>
 
-                            <button
-                                type="button"
-                                onClick={() =>
-                                    loadAdmins(
-                                        true
-                                    )
-                                }
-                                disabled={
-                                    refreshing
-                                }
-                                className="flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-sm font-bold text-white backdrop-blur-md transition hover:bg-white/15 disabled:cursor-not-allowed disabled:opacity-50"
-                            >
-                                <RefreshCw
-                                    size={17}
-                                    className={
-                                        refreshing
-                                            ? "animate-spin"
-                                            : ""
-                                    }
-                                />
-
-                                Refresh
-                            </button>
-
-                            <button
-                                type="button"
-                                onClick={
-                                    openAddModal
-                                }
-                                className="flex items-center justify-center gap-2 rounded-xl bg-[var(--gold)] px-5 py-3 text-sm font-bold text-[var(--navy)] shadow-lg shadow-[var(--gold)]/20 transition hover:bg-[#c5a253] hover:shadow-xl"
-                            >
-                                <Plus size={18} />
-
-                                Add Admin
-                            </button>
                         </div>
                     </div>
                 </div>
