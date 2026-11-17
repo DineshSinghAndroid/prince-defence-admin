@@ -139,7 +139,7 @@ export default function VisitorAnalyticsPage() {
           <div className="pointer-events-none absolute -bottom-16 left-1/3 h-48 w-48 rounded-full bg-[#3869D0]/20 blur-3xl" />
           <div className="relative flex flex-wrap items-end justify-between gap-4">
             <div>
-              <h1 className="montserrat text-3xl font-extrabold leading-tight text-white sm:text-4xl">Visitor Analytics</h1>
+              <h1 className="cinzel text-3xl font-extrabold leading-tight text-white sm:text-4xl">Visitor Analytics</h1>
               <p className="mt-2 text-sm text-white/70">Explore visitor activity, quiz engagement, and individual browsing history.</p>
             </div>
             <div className="flex flex-wrap items-center gap-2">

@@ -738,7 +738,7 @@ function AdminsContent() {
                     <div className="relative flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
 
                         <div>
-                            <h1 className="montserrat text-3xl font-extrabold leading-tight text-white sm:text-4xl">
+                            <h1 className="cinzel text-3xl font-extrabold leading-tight text-white sm:text-4xl">
                                 Admin Management
                             </h1>
 

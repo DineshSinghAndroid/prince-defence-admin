@@ -970,7 +970,7 @@ export default function GalleryPage() {
 
                         <div>
 
-                            <h1 className="montserrat text-3xl font-extrabold leading-tight text-white sm:text-4xl">
+                            <h1 className="cinzel text-3xl font-extrabold leading-tight text-white sm:text-4xl">
                                 Gallery
                             </h1>
 

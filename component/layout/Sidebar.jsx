@@ -142,7 +142,7 @@ const Sidebar = () => {
                         alt="Prince Defence Academy"
                         className="h-8 w-8 object-contain"
                     />
-                    <span className="montserrat text-sm font-extrabold">
+                    <span className="cinzel text-sm font-bold tracking-wide">
                         Prince Defence Academy
                     </span>
                 </div>
@@ -218,7 +218,7 @@ const Sidebar = () => {
                             </div>
 
                             <div>
-                                <h2 className="montserrat text-xs lg:text-base font-extrabold leading-tight text-white">
+                                <h2 className="cinzel text-xs lg:text-base font-bold tracking-wide leading-tight text-white">
                                     Prince Defence Academy
                                 </h2>
 

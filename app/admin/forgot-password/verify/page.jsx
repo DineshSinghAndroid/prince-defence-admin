@@ -190,7 +190,7 @@ function VerifyOtpForm() {
         return (
             <main className="flex min-h-screen items-center justify-center bg-[#F4F7FB] p-3 sm:p-6 lg:p-10">
                 <div className="w-full max-w-md rounded-2xl sm:rounded-3xl border border-slate-200/80 bg-white p-8 text-center shadow-[0_20px_60px_rgba(16,42,67,0.08)]">
-                    <h1 className="montserrat text-xl font-bold text-[var(--navy)]">
+                    <h1 className="cinzel text-xl font-bold text-[var(--navy)]">
                         Recovery Session Expired
                     </h1>
                     <p className="mt-2 text-xs text-slate-500 sm:text-sm">
@@ -275,7 +275,7 @@ function VerifyOtpForm() {
                     <div className="my-auto">
 
                         {/* Title & Subtitle (NO EYEBROW) */}
-                        <h1 className="montserrat text-2xl font-black tracking-tight text-[var(--navy)] sm:text-3xl">
+                        <h1 className="cinzel text-2xl font-bold tracking-tight text-[var(--navy)] sm:text-3xl">
                             Verify OTP code
                         </h1>
                         <p className="mt-2 text-xs leading-relaxed text-slate-500 sm:text-sm">

@@ -202,7 +202,7 @@ export default function QuizCategoriesManager({ embedded = false }) {
             <div className="relative flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
               <div>
                 <span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[10px] font-bold tracking-[0.2em] text-white/90">QUIZ CATALOG</span>
-                <h1 className="montserrat mt-4 text-3xl font-extrabold italic leading-tight md:text-4xl">Quiz Categories</h1>
+                <h1 className="cinzel mt-4 text-3xl font-extrabold leading-tight md:text-4xl">Quiz Categories</h1>
                 <p className="mt-2 text-sm text-white/70">Manage subjects used by the daily quiz.</p>
               </div>
               <div className="flex flex-wrap items-center gap-3">

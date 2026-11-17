@@ -353,7 +353,7 @@ export default function AchieversPage() {
                     <div className="pointer-events-none absolute -bottom-16 left-1/3 h-48 w-48 rounded-full bg-[#3869D0]/20 blur-3xl" />
                     <div className="relative flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
                         <div>
-                            <h1 className="montserrat text-3xl font-extrabold leading-tight text-white sm:text-4xl">
+                            <h1 className="cinzel text-3xl font-extrabold leading-tight text-white sm:text-4xl">
                                 Achievers Management
                             </h1>
 

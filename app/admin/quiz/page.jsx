@@ -157,7 +157,7 @@ export default function QuizAnalyticsPage() {
                     <div className="pointer-events-none absolute -bottom-16 left-1/3 h-48 w-48 rounded-full bg-[#3869D0]/20 blur-3xl" />
                     <div className="relative flex flex-wrap items-end justify-between gap-4">
                         <div>
-                            <h1 className="montserrat text-3xl font-extrabold leading-tight text-white sm:text-4xl">Quiz Analytics</h1>
+                            <h1 className="cinzel text-3xl font-extrabold leading-tight text-white sm:text-4xl">Quiz Analytics</h1>
                             <p className="mt-2 max-w-2xl text-sm leading-6 text-white/70">Unique quiz visitors are counted once per 24-hour period. Review attempts, completion, skipped answers, and scores.</p>
                         </div>
                         <div className="flex flex-wrap items-center gap-2">

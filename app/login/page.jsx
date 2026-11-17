@@ -157,7 +157,7 @@ export default function LoginPage() {
                                 className="object-contain"
                             />
                         </div>
-                        <span className="montserrat text-[11px] font-black tracking-wide text-white">
+                        <span className="cinzel text-[11px] font-bold tracking-wide text-white">
                             PRINCE DEFENCE ACADEMY
                         </span>
                     </div>
@@ -191,7 +191,7 @@ export default function LoginPage() {
                                     className="object-contain"
                                 />
                             </div>
-                            <span className="montserrat text-xs font-black tracking-wide text-[var(--navy)]">
+                            <span className="cinzel text-xs font-bold tracking-wide text-[var(--navy)]">
                                 PRINCE DEFENCE ACADEMY
                             </span>
                         </div>
@@ -207,7 +207,7 @@ export default function LoginPage() {
 
 
                         {/* Title & Subtitle (NO EYEBROW) */}
-                        <h1 className="montserrat text-2xl font-black tracking-tight text-[var(--navy)] sm:text-3xl">
+                        <h1 className="cinzel text-2xl font-bold tracking-tight text-[var(--navy)] sm:text-3xl">
                             Admin Login
                         </h1>
                         <p className="mt-2 text-xs leading-relaxed text-slate-500 sm:text-sm">

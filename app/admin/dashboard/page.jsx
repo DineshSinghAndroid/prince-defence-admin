@@ -117,7 +117,7 @@ export default function DashboardPage() {
                     <div className="pointer-events-none absolute -bottom-16 left-1/3 h-48 w-48 rounded-full bg-[var(--gold)]/10 blur-3xl" />
                     <div className="relative flex flex-wrap items-end justify-between gap-4">
                         <div>
-                            <h1 className="montserrat text-3xl font-extrabold leading-tight text-white sm:text-4xl">Dashboard</h1>
+                            <h1 className="cinzel text-3xl font-extrabold leading-tight text-white sm:text-4xl">Dashboard</h1>
                             <p className="mt-2 text-sm text-white/70">A quick view of academy pages, traffic, and quiz totals.</p>
                         </div>
                         <button type="button" onClick={refreshData} disabled={loading} aria-label="Refresh dashboard" className="inline-flex h-11 items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-4 text-sm font-semibold hover:bg-white/20 disabled:opacity-50">

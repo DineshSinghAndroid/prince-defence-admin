@@ -124,7 +124,7 @@ export default function ForgotPasswordPage() {
                     <div className="my-auto">
 
                         {/* Title & Subtitle (NO EYEBROW) */}
-                        <h1 className="montserrat text-2xl font-black tracking-tight text-[var(--navy)] sm:text-3xl">
+                        <h1 className="cinzel text-2xl font-bold tracking-tight text-[var(--navy)] sm:text-3xl">
                             Forgot password?
                         </h1>
                         <p className="mt-2 text-xs leading-relaxed text-slate-500 sm:text-sm">

@@ -723,7 +723,7 @@ export default function QuizQuestionsPage() {
 
                     <div className="relative flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
                         <div>
-                            <h1 className="montserrat text-3xl font-extrabold leading-tight text-white sm:text-4xl">
+                            <h1 className="cinzel text-3xl font-extrabold leading-tight text-white sm:text-4xl">
                                 Quiz Questions
                             </h1>
 
