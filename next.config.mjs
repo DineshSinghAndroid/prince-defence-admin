@@ -4,6 +4,7 @@ const nextConfig = {
     poweredByHeader: false,
     experimental: {
         optimizePackageImports: ["lucide-react"],
+        agentUpgrade: "security",
     },
     images: {
         formats: [
