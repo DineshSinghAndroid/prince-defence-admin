@@ -23,6 +23,8 @@ import {
     FileSpreadsheet,
     Copy,
     Check,
+    LayoutGrid,
+    List,
 } from "lucide-react";
 
 import {
@@ -166,6 +168,9 @@ const getApiPayload = (response) => {
 export default function ContactsPage() {
     const [contacts, setContacts] =
         useState([]);
+
+    const [viewMode, setViewMode] =
+        useState("cards");
 
     const [loading, setLoading] =
         useState(true);
@@ -1578,6 +1583,36 @@ export default function ContactsPage() {
                             </div>
 
                             <div className="flex flex-wrap items-center gap-3">
+                                {/* View Mode Toggle (Cards vs Table) */}
+                                <div className="inline-flex rounded-xl border border-[#C8D5EA] bg-white/80 p-0.5 shadow-2xs">
+                                    <button
+                                        type="button"
+                                        onClick={() => setViewMode("cards")}
+                                        className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition ${
+                                            viewMode === "cards"
+                                                ? "bg-[#3869D0] text-white shadow-xs"
+                                                : "text-[#526579] hover:text-[var(--navy)]"
+                                        }`}
+                                        title="Cards View"
+                                    >
+                                        <LayoutGrid size={13} />
+                                        <span>Cards</span>
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setViewMode("table")}
+                                        className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition ${
+                                            viewMode === "table"
+                                                ? "bg-[#3869D0] text-white shadow-xs"
+                                                : "text-[#526579] hover:text-[var(--navy)]"
+                                        }`}
+                                        title="Table View"
+                                    >
+                                        <List size={13} />
+                                        <span>Table</span>
+                                    </button>
+                                </div>
+
                                 <button
                                     onClick={handleExportExcel}
                                     disabled={exporting || loading || totalContacts === 0}
@@ -1657,605 +1692,341 @@ export default function ContactsPage() {
                         </div>
                     ) : (
                         <>
-
-                            {/* Desktop Table */}
-
-                            <div className="hidden overflow-x-auto xl:block">
-
-                                <table className="w-full border-collapse">
-
-                                    <thead>
-
-                                        <tr className="border-b border-[#D8E1EE] bg-[#F2F6FF]/70">
-
-                                            <th className="px-5 py-4 text-left text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--muted)]">
-                                                Contact
-                                            </th>
-
-                                            <th className="px-5 py-4 text-left text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--muted)]">
-                                                Number
-                                            </th>
-
-                                            <th className="px-5 py-4 text-left text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--muted)]">
-                                                Course
-                                            </th>
-
-                                            <th className="px-5 py-4 text-left text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--muted)]">
-                                                Message
-                                            </th>
-
-                                            <th className="px-5 py-4 text-left text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--muted)]">
-                                                Status
-                                            </th>
-
-                                            <th className="px-5 py-4 text-left text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--muted)]">
-                                                Date
-                                            </th>
-
-                                            <th className="px-5 py-4 text-right text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--muted)]">
-                                                Action
-                                            </th>
-
-                                        </tr>
-
-                                    </thead>
-
-                                    <tbody>
-
-                                        {contacts.map(
-                                            (
-                                                contact
-                                            ) => (
-
-                                                <tr
-                                                    key={
-                                                        contact._id
-                                                    }
-                                                    className="border-b border-[#D8E1EE]/70 transition duration-200 hover:bg-[#EEF4FF]"
-                                                >
-
-                                                    <td className="px-5 py-5 align-top">
-
-                                                        <div className="flex items-center gap-3">
-
-                                                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#3869D0]/10 text-sm font-bold text-[#3869D0]">
-                                                                {contact?.name
-                                                                    ?.charAt(
-                                                                        0
-                                                                    )
-                                                                    ?.toUpperCase() ||
-                                                                    "U"}
-                                                            </div>
-
-                                                            <div className="min-w-0">
-
-                                                                <p className="font-semibold text-[var(--navy)]">
-                                                                    {contact?.name ||
-                                                                        "—"}
-                                                                </p>
-
-                                                                <p className="mt-0.5 text-xs text-[var(--muted)]">
-                                                                    Website Enquiry
-                                                                </p>
-
-                                                            </div>
-
-                                                        </div>
-
-                                                    </td>
-
-                                                    <td className="px-5 py-5 align-top">
-
-                                                        {contact?.number ? (
-                                                            (() => {
-                                                                const cleanNumber = String(contact.number).trim().replace(/[^\d+]/g, "");
-                                                                return (
-                                                                    <div className="flex items-center gap-2">
-                                                                        <a
-                                                                            href={`tel:${cleanNumber}`}
-                                                                            onClick={(e) => handleDirectCall(cleanNumber, e)}
-                                                                            className="group/call inline-flex items-center gap-2 rounded-xl border border-[#3869D0]/20 bg-blue-50/70 px-2.5 py-1.5 transition-all hover:border-[#3869D0] hover:bg-blue-100 hover:shadow-sm"
-                                                                            title={`Click to call ${contact.number}`}
-                                                                        >
-                                                                            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#3869D0] text-white shadow-sm transition group-hover/call:scale-110">
-                                                                                <Phone size={13} />
-                                                                            </div>
-
-                                                                            <span className="whitespace-nowrap text-sm font-bold text-[var(--navy)] group-hover/call:text-[#3869D0] group-hover/call:underline">
-                                                                                {contact.number}
-                                                                            </span>
-                                                                        </a>
-
-                                                                        <button
-                                                                            type="button"
-                                                                            onClick={(e) => handleCopyNumber(contact.number, e)}
-                                                                            className="rounded-xl border border-[#C8D5EA] bg-white/80 p-2 text-[var(--muted)] transition hover:border-[#3869D0]/50 hover:bg-white hover:text-[#3869D0] hover:shadow-sm"
-                                                                            title="Copy phone number"
-                                                                        >
-                                                                            {copiedNumber === String(contact.number).trim() ? (
-                                                                                <Check size={13} className="text-[#3869D0]" />
-                                                                            ) : (
-                                                                                <Copy size={13} />
-                                                                            )}
-                                                                        </button>
-                                                                    </div>
-                                                                );
-                                                            })()
-                                                        ) : (
-                                                            <span className="whitespace-nowrap text-sm font-medium text-[var(--muted)]">
-                                                                —
-                                                            </span>
-                                                        )}
-
-                                                    </td>
-
-                                                    <td className="px-5 py-5 align-top">
-
-                                                        <div className="inline-flex max-w-[170px] items-center gap-2 rounded-xl border border-[#C8D5EA] bg-white/60 px-3 py-2">
-
-                                                            <BookOpen
-                                                                size={
-                                                                    15
-                                                                }
-                                                                className="shrink-0 text-[#3869D0]"
-                                                            />
-
-                                                            <span className="break-words text-sm font-medium text-[#526579]">
-                                                                {contact?.course ||
-                                                                    "—"}
-                                                            </span>
-
-                                                        </div>
-
-                                                    </td>
-
-                                                    <td className="max-w-[360px] px-5 py-5 align-top">
-
-                                                        <div className="flex gap-2">
-
-                                                            <MessageSquare
-                                                                size={
-                                                                    16
-                                                                }
-                                                                className="mt-1 shrink-0 text-[#3869D0]/70"
-                                                            />
-
-                                                            <p className="whitespace-pre-wrap break-words text-sm leading-6 text-[#526579]">
-                                                                {contact?.message ||
-                                                                    "—"}
-                                                            </p>
-
-                                                        </div>
-
-                                                    </td>
-
-                                                    <td className="px-5 py-5 align-top">
-
-                                                        <div className="flex items-center">
-
-                                                            <select
-                                                                value={
-                                                                    contact?.status ||
-                                                                    "new"
-                                                                }
-                                                                onChange={(
-                                                                    e
-                                                                ) =>
-                                                                    handleStatusChange(
-                                                                        contact._id,
-                                                                        e
-                                                                            .target
-                                                                            .value
-                                                                    )
-                                                                }
-                                                                disabled={
-                                                                    updatingId ===
-                                                                    contact._id
-                                                                }
-                                                                className={`rounded-full border px-3 py-2 text-xs font-bold outline-none transition disabled:cursor-not-allowed disabled:opacity-60 ${statusStyles[
-                                                                    contact?.status
-                                                                    ] ||
-                                                                    statusStyles.new
-                                                                    }`}
-                                                            >
-
-                                                                <option value="new">
-                                                                    New
-                                                                </option>
-
-                                                                <option value="open">
-                                                                    Open
-                                                                </option>
-
-                                                                <option value="closed">
-                                                                    Closed
-                                                                </option>
-
-                                                            </select>
-
-                                                            {updatingId ===
-                                                                contact._id && (
-                                                                    <Loader2
-                                                                        size={
-                                                                            14
-                                                                        }
-                                                                        className="ml-2 animate-spin text-[var(--muted)]"
-                                                                    />
-                                                                )}
-
-                                                        </div>
-
-                                                    </td>
-
-                                                    <td className="px-5 py-5 align-top">
-
-                                                        <div className="flex items-start gap-2">
-
-                                                            <CalendarDays
-                                                                size={
-                                                                    15
-                                                                }
-                                                                className="mt-0.5 shrink-0 text-[var(--muted)]"
-                                                            />
-
-                                                            <div>
-
-                                                                <p className="whitespace-nowrap text-sm font-medium text-[#526579]">
-                                                                    {formatDate(
-                                                                        contact?.createdAt
-                                                                    )}
-                                                                </p>
-
-                                                                <p className="mt-0.5 text-xs text-[var(--muted)]">
-                                                                    {formatTime(
-                                                                        contact?.createdAt
-                                                                    )}
-                                                                </p>
-
-                                                            </div>
-
-                                                        </div>
-
-                                                    </td>
-
-                                                    <td className="px-5 py-5 text-right align-top">
-
-                                                        <button
-                                                            onClick={() =>
-                                                                requestDelete(
-                                                                    contact
-                                                                )
-                                                            }
-                                                            disabled={
-                                                                deletingId ===
-                                                                contact._id
-                                                            }
-                                                            className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-red-100 bg-red-50 text-red-500 transition hover:bg-red-100 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
-                                                            title="Delete enquiry"
-                                                        >
-                                                            {deletingId ===
-                                                                contact._id ? (
-                                                                <Loader2
-                                                                    size={
-                                                                        16
-                                                                    }
-                                                                    className="animate-spin"
-                                                                />
-                                                            ) : (
-                                                                <Trash2
-                                                                    size={
-                                                                        16
-                                                                    }
-                                                                />
-                                                            )}
-                                                        </button>
-
-                                                    </td>
-
-                                                </tr>
-
-                                            )
-                                        )}
-
-                                    </tbody>
-
-                                </table>
-
-                            </div>
-
-                            {/* Mobile Cards */}
-
-                            <div className="grid grid-cols-1 gap-4 p-4 xl:hidden">
-
-                                {contacts.map(
-                                    (
-                                        contact
-                                    ) => (
-
-                                        <div
-                                            key={
-                                                contact._id
-                                            }
-                                            className="rounded-2xl border border-[#C8D5EA] bg-white/70 p-4 shadow-sm backdrop-blur-md transition hover:bg-white hover:shadow-md"
-                                        >
-
-                                            <div className="flex items-start justify-between gap-3">
-
-                                                <div className="flex min-w-0 items-center gap-3">
-
-                                                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#3869D0]/10 text-sm font-bold text-[#3869D0]">
-
-                                                        {contact?.name
-                                                            ?.charAt(
-                                                                0
-                                                            )
-                                                            ?.toUpperCase() ||
-                                                            "U"}
-
-                                                    </div>
-
+                            {viewMode === "table" ? (
+                        /* Table View */
+                        <div className="overflow-x-auto">
+                            <table className="w-full border-collapse">
+                                <thead>
+                                    <tr className="border-b border-[#D8E1EE] bg-[#F2F6FF]/70">
+                                        <th className="px-5 py-4 text-left text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--muted)]">
+                                            Contact
+                                        </th>
+                                        <th className="px-5 py-4 text-left text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--muted)]">
+                                            Number
+                                        </th>
+                                        <th className="px-5 py-4 text-left text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--muted)]">
+                                            Course
+                                        </th>
+                                        <th className="px-5 py-4 text-left text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--muted)]">
+                                            Enquiry Message
+                                        </th>
+                                        <th className="px-5 py-4 text-left text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--muted)]">
+                                            Status
+                                        </th>
+                                        <th className="px-5 py-4 text-left text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--muted)]">
+                                            Date &amp; Time
+                                        </th>
+                                        <th className="px-5 py-4 text-right text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--muted)]">
+                                            Action
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {contacts.map((contact) => {
+                                        const cleanNumber = contact?.number
+                                            ? String(contact.number).trim().replace(/[^\d+]/g, "")
+                                            : "";
+                                        const waNumber = cleanNumber ? cleanNumber.replace(/[^\d]/g, "") : "";
+
+                                        return (
+                                            <tr
+                                                key={contact._id}
+                                                className="border-b border-[#D8E1EE]/70 transition duration-150 hover:bg-[#EEF4FF]/70"
+                                            >
+                                                {/* Contact Name (No first letter avatar logo) */}
+                                                <td className="px-5 py-4 align-top">
                                                     <div className="min-w-0">
-
-                                                        <p className="truncate font-bold text-[var(--navy)]">
-                                                            {contact?.name ||
-                                                                "—"}
+                                                        <p className="font-bold text-sm text-[var(--navy)]">
+                                                            {contact?.name || "—"}
                                                         </p>
+                                                        <p className="mt-0.5 text-xs text-slate-400">
+                                                            Website Enquiry
+                                                        </p>
+                                                    </div>
+                                                </td>
 
-                                                        <div className="mt-1 flex items-center gap-1.5 text-xs text-[var(--muted)]">
+                                                {/* Contact Number */}
+                                                <td className="px-5 py-4 align-top">
+                                                    {contact?.number ? (
+                                                        <div className="flex items-center gap-2">
+                                                            <a
+                                                                href={`tel:${cleanNumber}`}
+                                                                onClick={(e) => handleDirectCall(cleanNumber, e)}
+                                                                className="group/call inline-flex items-center gap-1.5 rounded-xl border border-[#3869D0]/20 bg-blue-50/70 px-2.5 py-1.5 transition-all hover:border-[#3869D0] hover:bg-blue-100 hover:shadow-2xs"
+                                                                title={`Click to call ${contact.number}`}
+                                                            >
+                                                                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-[#3869D0] text-white shadow-2xs transition group-hover/call:scale-105">
+                                                                    <Phone size={12} />
+                                                                </div>
+                                                                <span className="whitespace-nowrap text-xs font-bold text-[var(--navy)] group-hover/call:text-[#3869D0]">
+                                                                    {contact.number}
+                                                                </span>
+                                                            </a>
 
-                                                            <CalendarDays
-                                                                size={
-                                                                    12
-                                                                }
-                                                            />
-
-                                                            {formatDate(
-                                                                contact?.createdAt
+                                                            {waNumber && (
+                                                                <a
+                                                                    href={`https://wa.me/${waNumber}`}
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    className="inline-flex h-8 items-center gap-1 rounded-xl bg-emerald-50 px-2 text-xs font-bold text-emerald-700 border border-emerald-200/80 transition hover:bg-emerald-100"
+                                                                    title="WhatsApp message"
+                                                                >
+                                                                    WA
+                                                                </a>
                                                             )}
 
-                                                        </div>
-
-                                                    </div>
-
-                                                </div>
-
-                                                <button
-                                                    onClick={() =>
-                                                        requestDelete(
-                                                            contact
-                                                        )
-                                                    }
-                                                    disabled={
-                                                        deletingId ===
-                                                        contact._id
-                                                    }
-                                                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-red-100 bg-red-50 text-red-500 transition hover:bg-red-100 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
-                                                    title="Delete enquiry"
-                                                >
-
-                                                    {deletingId ===
-                                                        contact._id ? (
-                                                        <Loader2
-                                                            size={
-                                                                16
-                                                            }
-                                                            className="animate-spin"
-                                                        />
-                                                    ) : (
-                                                        <Trash2
-                                                            size={
-                                                                16
-                                                            }
-                                                        />
-                                                    )}
-
-                                                </button>
-
-                                            </div>
-
-                                            <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
-
-                                                <div className="rounded-xl border border-[#C8D5EA] bg-white/60 p-3">
-
-                                                    <div className="mb-2 flex items-center justify-between text-xs font-semibold text-[var(--muted)]">
-
-                                                        <span className="flex items-center gap-1.5">
-                                                            <Phone
-                                                                size={14}
-                                                                className="text-[#3869D0]"
-                                                            />
-                                                            Mobile Number
-                                                        </span>
-
-                                                        {contact?.number && (
                                                             <button
                                                                 type="button"
                                                                 onClick={(e) => handleCopyNumber(contact.number, e)}
-                                                                className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#3869D0] hover:underline"
+                                                                className="rounded-xl border border-[#C8D5EA] bg-white/80 p-2 text-[var(--muted)] transition hover:border-[#3869D0]/50 hover:bg-white hover:text-[#3869D0] hover:shadow-2xs"
                                                                 title="Copy phone number"
                                                             >
                                                                 {copiedNumber === String(contact.number).trim() ? (
-                                                                    <>
-                                                                        <Check size={12} className="text-[#3869D0]" />
-                                                                        <span className="font-bold text-[#3869D0]">Copied</span>
-                                                                    </>
+                                                                    <Check size={13} className="text-[#3869D0]" />
                                                                 ) : (
-                                                                    <>
-                                                                        <Copy size={12} />
-                                                                        <span>Copy</span>
-                                                                    </>
+                                                                    <Copy size={13} />
                                                                 )}
                                                             </button>
-                                                        )}
-
-                                                    </div>
-
-                                                    {contact?.number ? (
-                                                        (() => {
-                                                            const cleanNumber = String(contact.number).trim().replace(/[^\d+]/g, "");
-                                                            return (
-                                                                <a
-                                                                    href={`tel:${cleanNumber}`}
-                                                                    onClick={(e) => handleDirectCall(cleanNumber, e)}
-                                                                    className="flex items-center justify-between gap-2 rounded-xl border border-[#3869D0]/30 bg-blue-50/70 p-2.5 transition active:scale-[0.98] hover:bg-blue-100/80"
-                                                                    title={`Click to call ${contact.number}`}
-                                                                >
-                                                                    <span className="text-sm font-bold text-[var(--navy)]">
-                                                                        {contact.number}
-                                                                    </span>
-                                                                    <span className="inline-flex items-center gap-1.5 rounded-lg bg-[#3869D0] px-3 py-1 text-xs font-bold text-white shadow-sm">
-                                                                        <Phone size={12} />
-                                                                        Call Now
-                                                                    </span>
-                                                                </a>
-                                                            );
-                                                        })()
+                                                        </div>
                                                     ) : (
-                                                        <p className="text-sm font-medium text-[var(--muted)]">—</p>
+                                                        <span className="whitespace-nowrap text-sm font-medium text-[var(--muted)]">
+                                                            —
+                                                        </span>
                                                     )}
+                                                </td>
 
-                                                </div>
-
-                                                <div className="rounded-xl border border-[#C8D5EA] bg-white/60 p-3">
-
-                                                    <div className="mb-1.5 flex items-center gap-2 text-xs font-semibold text-[var(--muted)]">
-
-                                                        <BookOpen
-                                                            size={
-                                                                14
-                                                            }
-                                                            className="text-[#3869D0]"
-                                                        />
-
-                                                        Course
-
+                                                {/* Target Course */}
+                                                <td className="px-5 py-4 align-top">
+                                                    <div className="inline-flex items-center gap-1.5 rounded-full border border-blue-200/80 bg-blue-50/70 px-3 py-1 text-xs font-bold text-[#3869D0]">
+                                                        <BookOpen size={12} className="shrink-0" />
+                                                        <span>{contact?.course || "—"}</span>
                                                     </div>
+                                                </td>
 
-                                                    <p className="break-words text-sm font-medium text-[#526579]">
-                                                        {contact?.course ||
-                                                            "—"}
-                                                    </p>
-
-                                                </div>
-
-                                            </div>
-
-                                            <div className="mt-3 rounded-xl border border-[#C8D5EA] bg-white/60 p-3">
-
-                                                <div className="mb-2 flex items-center gap-2 text-xs font-semibold text-[var(--muted)]">
-
-                                                    <MessageSquare
-                                                        size={
-                                                            14
-                                                        }
-                                                        className="text-[#3869D0]"
-                                                    />
-
-                                                    Message
-
-                                                </div>
-
-                                                <p className="whitespace-pre-wrap break-words text-sm leading-6 text-[#526579]">
-                                                    {contact?.message ||
-                                                        "—"}
-                                                </p>
-
-                                            </div>
-
-                                            <div className="mt-3 grid grid-cols-1 gap-3 border-t border-[#D8E1EE] pt-3 sm:grid-cols-2">
-
-                                                <div>
-
-                                                    <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-[var(--muted)]">
-                                                        Status
-                                                    </p>
-
-                                                    <div className="flex items-center">
-
-                                                        <select
-                                                            value={
-                                                                contact?.status ||
-                                                                "new"
-                                                            }
-                                                            onChange={(
-                                                                e
-                                                            ) =>
-                                                                handleStatusChange(
-                                                                    contact._id,
-                                                                    e
-                                                                        .target
-                                                                        .value
-                                                                )
-                                                            }
-                                                            disabled={
-                                                                updatingId ===
-                                                                contact._id
-                                                            }
-                                                            className={`rounded-full border px-3 py-2 text-xs font-bold outline-none disabled:cursor-not-allowed disabled:opacity-60 ${statusStyles[
-                                                                contact?.status
-                                                                ] ||
-                                                                statusStyles.new
-                                                                }`}
-                                                        >
-
-                                                            <option value="new">
-                                                                New
-                                                            </option>
-
-                                                            <option value="open">
-                                                                Open
-                                                            </option>
-
-                                                            <option value="closed">
-                                                                Closed
-                                                            </option>
-
-                                                        </select>
-
-                                                        {updatingId ===
-                                                            contact._id && (
-                                                                <Loader2
-                                                                    size={
-                                                                        14
-                                                                    }
-                                                                    className="ml-2 animate-spin text-[var(--muted)]"
-                                                                />
+                                                {/* Enquiry Message - PROPERLY VISIBLE in dedicated container */}
+                                                <td className="min-w-[280px] max-w-[420px] px-5 py-4 align-top">
+                                                    <div className="rounded-xl border border-slate-200/90 bg-slate-50/80 p-3 shadow-2xs transition hover:bg-white hover:border-[#3869D0]/30">
+                                                        <div className="mb-1 flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
+                                                            <MessageSquare size={12} className="text-[#3869D0]" />
+                                                            <span>Enquiry Message</span>
+                                                        </div>
+                                                        <p className="whitespace-pre-wrap break-words text-xs font-medium leading-relaxed text-slate-700">
+                                                            {contact?.message ? (
+                                                                contact.message
+                                                            ) : (
+                                                                <span className="italic text-slate-400">No message provided</span>
                                                             )}
-
+                                                        </p>
                                                     </div>
+                                                </td>
 
+                                                {/* Status */}
+                                                <td className="px-5 py-4 align-top">
+                                                    <div className="flex items-center">
+                                                        <select
+                                                            value={contact?.status || "new"}
+                                                            onChange={(e) => handleStatusChange(contact._id, e.target.value)}
+                                                            disabled={updatingId === contact._id}
+                                                            className={`rounded-full border px-3 py-1.5 text-xs font-bold outline-none cursor-pointer transition disabled:cursor-not-allowed disabled:opacity-60 ${
+                                                                statusStyles[contact?.status] || statusStyles.new
+                                                            }`}
+                                                        >
+                                                            <option value="new">New</option>
+                                                            <option value="open">Open</option>
+                                                            <option value="closed">Closed</option>
+                                                        </select>
+                                                        {updatingId === contact._id && (
+                                                            <Loader2 size={14} className="ml-2 animate-spin text-[var(--muted)]" />
+                                                        )}
+                                                    </div>
+                                                </td>
+
+                                                {/* Date & Time */}
+                                                <td className="px-5 py-4 align-top">
+                                                    <div className="flex items-start gap-2">
+                                                        <CalendarDays size={14} className="mt-0.5 shrink-0 text-slate-400" />
+                                                        <div>
+                                                            <p className="whitespace-nowrap text-xs font-bold text-[#526579]">
+                                                                {formatDate(contact?.createdAt)}
+                                                            </p>
+                                                            <p className="mt-0.5 text-[11px] text-[var(--muted)]">
+                                                                {formatTime(contact?.createdAt)}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </td>
+
+                                                {/* Action */}
+                                                <td className="px-5 py-4 text-right align-top">
+                                                    <button
+                                                        onClick={() => requestDelete(contact)}
+                                                        disabled={deletingId === contact._id}
+                                                        className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-red-100 bg-red-50 text-red-500 transition hover:bg-red-100 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
+                                                        title="Delete enquiry"
+                                                    >
+                                                        {deletingId === contact._id ? (
+                                                            <Loader2 size={16} className="animate-spin" />
+                                                        ) : (
+                                                            <Trash2 size={16} />
+                                                        )}
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
+
+                    ) : (
+                        /* Cards View - Human-crafted CRM cards */
+                        <div className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 lg:gap-5 sm:p-5 xl:grid-cols-3">
+                            {contacts.map((contact) => {
+                                const cleanNumber = contact?.number
+                                    ? String(contact.number).trim().replace(/[^\d+]/g, "")
+                                    : "";
+                                const waNumber = cleanNumber ? cleanNumber.replace(/[^\d]/g, "") : "";
+
+                                return (
+                                    <div
+                                        key={contact._id}
+                                        className="flex flex-col justify-between rounded-2xl border border-[#C8D5EA]/80 bg-white p-5 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:border-[#3869D0]/40 hover:shadow-md"
+                                    >
+                                        {/* Top Row: Candidate Name & Course + Delete Button */}
+                                        <div>
+                                            <div className="flex items-start justify-between gap-3">
+                                                <div className="min-w-0 flex-1">
+                                                    <h3 className="truncate text-base font-bold text-[var(--navy)] tracking-tight">
+                                                        {contact?.name || "Anonymous Candidate"}
+                                                    </h3>
+                                                    <div className="mt-1 flex flex-wrap items-center gap-1.5">
+                                                        {contact?.course ? (
+                                                            <span className="inline-flex items-center gap-1 rounded-full border border-blue-200/80 bg-blue-50 px-2.5 py-0.5 text-[11px] font-bold text-[#3869D0]">
+                                                                <BookOpen size={11} />
+                                                                {contact.course}
+                                                            </span>
+                                                        ) : (
+                                                            <span className="text-xs font-medium text-slate-400">General Enquiry</span>
+                                                        )}
+                                                    </div>
                                                 </div>
 
-                                                <div className="sm:text-right">
-
-                                                    <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-[var(--muted)]">
-                                                        Submitted
-                                                    </p>
-
-                                                    <p className="text-xs font-medium text-[#526579]">
-
-                                                        {formatDate(
-                                                            contact?.createdAt
-                                                        )}
-
-                                                        {" • "}
-
-                                                        {formatTime(
-                                                            contact?.createdAt
-                                                        )}
-
-                                                    </p>
-
-                                                </div>
-
+                                                <button
+                                                    onClick={() => requestDelete(contact)}
+                                                    disabled={deletingId === contact._id}
+                                                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-red-100 bg-red-50 text-red-500 transition hover:bg-red-100 hover:text-red-600 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+                                                    title="Delete enquiry"
+                                                >
+                                                    {deletingId === contact._id ? (
+                                                        <Loader2 size={15} className="animate-spin" />
+                                                    ) : (
+                                                        <Trash2 size={15} />
+                                                    )}
+                                                </button>
                                             </div>
 
+                                            {/* Phone Strip with Direct Actions (Call, WhatsApp, Copy) */}
+                                            {contact?.number ? (
+                                                <div className="my-3.5 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-slate-200/80 bg-[#F6F9FD] p-2.5">
+                                                    <div className="flex items-center gap-2 min-w-0">
+                                                        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#3869D0] text-white shadow-2xs">
+                                                            <Phone size={12} />
+                                                        </div>
+                                                        <div className="min-w-0">
+                                                            <p className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Contact</p>
+                                                            <p className="truncate text-xs font-bold text-[var(--navy)]">{contact.number}</p>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="flex items-center gap-1.5">
+                                                        <a
+                                                            href={`tel:${cleanNumber}`}
+                                                            onClick={(e) => handleDirectCall(cleanNumber, e)}
+                                                            className="inline-flex items-center gap-1 rounded-lg border border-[#3869D0]/30 bg-white px-2.5 py-1 text-xs font-bold text-[#3869D0] shadow-2xs transition hover:bg-blue-50 active:scale-95"
+                                                            title={`Call ${contact.number}`}
+                                                        >
+                                                            Call
+                                                        </a>
+                                                        {waNumber && (
+                                                            <a
+                                                                href={`https://wa.me/${waNumber}`}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                className="inline-flex items-center gap-1 rounded-lg bg-emerald-600 px-2.5 py-1 text-xs font-bold text-white shadow-2xs transition hover:bg-emerald-700 active:scale-95"
+                                                                title="Chat on WhatsApp"
+                                                            >
+                                                                WhatsApp
+                                                            </a>
+                                                        )}
+                                                        <button
+                                                            type="button"
+                                                            onClick={(e) => handleCopyNumber(contact.number, e)}
+                                                            className="flex h-7 w-7 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 transition hover:text-[#3869D0] hover:border-[#3869D0]/40"
+                                                            title="Copy phone number"
+                                                        >
+                                                            {copiedNumber === String(contact.number).trim() ? (
+                                                                <Check size={13} className="text-[#3869D0]" />
+                                                            ) : (
+                                                                <Copy size={13} />
+                                                            )}
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <div className="my-3.5 flex items-center gap-2 rounded-xl border border-slate-200/80 bg-slate-50 p-2.5 text-xs text-slate-400">
+                                                    <Phone size={13} />
+                                                    <span>No phone number provided</span>
+                                                </div>
+                                            )}
+
+                                            {/* Dedicated Message Block - Crystal Clear Visibility */}
+                                            <div className="my-1 rounded-xl border border-slate-200/90 bg-slate-50/90 p-3.5 shadow-2xs">
+                                                <div className="mb-1.5 flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
+                                                    <MessageSquare size={12} className="text-[#3869D0]" />
+                                                    <span className="text-slate-600 font-bold">Enquiry Message</span>
+                                                </div>
+                                                <p className="whitespace-pre-wrap break-words text-xs sm:text-sm font-medium leading-relaxed text-slate-700">
+                                                    {contact?.message ? (
+                                                        contact.message
+                                                    ) : (
+                                                        <span className="italic text-slate-400">No message entered.</span>
+                                                    )}
+                                                </p>
+                                            </div>
                                         </div>
 
-                                    )
-                                )}
+                                        {/* Bottom Status & Date Row */}
+                                        <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3">
+                                            <div className="flex items-center gap-1.5 text-xs font-medium text-slate-400">
+                                                <CalendarDays size={13} className="text-slate-400" />
+                                                <span>{formatDate(contact?.createdAt)}</span>
+                                                <span className="text-slate-300">•</span>
+                                                <span>{formatTime(contact?.createdAt)}</span>
+                                            </div>
 
-                            </div>
+                                            <div className="flex items-center gap-1.5">
+                                                <select
+                                                    value={contact?.status || "new"}
+                                                    onChange={(e) => handleStatusChange(contact._id, e.target.value)}
+                                                    disabled={updatingId === contact._id}
+                                                    className={`rounded-full border px-3 py-1 text-xs font-bold outline-none cursor-pointer transition disabled:cursor-not-allowed disabled:opacity-60 ${
+                                                        statusStyles[contact?.status] || statusStyles.new
+                                                    }`}
+                                                >
+                                                    <option value="new">New</option>
+                                                    <option value="open">Open</option>
+                                                    <option value="closed">Closed</option>
+                                                </select>
+                                                {updatingId === contact._id && (
+                                                    <Loader2 size={13} className="animate-spin text-[#3869D0]" />
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                            )}
 
                             {/* Pagination */}
 
