@@ -197,7 +197,7 @@ export default function LoginPage() {
                         </div>
 
                         <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-3 py-1 text-[11px] font-bold text-[#3869D0]">
-                            
+
                             Admin Portal
                         </span>
                     </div>
@@ -352,11 +352,9 @@ export default function LoginPage() {
                         {/* Bottom Clean Typography Overlay (No background card, no academy badge) */}
                         <div className="absolute bottom-8 left-8 right-8 z-10 xl:bottom-12 xl:left-12 xl:right-12">
                             <blockquote className="text-base font-bold leading-snug text-white sm:text-lg xl:text-xl">
-                                &ldquo;Empowering administrators with centralized control, real-time analytics, and enterprise-grade data security.&rdquo;
+                                &ldquo;Welcome to the Admin Portal for Prince Defence Academy. Manage operations and access secure records with ease.&rdquo;
                             </blockquote>
-                            <p className="mt-2.5 text-xs font-medium text-slate-300">
-                                Official Administrative Command Center
-                            </p>
+
                         </div>
                     </div>
                 </div>
