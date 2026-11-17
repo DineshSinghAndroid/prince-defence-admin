@@ -1496,14 +1496,6 @@ export default function ContactsPage() {
                                 </span>
                             </div>
 
-                            {(!isCurrentMonthActive || search || course || status) && (
-                                <button
-                                    onClick={clearFilters}
-                                    className="w-fit text-left text-xs font-bold text-red-600 hover:text-red-700 hover:underline"
-                                >
-                                    Reset to Current Month
-                                </button>
-                            )}
                         </div>
 
                     </div>
