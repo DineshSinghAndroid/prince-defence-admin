@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { BarChart3, CalendarDays, Eye, RefreshCw, Search, Users } from "lucide-react";
+import { BarChart3, CalendarDays, RefreshCw, Search, Users } from "lucide-react";
 import toast from "react-hot-toast";
 
 import AnalyticsTrendChart from "@/component/quiz/AnalyticsTrendChart";
