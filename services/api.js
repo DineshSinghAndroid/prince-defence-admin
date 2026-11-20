@@ -8,7 +8,7 @@ const API_URL =
     (process.env.NEXT_PUBLIC_API_URL || DEFAULT_API_URL).trim().replace(/\/+$/, "");
 
 const API_BASE_URL = API_URL
-    ? `${API_URL.replace(/\/api$/i, "")}/api`
+    ? (API_URL.includes("index.php") ? API_URL : `${API_URL.replace(/\/api$/i, "")}/api`)
     : "";
 
 const getApiUrl = (endpoint) => {

@@ -1,7 +1,9 @@
-import { notFound } from "next/navigation";
+export function generateStaticParams() {
+    return [{ id: "none" }];
+}
 
 export default function EditBlogPage() {
-    notFound();
+    return null;
 }
 
 // "use client";

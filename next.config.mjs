@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+    output: "export",
+    trailingSlash: true,
     compress: true,
     poweredByHeader: false,
     experimental: {
@@ -7,6 +9,7 @@ const nextConfig = {
         agentUpgrade: "security",
     },
     images: {
+        unoptimized: true,
         formats: [
             "image/avif",
             "image/webp",
